@@ -1,0 +1,80 @@
+{
+  "name": "rag",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/rag/rag",
+  "targets": {
+    "lock": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "uv lock",
+        "cwd": "apps/rag"
+      }
+    },
+    "add": {
+      "executor": "@nxlv/python:add",
+      "options": {}
+    },
+    "update": {
+      "executor": "@nxlv/python:update",
+      "options": {}
+    },
+    "remove": {
+      "executor": "@nxlv/python:remove",
+      "options": {}
+    },
+    "serve": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "npx nodemon -e py --exec \"uv run rag/__init__.py\"",
+        "cwd": "apps"
+      }
+    },
+    "build": {
+      "executor": "@nxlv/python:build",
+      "outputs": ["{projectRoot}/dist"],
+      "options": {
+        "outputPath": "apps/rag/dist",
+        "publish": false,
+        "lockedVersions": true,
+        "bundleLocalDependencies": true
+      },
+      "cache": true
+    },
+    "install": {
+      "executor": "@nxlv/python:install",
+      "options": {
+        "silent": false,
+        "args": "",
+        "verbose": false,
+        "debug": false
+      }
+    },
+    "lint": {
+      "executor": "@nxlv/python:ruff-check",
+      "outputs": [],
+      "options": {
+        "lintFilePatterns": ["rag", "tests"]
+      },
+      "cache": true
+    },
+    "test": {
+      "executor": "@nxlv/python:run-commands",
+      "outputs": [
+        "{workspaceRoot}/reports/apps/rag/unittests",
+        "{workspaceRoot}/coverage/apps/rag"
+      ],
+      "options": {
+        "command": "uv run pytest tests/",
+        "cwd": "apps/rag"
+      },
+      "cache": true
+    }
+  },
+  "tags": [],
+  "release": {
+    "version": {
+      "generator": "@nxlv/python:release-version"
+    }
+  }
+}

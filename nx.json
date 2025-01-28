@@ -17,6 +17,12 @@
   "nxCloudId": "679799de896a9430b7281c63",
   "plugins": [
     {
+      "plugin": "@nxlv/python",
+      "options": {
+        "packageManager": "uv"
+      }
+    },
+    {
       "plugin": "@nx/webpack/plugin",
       "options": {
         "buildTargetName": "build",
