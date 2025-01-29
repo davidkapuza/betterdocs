@@ -3,19 +3,20 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "target": "es2021"
+    "target": "es2021",
+    "paths": {
+      "@shared/*": ["apps/api/src/shared/*"],
+      "@modules/*": ["apps/api/src/modules/*"],
+
+      // Duplication of path alias from tsconfig.base.json since tsconfig options are being overridden
+      "@betterdocs/api-contracts": [
+        "${configDir}/../../libs/api-contracts/src/index.ts"
+      ]
+    }
   },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "jest.config.ts",
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts"
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"]
 }

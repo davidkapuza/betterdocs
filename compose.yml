@@ -20,3 +20,31 @@ services:
       - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
       - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
 
+  postgres:
+    image: postgres:16.1-alpine
+    ports:
+      - ${POSTGRES_PORT}:5432
+    volumes:
+      - db:/var/lib/postgresql/data
+    env_file:
+      - .env
+
+  postgres_admin:
+    image: dpage/pgadmin4
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    ports:
+      - '15432:80'
+
+  maildev:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.maildev
+    ports:
+      - ${MAIL_CLIENT_PORT}:1080
+      - ${MAIL_PORT}:1025
+
+volumes:
+  db:

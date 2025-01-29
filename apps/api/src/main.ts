@@ -1,19 +1,40 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
-import { Logger } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app/app.module';
+import { VersioningType } from '@nestjs/common';
+import { NestFactory, Reflector } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { ConfigService } from '@nestjs/config';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { Config } from '@shared/config';
+import { ZodValidationPipe } from '@shared/pipes';
+import { ZodSerializerInterceptor } from '@shared/interceptors';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
-  const port = process.env.PORT || 3000;
-  await app.listen(port);
-  Logger.log(`🚀 Application is running on: http://localhost:${port}/${globalPrefix}`);
+
+  const configService = app.get(ConfigService<Config>);
+
+  app.setGlobalPrefix(
+    configService.getOrThrow('app.apiPrefix', { infer: true }),
+    {
+      exclude: ['/'],
+    }
+  );
+  app.enableVersioning({
+    type: VersioningType.URI,
+  });
+  app.useGlobalPipes(new ZodValidationPipe());
+  app.useGlobalInterceptors(new ZodSerializerInterceptor(app.get(Reflector)));
+
+  const options = new DocumentBuilder()
+    .setTitle('API')
+    .setDescription('API docs')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('docs', app, document);
+
+  await app.listen(configService.getOrThrow('app.port', { infer: true }));
 }
 
 bootstrap();
