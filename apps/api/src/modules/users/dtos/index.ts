@@ -1,6 +1,6 @@
 import { usersSchemas } from '@betterdocs/api-contracts';
-import { createDtoFromZod } from '@shared/libs/zod';
+import { ZSchema } from '@shared/libs/zod';
 
-export class UserResponseDto extends createDtoFromZod(
+export class UserResponseDto extends ZSchema(
   usersSchemas.UserResponseDtoSchema
 ) {}

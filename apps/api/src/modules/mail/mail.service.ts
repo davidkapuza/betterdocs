@@ -21,8 +21,7 @@ export class MailService {
 
     const templatePath = path.resolve(
       __dirname,
-      'templates',
-      'signup-confirmation.template.hbs'
+      'modules/mail/templates/signup-confirmation.template.hbs'
     );
 
     await this.mailerService.send({
@@ -31,9 +30,9 @@ export class MailService {
       text: url.toString(),
       templatePath,
       context: {
-      title: 'Sign up confirmation',
-      url: url.toString(),
-      action: 'Confirm',
+        title: 'Sign up confirmation',
+        url: url.toString(),
+        action: 'Confirm',
       },
     });
   }

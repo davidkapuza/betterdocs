@@ -9,4 +9,12 @@ export class UsersService {
   async create(createUserDto: usersTypes.CreateUserInputDto) {
     return this.prisma.user.create({ data: createUserDto });
   }
+
+  async findByEmail(email: string) {
+    return this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+  }
 }

@@ -22,10 +22,19 @@ module.exports = {
       compiler: 'tsc',
       main: './src/main.ts',
       tsConfig: './tsconfig.app.json',
-      assets: ['./src/assets'],
+      assets: ['./src/assets', './src/modules/mail/templates',],
       optimization: false,
       outputHashing: 'none',
       generatePackageJson: true,
+      transformers: [
+        {
+          name: '@nestjs/swagger/plugin',
+          options: {
+            classValidatorShim: false,
+            introspectComments: true,
+          },
+        },
+      ],
     }),
   ],
 };
