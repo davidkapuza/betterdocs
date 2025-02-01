@@ -233,6 +233,8 @@ export class AuthService {
       password: newPassword,
     });
 
+    await this.sessionsService.deleteManyByUserId(user.id);
+
     const session = await this.sessionsService.create(user.id);
 
     const { accessToken, refreshToken } = await this.getTokens({

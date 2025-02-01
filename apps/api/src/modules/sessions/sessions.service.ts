@@ -33,8 +33,16 @@ export class SessionsService {
         id,
       },
       include: {
-        user: true
-      }
+        user: true,
+      },
+    });
+  }
+
+  deleteManyByUserId(userId: Session['userId']) {
+    return this.prisma.session.deleteMany({
+      where: {
+        userId,
+      },
     });
   }
 }

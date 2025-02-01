@@ -11,10 +11,18 @@ export class UsersService {
     return this.prisma.user.create({ data: createUserDto });
   }
 
-  async findByEmail(email: string) {
+  async findByEmail(email: User['email']) {
     return this.prisma.user.findUnique({
       where: {
         email,
+      },
+    });
+  }
+
+  async findById(id: User['id']) {
+    return this.prisma.user.findUnique({
+      where: {
+        id,
       },
     });
   }
