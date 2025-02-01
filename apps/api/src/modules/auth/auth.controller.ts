@@ -15,6 +15,8 @@ import {
   ConfirmEmailDto,
   SignInDto,
   SignInResponseDto,
+  ResetPasswordRequestDto,
+  ResetPasswordDto,
 } from './dtos';
 import { ZodSerializer } from '@shared/decorators';
 import { authSchemas } from '@betterdocs/api-contracts';
@@ -66,5 +68,22 @@ export class AuthController {
       sessionId: jwtPayload.sessionId,
       hash: jwtPayload.hash,
     });
+  }
+
+  @Post('reset-password-request')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async resetPasswordRequest(
+    @Body() resetPasswordRequestDto: ResetPasswordRequestDto
+  ) {
+    await this.authService.resetPasswordRequest(resetPasswordRequestDto);
+  }
+
+  @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
+  @ZodSerializer(authSchemas.SignInResponseDtoSchema)
+  async resetPassword(
+    @Body() resetPasswordDto: ResetPasswordDto
+  ): Promise<SignInResponseDto> {
+    return this.authService.resetPassword(resetPasswordDto);
   }
 }

@@ -1,5 +1,8 @@
 import { z } from 'zod';
-import { CreateUserDtoSchema, UserResponseDtoSchema } from '../users/users.schemas';
+import {
+  CreateUserDtoSchema,
+  UserResponseDtoSchema,
+} from '../users/users.schemas';
 
 export const SignUpDtoSchema = CreateUserDtoSchema.omit({
   role: true,
@@ -19,4 +22,14 @@ export const SignInResponseDtoSchema = z.object({
   accessToken: z.string(),
   refreshToken: z.string(),
   user: UserResponseDtoSchema,
+});
+
+export const ResetPasswordRequestDtoSchema = SignUpDtoSchema.pick({
+  email: true,
+});
+
+export const ResetPasswordDtoSchema = SignInDtoSchema.pick({
+  password: true,
+}).extend({
+  hash: z.string(),
 });

@@ -1,10 +1,12 @@
+import { StringValue } from 'ms';
+
 export type AuthConfig = {
   accessTokenSecret: string;
-  accessTokenExpiration: string;
+  accessTokenExpiration: StringValue;
   refreshTokenSecret: string;
-  refreshTokenExpiration: string;
-  forgotTokenSecret: string;
-  forgotTokenExpiration: string;
+  refreshTokenExpiration: StringValue;
+  resetPasswordTokenSecret: string;
+  resetPasswordTokenExpiration: StringValue;
   confirmEmailSecret: string;
-  confirmEmailExpiration: string;
+  confirmEmailExpiration: StringValue;
 };

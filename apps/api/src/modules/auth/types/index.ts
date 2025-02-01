@@ -10,3 +10,7 @@ export type JwtRefreshPayloadType = {
   sessionId: Session['id'];
   hash: Session['hash'];
 };
+
+export type ResetPaswordConfirmationPayloadType = {
+  userId: User['id'];
+};

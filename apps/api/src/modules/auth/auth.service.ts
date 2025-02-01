@@ -7,14 +7,24 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { SignUpDto, ConfirmEmailDto, SignInDto } from './dtos';
+import {
+  SignUpDto,
+  ConfirmEmailDto,
+  SignInDto,
+  ResetPasswordRequestDto,
+  ResetPasswordDto,
+} from './dtos';
 import bcrypt from 'bcryptjs';
 import { ConfigService } from '@nestjs/config';
 import { Config } from '@shared/config';
 import { MailService } from '@modules/mail/mail.service';
 import { Session, Status, User } from '@prisma/client';
 import { SessionsService } from '@modules/sessions/sessions.service';
-import { JwtAccessPayloadType, JwtRefreshPayloadType } from './types';
+import {
+  JwtAccessPayloadType,
+  JwtRefreshPayloadType,
+  ResetPaswordConfirmationPayloadType,
+} from './types';
 
 @Injectable()
 export class AuthService {
@@ -152,6 +162,88 @@ export class AuthService {
 
     return {
       user: session.user,
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  async resetPasswordRequest(resetPasswordRequestDto: ResetPasswordRequestDto) {
+    const user = await this.usersService.findByEmail(
+      resetPasswordRequestDto.email
+    );
+
+    if (!user) {
+      throw new UnprocessableEntityException('User does not exist');
+    }
+
+    const expiresIn = this.configService.getOrThrow(
+      'auth.resetPasswordTokenExpiration',
+      {
+        infer: true,
+      }
+    );
+
+    const hash = await this.jwtService.signAsync(
+      {
+        userId: user.id,
+      } as ResetPaswordConfirmationPayloadType,
+      {
+        secret: this.configService.getOrThrow('auth.resetPasswordTokenSecret', {
+          infer: true,
+        }),
+        expiresIn,
+      }
+    );
+
+    await this.mailService.sendResetPasswordConfirmation({
+      to: resetPasswordRequestDto.email,
+      data: {
+        hash,
+        expiresIn,
+      },
+    });
+  }
+
+  async resetPassword(resetPasswordDto: ResetPasswordDto) {
+    let userId: User['id'];
+
+    try {
+      const jwtData =
+        await this.jwtService.verifyAsync<ResetPaswordConfirmationPayloadType>(
+          resetPasswordDto.hash,
+          {
+            secret: this.configService.getOrThrow(
+              'auth.resetPasswordTokenSecret',
+              {
+                infer: true,
+              }
+            ),
+          }
+        );
+
+      userId = jwtData.userId;
+    } catch {
+      throw new UnprocessableEntityException('Invalid hash');
+    }
+
+    const salt = await bcrypt.genSalt();
+    const newPassword = await bcrypt.hash(resetPasswordDto.password, salt);
+
+    const user = await this.usersService.updateById(userId, {
+      password: newPassword,
+    });
+
+    const session = await this.sessionsService.create(user.id);
+
+    const { accessToken, refreshToken } = await this.getTokens({
+      userId: user.id,
+      role: user.role,
+      sessionId: session.id,
+      hash: session.hash,
+    });
+
+    return {
+      user,
       accessToken,
       refreshToken,
     };

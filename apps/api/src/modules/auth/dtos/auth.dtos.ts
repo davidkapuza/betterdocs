@@ -16,3 +16,10 @@ export class SignInResponseDto extends ZSchema(
   @ApiProperty({ type: () => UserResponseDto })
   user!: UserResponseDto;
 }
+export class ResetPasswordRequestDto extends ZSchema(
+  authSchemas.ResetPasswordRequestDtoSchema
+) {}
+
+export class ResetPasswordDto extends ZSchema(
+  authSchemas.ResetPasswordDtoSchema
+) {}

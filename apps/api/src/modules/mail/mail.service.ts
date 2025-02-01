@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { Config } from '@shared/config';
 import { MailData } from './types';
 import path from 'path';
+import ms, { StringValue } from 'ms';
 
 @Injectable()
 export class MailService {
@@ -33,6 +34,37 @@ export class MailService {
         title: 'Sign up confirmation',
         url: url.toString(),
         action: 'Confirm',
+      },
+    });
+  }
+
+  async sendResetPasswordConfirmation(
+    mailData: MailData<{ hash: string; expiresIn: StringValue }>
+  ) {
+    const url = new URL(
+      '/password-reset',
+      this.configService.getOrThrow('app.frontendDomain', { infer: true })
+    );
+    url.searchParams.set('hash', mailData.data.hash);
+    url.searchParams.set(
+      'expires',
+      (Date.now() + ms(mailData.data.expiresIn)).toString()
+    );
+
+    const templatePath = path.resolve(
+      __dirname,
+      'modules/mail/templates/reset-password-confirmation.template.hbs'
+    );
+
+    await this.mailerService.send({
+      to: mailData.to,
+      subject: 'Password reset',
+      text: url.toString(),
+      templatePath,
+      context: {
+        title: 'Password reset',
+        url: url.toString(),
+        action: 'Reset',
       },
     });
   }
