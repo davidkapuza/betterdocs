@@ -3,19 +3,24 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Config } from '@shared/config';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { JwtPayloadType } from '../types';
+import { JwtRefreshPayloadType } from '../types';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class JwtRefreshStrategy extends PassportStrategy(
+  Strategy,
+  'jwt-refresh'
+) {
   constructor(configService: ConfigService<Config>) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: configService.getOrThrow('auth.jwtSecret', { infer: true }),
+      secretOrKey: configService.getOrThrow('auth.refreshTokenSecret', {
+        infer: true,
+      }),
     });
   }
 
-  public validate(payload: JwtPayloadType): JwtPayloadType {
-    if (!payload.id) {
+  public validate(payload: JwtRefreshPayloadType): JwtRefreshPayloadType {
+    if (!payload.sessionId) {
       throw new UnauthorizedException();
     }
 

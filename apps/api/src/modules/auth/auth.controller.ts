@@ -1,7 +1,26 @@
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { SignUpDto } from './dtos/signup.dto';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  SignUpDto,
+  ConfirmEmailDto,
+  SignInDto,
+  SignInResponseDto,
+} from './dtos';
+import { ZodSerializer } from '@shared/decorators';
+import { authSchemas } from '@betterdocs/api-contracts';
+import { Request } from 'express';
+import { AuthGuard } from '@nestjs/passport';
+import { JwtRefreshPayloadType } from './types';
 
 @ApiTags('Auth')
 @Controller({
@@ -13,7 +32,39 @@ export class AuthController {
 
   @Post('signup')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async signup(@Body() signUpDto: SignUpDto): Promise<void> {
-    await this.authService.signup(signUpDto);
+  async signUp(@Body() signUpDto: SignUpDto): Promise<void> {
+    await this.authService.signUp(signUpDto);
+  }
+
+  @Post('confirm-email')
+  @HttpCode(HttpStatus.OK)
+  @ZodSerializer(authSchemas.SignInResponseDtoSchema)
+  async confirmEmail(
+    @Body() confirmEmailDto: ConfirmEmailDto
+  ): Promise<SignInResponseDto> {
+    return this.authService.confirmEmail(confirmEmailDto);
+  }
+
+  @Post('signin')
+  @HttpCode(HttpStatus.OK)
+  @ZodSerializer(authSchemas.SignInResponseDtoSchema)
+  async signIn(@Body() signInDto: SignInDto): Promise<SignInResponseDto> {
+    return this.authService.signIn(signInDto);
+  }
+
+  @ApiBearerAuth('refreshToken')
+  @Post('refresh-token')
+  @UseGuards(AuthGuard('jwt-refresh'))
+  @HttpCode(HttpStatus.OK)
+  @ZodSerializer(authSchemas.SignInResponseDtoSchema)
+  async refreshToken(@Req() request: Request): Promise<SignInResponseDto> {
+    const jwtPayload = request.user as JwtRefreshPayloadType;
+
+    if (!jwtPayload) throw new UnauthorizedException();
+
+    return this.authService.refreshToken({
+      sessionId: jwtPayload.sessionId,
+      hash: jwtPayload.hash,
+    });
   }
 }

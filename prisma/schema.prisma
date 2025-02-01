@@ -16,8 +16,9 @@ model User {
   role      Role      @default(user)
   status    Status    @default(inactive)
   createdAt DateTime  @default(now()) @db.Timestamp(6)
-  updatedAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime? @db.Timestamp(6)
+  sessions  Session[]
 
   @@map("users")
 }
@@ -30,4 +31,16 @@ enum Role {
 enum Status {
   active
   inactive
+}
+
+model Session {
+  id        Int       @id @default(autoincrement())
+  hash      String    @unique
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? @db.Timestamp(6)
+
+  @@map("sessions")
 }

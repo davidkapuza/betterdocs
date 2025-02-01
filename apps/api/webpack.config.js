@@ -22,7 +22,7 @@ module.exports = {
       compiler: 'tsc',
       main: './src/main.ts',
       tsConfig: './tsconfig.app.json',
-      assets: ['./src/assets', './src/modules/mail/templates',],
+      assets: ['./src/assets', './src/modules/mail/templates'],
       optimization: false,
       outputHashing: 'none',
       generatePackageJson: true,
@@ -30,6 +30,7 @@ module.exports = {
         {
           name: '@nestjs/swagger/plugin',
           options: {
+            dtoFileNameSuffix: ['.dto.ts', '.dtos.ts', '.entity.ts'],
             classValidatorShim: false,
             introspectComments: true,
           },

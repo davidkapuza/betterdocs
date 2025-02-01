@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/libs/prisma';
 import { usersTypes } from '@betterdocs/api-contracts';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -15,6 +16,15 @@ export class UsersService {
       where: {
         email,
       },
+    });
+  }
+
+  async updateById(userId: User['id'], data: Partial<User>) {
+    return this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data,
     });
   }
 }

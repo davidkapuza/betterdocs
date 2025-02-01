@@ -11,7 +11,7 @@ export const UserResponseDtoSchema = z.object({
 });
 
 export const CreateUserDtoSchema = z.object({
-  email: z.string().email().meta({
+  email: z.string().toLowerCase().email().meta({
     example: 'example@gmail.com',
   }),
   password: z.string().min(6).meta({

@@ -11,7 +11,7 @@ function createApiPropertyDecoratorFromZod<T extends z.ZodRawShape>(
 
     for (const [key, value] of Object.entries(zodShape)) {
       if (value instanceof z.ZodType) {
-        const options = getApiPropertyOptions(value);
+        const options = getApiPropertyOptions(value, key);
         ApiProperty(options)(target.prototype, key);
       }
     }
@@ -20,7 +20,10 @@ function createApiPropertyDecoratorFromZod<T extends z.ZodRawShape>(
   };
 }
 
-function getApiPropertyOptions(zodSchema: z.ZodTypeAny): ApiPropertyOptions {
+function getApiPropertyOptions(
+  zodSchema: z.ZodTypeAny,
+  propertyKey: string
+): ApiPropertyOptions {
   const options: ApiPropertyOptions = {};
 
   if ('meta' in zodSchema._def) {
@@ -39,11 +42,19 @@ function getApiPropertyOptions(zodSchema: z.ZodTypeAny): ApiPropertyOptions {
     if (zodSchema.maxValue !== null) options.maximum = zodSchema.maxValue;
   } else if (zodSchema instanceof z.ZodBoolean) {
     options.type = 'boolean';
-  } else if (zodSchema instanceof z.ZodArray) {
-    options.type = 'array';
-    // TODO set array items
   } else if (zodSchema instanceof z.ZodEnum) {
     options.enum = zodSchema.options;
+    options.type = 'string';
+  } else if (zodSchema instanceof z.ZodNativeEnum) {
+    options.enum = Object.values(zodSchema.enum);
+    options.type = 'string';
+  } else if (zodSchema instanceof z.ZodDefault) {
+    return {
+      ...getApiPropertyOptions(zodSchema._def.innerType, propertyKey),
+      default: zodSchema._def.defaultValue(),
+    };
+  } else if (zodSchema instanceof z.ZodEffects) {
+    return getApiPropertyOptions(zodSchema._def.schema, propertyKey);
   }
 
   options.required = !zodSchema.isOptional();

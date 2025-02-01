@@ -24,14 +24,16 @@ async function bootstrap() {
   app.useGlobalPipes(new ZodValidationPipe());
   app.useGlobalInterceptors(new ZodSerializerInterceptor(app.get(Reflector)));
 
-  const options = new DocumentBuilder()
+  const config = new DocumentBuilder()
     .setTitle('API')
     .setDescription('API docs')
     .setVersion('1.0')
-    .addBearerAuth()
+    .addBearerAuth({ type: 'http' }, 'accessToken')
+    .addBearerAuth({ type: 'http' }, 'refreshToken')
     .build();
 
-  const document = SwaggerModule.createDocument(app, options);
+  const document = SwaggerModule.createDocument(app, config);
+
   SwaggerModule.setup('docs', app, document);
 
   await app.listen(configService.getOrThrow('app.port', { infer: true }));
