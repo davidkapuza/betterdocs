@@ -7,7 +7,6 @@ import {
   HttpStatus,
   Post,
   Req,
-  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -17,12 +16,12 @@ import {
   SignInResponseDto,
   ResetPasswordRequestDto,
   ResetPasswordDto,
+  JwtTokensResponseDtoSchema,
 } from './dtos';
 import { ZodSerializer } from '@shared/decorators';
 import { authSchemas } from '@betterdocs/api-contracts';
 import { Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
-import { JwtRefreshPayloadType } from './types';
 
 @ApiTags('Auth')
 @Controller({
@@ -55,19 +54,13 @@ export class AuthController {
   }
 
   @ApiBearerAuth('refreshToken')
-  @Post('refresh-token')
+  @Post('refresh-tokens')
   @UseGuards(AuthGuard('jwt-refresh'))
   @HttpCode(HttpStatus.OK)
-  @ZodSerializer(authSchemas.SignInResponseDtoSchema)
-  async refreshToken(@Req() request: Request): Promise<SignInResponseDto> {
-    const jwtPayload = request.user as JwtRefreshPayloadType;
-
-    if (!jwtPayload) throw new UnauthorizedException();
-
-    return this.authService.refreshToken({
-      sessionId: jwtPayload.sessionId,
-      hash: jwtPayload.hash,
-    });
+  async refreshTokens(
+    @Req() request: Request
+  ): Promise<JwtTokensResponseDtoSchema> {
+    return this.authService.refreshTokens(request.user);
   }
 
   @Post('reset-password-request')
@@ -85,5 +78,13 @@ export class AuthController {
     @Body() resetPasswordDto: ResetPasswordDto
   ): Promise<SignInResponseDto> {
     return this.authService.resetPassword(resetPasswordDto);
+  }
+
+  @ApiBearerAuth('accessToken')
+  @Post('signout')
+  @UseGuards(AuthGuard('jwt-access'))
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async signOut(@Req() request: Request) {
+    await this.authService.signOut(request.user);
   }
 }

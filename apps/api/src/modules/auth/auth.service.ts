@@ -18,21 +18,19 @@ import bcrypt from 'bcryptjs';
 import { ConfigService } from '@nestjs/config';
 import { Config } from '@shared/config';
 import { MailService } from '@modules/mail/mail.service';
-import { Session, Status, User } from '@prisma/client';
-import { SessionsService } from '@modules/sessions/sessions.service';
-import {
-  JwtAccessPayloadType,
-  JwtRefreshPayloadType,
-  ResetPaswordConfirmationPayloadType,
-} from './types';
+import { Status, User } from '@prisma/client';
+import { RedisService } from '@modules/redis/redis.service';
+import { JwtPayload } from '@shared/types';
+import { v4 as uuid } from 'uuid';
+import ms from 'ms';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
     private readonly usersService: UsersService,
-    private readonly sessionsService: SessionsService,
     private readonly mailService: MailService,
+    private readonly redisService: RedisService,
     private readonly configService: ConfigService<Config>
   ) {}
 
@@ -101,13 +99,8 @@ export class AuthService {
       status: Status.active,
     });
 
-    const session = await this.sessionsService.create(user.id);
-
-    const { accessToken, refreshToken } = await this.getTokens({
+    const { accessToken, refreshToken } = await this.generateTokens({
       userId: user.id,
-      role: user.role,
-      sessionId: session.id,
-      hash: session.hash,
     });
 
     return {
@@ -128,13 +121,8 @@ export class AuthService {
       throw new ForbiddenException('Email confirmation is awaited');
     }
 
-    const session = await this.sessionsService.create(user.id);
-
-    const { accessToken, refreshToken } = await this.getTokens({
+    const { accessToken, refreshToken } = await this.generateTokens({
       userId: user.id,
-      role: user.role,
-      sessionId: session.id,
-      hash: session.hash,
     });
 
     return {
@@ -144,24 +132,12 @@ export class AuthService {
     };
   }
 
-  async refreshToken(data: JwtRefreshPayloadType) {
-    const session = await this.sessionsService.findById(data.sessionId);
+  async refreshTokens(data: JwtPayload) {
+    await this.revokeTokens(data.jti);
 
-    if (!session || session.hash !== data.hash) {
-      throw new UnauthorizedException();
-    }
-
-    await this.sessionsService.updateById(session.id);
-
-    const { accessToken, refreshToken } = await this.getTokens({
-      userId: session.user.id,
-      role: session.user.role,
-      sessionId: session.id,
-      hash: session.hash,
-    });
+    const { accessToken, refreshToken } = await this.generateTokens(data);
 
     return {
-      user: session.user,
       accessToken,
       refreshToken,
     };
@@ -186,7 +162,7 @@ export class AuthService {
     const hash = await this.jwtService.signAsync(
       {
         userId: user.id,
-      } as ResetPaswordConfirmationPayloadType,
+      } as JwtPayload,
       {
         secret: this.configService.getOrThrow('auth.resetPasswordTokenSecret', {
           infer: true,
@@ -208,18 +184,17 @@ export class AuthService {
     let userId: User['id'];
 
     try {
-      const jwtData =
-        await this.jwtService.verifyAsync<ResetPaswordConfirmationPayloadType>(
-          resetPasswordDto.hash,
-          {
-            secret: this.configService.getOrThrow(
-              'auth.resetPasswordTokenSecret',
-              {
-                infer: true,
-              }
-            ),
-          }
-        );
+      const jwtData = await this.jwtService.verifyAsync<JwtPayload>(
+        resetPasswordDto.hash,
+        {
+          secret: this.configService.getOrThrow(
+            'auth.resetPasswordTokenSecret',
+            {
+              infer: true,
+            }
+          ),
+        }
+      );
 
       userId = jwtData.userId;
     } catch {
@@ -233,15 +208,8 @@ export class AuthService {
       password: newPassword,
     });
 
-    await this.sessionsService.deleteManyByUserId(user.id);
-
-    const session = await this.sessionsService.create(user.id);
-
-    const { accessToken, refreshToken } = await this.getTokens({
+    const { accessToken, refreshToken } = await this.generateTokens({
       userId: user.id,
-      role: user.role,
-      sessionId: session.id,
-      hash: session.hash,
     });
 
     return {
@@ -251,19 +219,19 @@ export class AuthService {
     };
   }
 
-  private async getTokens(data: {
-    userId: User['id'];
-    role: User['role'];
-    sessionId: Session['id'];
-    hash: Session['hash'];
-  }) {
+  async signOut(data: JwtPayload) {
+    await this.revokeTokens(data.jti);
+  }
+
+  private async generateTokens(data: Pick<JwtPayload, 'userId'>) {
+    const jti = uuid();
+
     const [accessToken, refreshToken] = await Promise.all([
       await this.jwtService.signAsync(
         {
           userId: data.userId,
-          role: data.role,
-          sessionId: data.sessionId,
-        } as JwtAccessPayloadType,
+          jti,
+        },
         {
           secret: this.configService.getOrThrow('auth.accessTokenSecret', {
             infer: true,
@@ -278,9 +246,9 @@ export class AuthService {
       ),
       await this.jwtService.signAsync(
         {
-          sessionId: data.sessionId,
-          hash: data.hash,
-        } as JwtRefreshPayloadType,
+          userId: data.userId,
+          jti,
+        },
         {
           secret: this.configService.getOrThrow('auth.refreshTokenSecret', {
             infer: true,
@@ -299,5 +267,19 @@ export class AuthService {
       accessToken,
       refreshToken,
     };
+  }
+
+  private async revokeTokens(jti: string) {
+    // Using longer expiration time
+    const refreshTokenExpiration = this.configService.getOrThrow(
+      'auth.refreshTokenExpiration',
+      {
+        infer: true,
+      }
+    );
+
+    const expirationInSeconds = ms(refreshTokenExpiration) / 1000;
+
+    await this.redisService.revokeToken(jti, expirationInSeconds);
   }
 }

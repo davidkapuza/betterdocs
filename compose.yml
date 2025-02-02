@@ -46,5 +46,11 @@ services:
       - ${MAIL_CLIENT_PORT}:1080
       - ${MAIL_PORT}:1025
 
+  redis:
+    image: redis:alpine
+    ports:
+      - 6379:6379
+    restart: unless-stopped
+
 volumes:
   db:

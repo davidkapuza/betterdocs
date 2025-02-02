@@ -18,9 +18,12 @@ export const SignInDtoSchema = SignUpDtoSchema.pick({
   password: true,
 });
 
-export const SignInResponseDtoSchema = z.object({
+export const JwtTokensResponseDtoSchema = z.object({
   accessToken: z.string(),
   refreshToken: z.string(),
+});
+
+export const SignInResponseDtoSchema = JwtTokensResponseDtoSchema.extend({
   user: UserResponseDtoSchema,
 });
 

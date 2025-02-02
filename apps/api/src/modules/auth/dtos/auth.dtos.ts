@@ -8,6 +8,10 @@ export class ConfirmEmailDto extends ZSchema(
   authSchemas.ConfirmEmailDtoSchema
 ) {}
 export class SignInDto extends ZSchema(authSchemas.SignInDtoSchema) {}
+
+export class JwtTokensResponseDtoSchema extends ZSchema(
+  authSchemas.JwtTokensResponseDtoSchema
+) {}
 export class SignInResponseDto extends ZSchema(
   authSchemas.SignInResponseDtoSchema
 ) {
