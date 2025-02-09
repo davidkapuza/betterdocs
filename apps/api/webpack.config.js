@@ -28,11 +28,18 @@ module.exports = {
       generatePackageJson: true,
       transformers: [
         {
-          name: '@nestjs/swagger/plugin',
+          name: '@nestjs/graphql/plugin',
           options: {
-            dtoFileNameSuffix: ['.dto.ts', '.dtos.ts', '.entity.ts'],
-            classValidatorShim: false,
             introspectComments: true,
+            typeFileNameSuffix: [
+              '.input.ts',
+              '.inputs.ts',
+              '.args.ts',
+              '.entity.ts',
+              '.entities.ts',
+              '.model.ts',
+              '.models.ts',
+            ],
           },
         },
       ],

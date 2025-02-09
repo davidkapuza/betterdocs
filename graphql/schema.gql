@@ -1,0 +1,67 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  role: Role!
+  status: Status!
+  id: Float!
+  email: String!
+  firstName: String!
+  lastName: String!
+}
+
+enum Role {
+  admin
+  user
+}
+
+enum Status {
+  active
+  inactive
+}
+
+type TokensResponseModel {
+  accessToken: String!
+  refreshToken: String!
+}
+
+type SignInResponseModel {
+  accessToken: String!
+  refreshToken: String!
+  user: User!
+}
+
+type Query {
+  user: User!
+}
+
+type Mutation {
+  signUp(signUpInput: SignUpInput!): Void
+  confirmEmail(hash: String!): SignInResponseModel!
+  signIn(signInInput: SignInInput!): SignInResponseModel!
+  refreshTokens: TokensResponseModel!
+  resetPasswordRequest(email: String!): Void
+  resetPassword(resetPasswordInput: ResetPasswordInput!): SignInResponseModel!
+  signOut: Void
+}
+
+"""Represents NULL values"""
+scalar Void
+
+input SignUpInput {
+  email: String!
+  password: String!
+  firstName: String!
+  lastName: String!
+}
+
+input SignInInput {
+  email: String!
+  password: String!
+}
+
+input ResetPasswordInput {
+  password: String!
+  hash: String!
+}

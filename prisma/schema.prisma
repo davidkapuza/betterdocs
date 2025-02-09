@@ -19,6 +19,8 @@ model User {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime? @db.Timestamp(6)
 
+  documents Document[]
+
   @@map("users")
 }
 
@@ -30,4 +32,16 @@ enum Role {
 enum Status {
   active
   inactive
+}
+
+model Document {
+  id        Int       @id @default(autoincrement())
+  content   String
+  author    User      @relation(fields: [authorId], references: [id])
+  authorId  Int
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? @db.Timestamp(6)
+
+  @@map("documents")
 }

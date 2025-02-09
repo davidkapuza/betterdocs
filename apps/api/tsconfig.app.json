@@ -9,12 +9,7 @@
     "target": "es2021",
     "paths": {
       "@shared/*": ["apps/api/src/shared/*"],
-      "@modules/*": ["apps/api/src/modules/*"],
-
-      // Duplication of path alias from tsconfig.base.json since tsconfig options are being overridden
-      "@betterdocs/api-contracts": [
-        "${configDir}/../../libs/api-contracts/src/index.ts"
-      ]
+      "@modules/*": ["apps/api/src/modules/*"]
     }
   },
   "include": ["src/**/*.ts"],

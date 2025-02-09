@@ -7,13 +7,6 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import {
-  SignUpDto,
-  ConfirmEmailDto,
-  SignInDto,
-  ResetPasswordRequestDto,
-  ResetPasswordDto,
-} from './dtos';
 import bcrypt from 'bcryptjs';
 import { ConfigService } from '@nestjs/config';
 import { Config } from '@shared/config';
@@ -23,6 +16,7 @@ import { RedisService } from '@modules/redis/redis.service';
 import { JwtPayload } from '@shared/types';
 import { v4 as uuid } from 'uuid';
 import ms from 'ms';
+import { ResetPasswordInput, SignInInput, SignUpInput } from './gql';
 
 @Injectable()
 export class AuthService {
@@ -34,8 +28,8 @@ export class AuthService {
     private readonly configService: ConfigService<Config>
   ) {}
 
-  async signUp(signUpDto: SignUpDto): Promise<void> {
-    let user = await this.usersService.findByEmail(signUpDto.email);
+  async signUp(signUpInput: SignUpInput): Promise<void> {
+    let user = await this.usersService.findByEmail(signUpInput.email);
 
     if (user && user.status === Status.active) {
       throw new ConflictException('User already exists');
@@ -43,14 +37,14 @@ export class AuthService {
 
     if (!user) {
       const salt = await bcrypt.genSalt();
-      const password = await bcrypt.hash(signUpDto.password, salt);
+      const password = await bcrypt.hash(signUpInput.password, salt);
 
-      const createUserDto = {
-        ...signUpDto,
+      const createUserInput = {
+        ...signUpInput,
         password,
       };
 
-      user = await this.usersService.create(createUserDto);
+      user = await this.usersService.create(createUserInput);
     }
 
     const hash = await this.jwtService.signAsync(
@@ -78,13 +72,13 @@ export class AuthService {
     });
   }
 
-  async confirmEmail(confirmEmailDto: ConfirmEmailDto) {
+  async confirmEmail(hash: string) {
     let userId: User['id'];
 
     try {
       const jwtData = await this.jwtService.verifyAsync<{
         userId: User['id'];
-      }>(confirmEmailDto.hash, {
+      }>(hash, {
         secret: this.configService.getOrThrow('auth.confirmEmailSecret', {
           infer: true,
         }),
@@ -110,10 +104,10 @@ export class AuthService {
     };
   }
 
-  async signIn(signInDto: SignInDto) {
-    const user = await this.usersService.findByEmail(signInDto.email);
+  async signIn(signInInput: SignInInput) {
+    const user = await this.usersService.findByEmail(signInInput.email);
 
-    if (!user || !(await bcrypt.compare(signInDto.password, user.password))) {
+    if (!user || !(await bcrypt.compare(signInInput.password, user.password))) {
       throw new UnauthorizedException('Invalid email or password');
     }
 
@@ -143,10 +137,8 @@ export class AuthService {
     };
   }
 
-  async resetPasswordRequest(resetPasswordRequestDto: ResetPasswordRequestDto) {
-    const user = await this.usersService.findByEmail(
-      resetPasswordRequestDto.email
-    );
+  async resetPasswordRequest(email: string) {
+    const user = await this.usersService.findByEmail(email);
 
     if (!user) {
       throw new UnprocessableEntityException('User does not exist');
@@ -172,7 +164,7 @@ export class AuthService {
     );
 
     await this.mailService.sendResetPasswordConfirmation({
-      to: resetPasswordRequestDto.email,
+      to: email,
       data: {
         hash,
         expiresIn,
@@ -180,12 +172,12 @@ export class AuthService {
     });
   }
 
-  async resetPassword(resetPasswordDto: ResetPasswordDto) {
+  async resetPassword(resetPasswordInput: ResetPasswordInput) {
     let userId: User['id'];
 
     try {
       const jwtData = await this.jwtService.verifyAsync<JwtPayload>(
-        resetPasswordDto.hash,
+        resetPasswordInput.hash,
         {
           secret: this.configService.getOrThrow(
             'auth.resetPasswordTokenSecret',
@@ -202,7 +194,7 @@ export class AuthService {
     }
 
     const salt = await bcrypt.genSalt();
-    const newPassword = await bcrypt.hash(resetPasswordDto.password, salt);
+    const newPassword = await bcrypt.hash(resetPasswordInput.password, salt);
 
     const user = await this.usersService.updateById(userId, {
       password: newPassword,
