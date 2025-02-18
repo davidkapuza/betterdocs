@@ -32,6 +32,11 @@ type SignInResponseModel {
   user: User!
 }
 
+type DocumentModel {
+  id: Float!
+  author: User!
+}
+
 type Query {
   user: User!
 }
@@ -44,6 +49,8 @@ type Mutation {
   resetPasswordRequest(email: String!): Void
   resetPassword(resetPasswordInput: ResetPasswordInput!): SignInResponseModel!
   signOut: Void
+  createDocument(createDocumentInput: CreateDocumentInput!): DocumentModel!
+  updateDocument(updateDocumentInput: UpdateDocumentInput!): DocumentModel!
 }
 
 """Represents NULL values"""
@@ -64,4 +71,14 @@ input SignInInput {
 input ResetPasswordInput {
   password: String!
   hash: String!
+}
+
+input CreateDocumentInput {
+  title: String!
+  content: String!
+}
+
+input UpdateDocumentInput {
+  documentId: Float!
+  content: String!
 }

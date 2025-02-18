@@ -26,8 +26,8 @@
     "serve": {
       "executor": "@nxlv/python:run-commands",
       "options": {
-        "command": "npx nodemon -e py --exec \"uv run rag/__init__.py\"",
-        "cwd": "apps"
+        "command": "npx nodemon -e py --exec \"uv run python -u __init__.py\"",
+        "cwd": "apps/rag"
       }
     },
     "build": {

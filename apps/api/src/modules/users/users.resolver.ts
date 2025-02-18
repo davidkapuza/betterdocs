@@ -13,6 +13,6 @@ export class UsersResolver {
   @UseGuards(JwtAccessGuard)
   @Query(() => User)
   async user(@ReqUser() jwtPayload: JwtPayload): Promise<User> {
-    return this.usersService.findById(jwtPayload.userId) as unknown as User;
+    return this.usersService.findById(jwtPayload.userId);
   }
 }

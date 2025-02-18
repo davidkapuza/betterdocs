@@ -19,7 +19,8 @@ model User {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime? @db.Timestamp(6)
 
-  documents Document[]
+  documents       Document[]
+  DocumentVersion DocumentVersion[]
 
   @@map("users")
 }
@@ -35,13 +36,28 @@ enum Status {
 }
 
 model Document {
-  id        Int       @id @default(autoincrement())
-  content   String
-  author    User      @relation(fields: [authorId], references: [id])
+  id        Int               @id @default(autoincrement())
+  title     String
+  author    User              @relation(fields: [authorId], references: [id])
   authorId  Int
-  createdAt DateTime  @default(now()) @db.Timestamp(6)
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime? @db.Timestamp(6)
+  createdAt DateTime          @default(now()) @db.Timestamp(6)
+  updatedAt DateTime          @updatedAt
+  deletedAt DateTime?         @db.Timestamp(6)
+  versions  DocumentVersion[]
 
   @@map("documents")
+}
+
+model DocumentVersion {
+  id         Int      @id @default(autoincrement())
+  version    Int
+  content    String
+  document   Document @relation(fields: [documentId], references: [id])
+  documentId Int
+  author     User     @relation(fields: [authorId], references: [id])
+  authorId   Int
+  createdAt  DateTime @default(now()) @db.Timestamp(6)
+
+  @@unique([documentId, version])
+  @@map("document_versions")
 }
