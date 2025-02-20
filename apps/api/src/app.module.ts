@@ -28,10 +28,16 @@ import { join } from 'path';
       resolvers: {
         Void: VoidResolver,
       },
+      autoTransformHttpErrors: true,
+      context: (context) => context,
+      subscriptions: {
+        'subscriptions-transport-ws': true,
+        'graphql-ws': true,
+      },
     }),
     AuthModule,
     UsersModule,
-    DocumentsModule
+    DocumentsModule,
   ],
 })
 export class AppModule {}

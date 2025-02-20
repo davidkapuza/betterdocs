@@ -10,41 +10,6 @@ from langchain_core.documents import Document
 
 from chromadb.config import Settings
 
-# # Invoke chain with RAG context
-# llm = OllamaLLM(model="llama3.2")
-# ## Load page content
-# loader = TextLoader("./data.txt")
-# docs = loader.load()
-
-# ## Vector store things
-# embeddings = OllamaEmbeddings(model="llama3.2")
-# text_splitter = RecursiveCharacterTextSplitter()
-# split_documents = text_splitter.split_documents(docs)
-# vector_store = Chroma.from_documents(
-#     split_documents, embeddings, persist_directory="./.chroma"
-# )
-
-# ## Prompt construction
-# prompt = ChatPromptTemplate.from_template(
-#     """
-#             Answer the following question only based on the given context
-
-#             <context>
-#             {context}
-#             </context>
-
-#             Question: {input}
-#     """
-# )
-
-# ## Retrieve context from vector store
-# docs_chain = create_stuff_documents_chain(llm, prompt)
-# retriever = vector_store.as_retriever()
-# retrieval_chain = create_retrieval_chain(retriever, docs_chain)
-
-# response = retrieval_chain.invoke({"input": "TODO"})
-# print(response["answer"])
-
 
 class RagService:
     def __init__(self):
@@ -66,6 +31,21 @@ class RagService:
             embedding_function=self.embeddings,
             client_settings=self.client_settings,
         )
+        self.llm = OllamaLLM(model="llama3.2")
+        self.prompt = ChatPromptTemplate.from_template(
+            """
+            Answer the following question only based on the given context
+
+            <context>
+            {context}
+            </context>
+
+            Question: {input}
+            """
+        )
+        self.docs_chain = create_stuff_documents_chain(self.llm, self.prompt)
+        self.retriever = self.vector_store.as_retriever()
+        self.retrieval_chain = create_retrieval_chain(self.retriever, self.docs_chain)
 
     def process_event(self, event):
         print("event", event)
@@ -108,3 +88,13 @@ class RagService:
 
         else:
             print(f"Unknown event type: {event_type}")
+
+    def handle_query(self, query):
+        docs = self.retriever.invoke(query)
+
+        context = "\n\n".join([doc.page_content for doc in docs])
+        formatted_prompt = self.prompt.format(context=context, input=query)
+
+        stream = self.llm.stream(formatted_prompt)
+        for token in stream:
+            yield token

@@ -35,7 +35,11 @@ class RabbitMQ:
     def publish(self, queue_name, message):
         if not self.channel:
             raise Exception("Connection is not established.")
-        self.channel.queue_declare(queue=queue_name, durable=True)
+        self.channel.queue_declare(
+            queue=queue_name,
+            durable=True,
+            arguments={"x-queue-mode": "lazy"},  # Optional: match if used in NestJS
+        )
         self.channel.basic_publish(
             exchange="",
             routing_key=queue_name,
@@ -44,4 +48,3 @@ class RabbitMQ:
                 delivery_mode=2,  # make message persistent
             ),
         )
-        print(f"Sent message to queue {queue_name}: {message}")

@@ -82,3 +82,7 @@ input UpdateDocumentInput {
   documentId: Float!
   content: String!
 }
+
+type Subscription {
+  queryDocument(query: String!, correlationId: String!): String!
+}

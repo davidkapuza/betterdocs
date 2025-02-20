@@ -1,11 +1,29 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  OnModuleInit,
+} from '@nestjs/common';
 import { PrismaService } from '@shared/libs/prisma';
 import { CreateDocumentInput, UpdateDocumentInput } from './gql';
 import { ClientProxy } from '@nestjs/microservices';
+import { PubSub } from 'graphql-subscriptions';
+import * as amqp from 'amqplib';
 
 enum DocumentEventType {
   STORE_CONTENT = 'document.store_content',
   UPDATE_CONTENT = 'document.update_content',
+  QUERY_REQUEST = 'query.request',
+  QUERY_RESPONSE = 'query.response',
+}
+
+interface QueryEvent {
+  type: DocumentEventType;
+  payload: {
+    query: string;
+    correlation_id: string;
+    reply_to: string;
+  };
 }
 
 interface DocumentEvent {
@@ -24,11 +42,19 @@ interface DocumentEvent {
 }
 
 @Injectable()
-export class DocumentsService {
+export class DocumentsService implements OnModuleInit {
+  private rmqChannel: amqp.Channel;
+  private readonly replyQueue = 'query_responses';
+
   constructor(
     private readonly prisma: PrismaService,
-    @Inject('RAG_SERVICE') private readonly ragService: ClientProxy
+    @Inject('RAG_SERVICE') private readonly ragService: ClientProxy,
+    @Inject('PUB_SUB') private readonly pubSub: PubSub
   ) {}
+
+  async onModuleInit() {
+    await this.setupResponseConsumer();
+  }
 
   async create(createDocumentInput: CreateDocumentInput, authorId: number) {
     return this.prisma.$transaction(async (tx) => {
@@ -119,7 +145,49 @@ export class DocumentsService {
     });
   }
 
+  async handleQuery(query: string, correlationId: string) {
+    const event: QueryEvent = {
+      type: DocumentEventType.QUERY_REQUEST,
+      payload: {
+        query,
+        correlation_id: correlationId,
+        reply_to: this.replyQueue,
+      },
+    };
+
+    this.ragService.emit('documents.query', event);
+  }
+
   private publishDocumentEvent(event: DocumentEvent) {
     this.ragService.emit('documents.content', event);
+  }
+
+  private async setupResponseConsumer() {
+    try {
+      const connection = await amqp.connect('amqp://localhost:5673');
+      this.rmqChannel = await connection.createChannel();
+
+      await this.rmqChannel.assertQueue(this.replyQueue, {
+        durable: true,
+        arguments: {
+          'x-queue-mode': 'lazy',
+        },
+      });
+
+      this.rmqChannel.consume(this.replyQueue, (msg) => {
+        if (msg) {
+          const content = JSON.parse(msg.content.toString());
+          if (content.type === DocumentEventType.QUERY_RESPONSE) {
+            this.pubSub.publish(`query.${content.payload.correlation_id}`, {
+              correlationId: content.payload.correlation_id,
+              token: content.payload.token,
+            });
+          }
+          this.rmqChannel.ack(msg);
+        }
+      });
+    } catch (err) {
+      console.error('Failed to initialize RabbitMQ consumer:', err);
+    }
   }
 }
