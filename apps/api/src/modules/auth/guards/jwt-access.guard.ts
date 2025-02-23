@@ -44,6 +44,17 @@ export class JwtAccessStrategy extends PassportStrategy(
 export class JwtAccessGuard extends AuthGuard(STRATEGY_NAME) {
   getRequest(context: ExecutionContext): Request {
     const ctx = GqlExecutionContext.create(context);
-    return ctx.getContext().req;
+    const gqlContext = ctx.getContext();
+
+    // For subscriptions: extract token from the context
+    if (gqlContext.req?.connectionParams) {
+      return {
+        headers: {
+          authorization: gqlContext.req.connectionParams.Authorization,
+        },
+      } as Request;
+    }
+
+    return gqlContext.req;
   }
 }

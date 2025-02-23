@@ -29,7 +29,6 @@ import { join } from 'path';
         Void: VoidResolver,
       },
       autoTransformHttpErrors: true,
-      context: (context) => context,
       subscriptions: {
         'subscriptions-transport-ws': true,
         'graphql-ws': true,

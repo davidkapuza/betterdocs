@@ -8,6 +8,7 @@ import { JwtPayload } from '@shared/types';
 import { PubSub } from 'graphql-subscriptions';
 
 @Resolver(() => DocumentModel)
+@UseGuards(JwtAccessGuard)
 export class DocumentsResolver {
   constructor(
     private readonly documentsService: DocumentsService,
@@ -15,7 +16,6 @@ export class DocumentsResolver {
   ) {}
 
   @Mutation(() => DocumentModel)
-  @UseGuards(JwtAccessGuard)
   async createDocument(
     @ReqUser() jwtPayload: JwtPayload,
     @Args('createDocumentInput') createDocumentInput: CreateDocumentInput
@@ -24,7 +24,6 @@ export class DocumentsResolver {
   }
 
   @Mutation(() => DocumentModel)
-  @UseGuards(JwtAccessGuard)
   async updateDocument(
     @ReqUser() jwtPayload: JwtPayload,
     @Args('updateDocumentInput') updateDocumentInput: UpdateDocumentInput
