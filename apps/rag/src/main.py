@@ -2,7 +2,14 @@ import json
 from .rabbitmq import RabbitMQ
 from .rag_service import RagService
 from dotenv import load_dotenv
-import threading
+from .dtos import (
+    DocumentDto,
+    QueryDocumentDto,
+    QueryResponseDto,
+    ResponseDataDto,
+    ProcessedDocumentResponseDto,
+    ProcessedDocumentResponseDataDto,
+)
 
 load_dotenv()
 
@@ -10,54 +17,85 @@ load_dotenv()
 def main():
     rabbitmq = RabbitMQ()
     rag_service = RagService()
-
-    def process_query_stream(query, reply_to, correlation_id):
-        thread_rabbitmq = RabbitMQ()
-        try:
-            token_generator = rag_service.handle_query(query)
-            for token in token_generator:
-
-                message = {
-                    "type": "query.response",
-                    "payload": {"correlation_id": correlation_id, "token": token},
-                }
-                thread_rabbitmq.publish(
-                    queue_name=reply_to, message=json.dumps(message)
-                )
-
-            completion_msg = {
-                "type": "query.completed",
-                "payload": {"correlation_id": correlation_id},
-            }
-            thread_rabbitmq.publish(
-                queue_name=reply_to, message=json.dumps(completion_msg)
-            )
-        except Exception as e:
-            print(f"Error processing query: {str(e)}")
-        finally:
-            thread_rabbitmq.close()
-
+    
     def callback(channel, method, properties, body):
         try:
-            event = json.loads(body).get("data")
-            channel.basic_ack(method.delivery_tag)
-            event_type = event.get("type")
-            payload = event.get("payload", {})
+            event = json.loads(body)
+            event_type = event.get("pattern")
+            payload = event.get("data", {})
 
-            if event_type == "query.request":
-                query = payload.get("query")
-                reply_to = payload.get("reply_to")
-                correlation_id = payload.get("correlation_id")
-                if not all([query, reply_to, correlation_id]):
-                    print("Invalid query request payload")
-                    return
-                threading.Thread(
-                    target=process_query_stream, args=(query, reply_to, correlation_id)
-                ).start()
-            else:
-                threading.Thread(
-                    target=rag_service.process_event, args=(event.get("data"),)
-                ).start()
+            if event_type == "document.store_content":
+                document_model = DocumentDto.model_validate(payload)
+
+                rag_service.store_document(document_model)
+
+                message = ProcessedDocumentResponseDto(
+                    pattern="document.processed",
+                    data=ProcessedDocumentResponseDataDto(documentId=document_model.id),
+                )
+
+                channel.basic_publish(
+                    exchange="",
+                    routing_key="documents_response_queue",
+                    body=json.dumps(message.to_dict()),
+                )
+
+                channel.basic_ack(method.delivery_tag)
+
+            elif event_type == "document.update_content":
+                document_model = DocumentDto.model_validate(payload)
+
+                rag_service.update_document(document_model)
+
+                message = ProcessedDocumentResponseDto(
+                    pattern="document.processed",
+                    data=ProcessedDocumentResponseDataDto(documentId=document_model.id),
+                )
+
+                channel.basic_publish(
+                    exchange="",
+                    routing_key="documents_response_queue",
+                    body=json.dumps(message.to_dict()),
+                )
+
+                channel.basic_ack(method.delivery_tag)
+
+            elif event_type == "query.request":
+                query_document_model = QueryDocumentDto.model_validate(payload)
+                channel.basic_ack(method.delivery_tag)
+
+                token_generator = rag_service.handle_query(query_document_model.query)
+
+                for token in token_generator:
+
+                    message = QueryResponseDto(
+                        pattern="query.response",
+                        data=ResponseDataDto(
+                            userId=query_document_model.userId,
+                            token=token,
+                            completed=False,
+                        ),
+                    )
+
+                    channel.basic_publish(
+                        exchange="",
+                        routing_key="documents_response_queue",
+                        body=json.dumps(message.to_dict()),
+                    )
+
+                completion_msg = QueryResponseDto(
+                    pattern="query.response",
+                    data=ResponseDataDto(
+                        userId=query_document_model.userId, token="", completed=True
+                    ),
+                )
+
+                channel.basic_publish(
+                    exchange="",
+                    routing_key="documents_response_queue",
+                    body=json.dumps(completion_msg.to_dict()),
+                )
+
         except Exception as e:
             print(f"Error processing message: {str(e)}")
             channel.basic_nack(method.delivery_tag, requeue=False)

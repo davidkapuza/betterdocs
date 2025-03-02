@@ -4,6 +4,8 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { Config } from '@shared/config';
 import helmet from 'helmet';
+import { MicroserviceOptions } from '@nestjs/microservices';
+import { RabbitMQService } from '@modules/rabbitmq/rabbitmq.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -50,6 +52,12 @@ async function bootstrap() {
       },
     })
   );
+
+  const rabbitMQService = app.get<RabbitMQService>(RabbitMQService);
+  app.connectMicroservice<MicroserviceOptions>(
+    rabbitMQService.getOptions('documents_response_queue')
+  );
+  await app.startAllMicroservices();
 
   await app.listen(configService.getOrThrow('app.port', { infer: true }));
 }

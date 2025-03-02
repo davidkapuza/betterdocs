@@ -4,7 +4,7 @@
 
 type User {
   role: Role!
-  status: Status!
+  status: UserStatus!
   id: Float!
   email: String!
   firstName: String!
@@ -16,7 +16,7 @@ enum Role {
   user
 }
 
-enum Status {
+enum UserStatus {
   active
   inactive
 }
@@ -34,11 +34,13 @@ type SignInResponseModel {
 
 type DocumentModel {
   id: Float!
+  content: String!
   author: User!
 }
 
 type Query {
   user: User!
+  getDocument(documentId: Float!): DocumentModel!
 }
 
 type Mutation {
@@ -49,8 +51,8 @@ type Mutation {
   resetPasswordRequest(email: String!): Void
   resetPassword(resetPasswordInput: ResetPasswordInput!): SignInResponseModel!
   signOut: Void
-  createDocument(createDocumentInput: CreateDocumentInput!): DocumentModel!
-  updateDocument(updateDocumentInput: UpdateDocumentInput!): DocumentModel!
+  createDocument(createDocumentInput: CreateDocumentInput!): Void
+  updateDocument(updateDocumentInput: UpdateDocumentInput!): Void
 }
 
 """Represents NULL values"""
@@ -84,5 +86,5 @@ input UpdateDocumentInput {
 }
 
 type Subscription {
-  queryDocument(query: String!, correlationId: String!): String!
+  queryDocument(query: String!): String!
 }

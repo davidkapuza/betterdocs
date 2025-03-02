@@ -25,18 +25,14 @@ export class AuthResolver {
 
   @Mutation(() => SignInResponseModel)
   async confirmEmail(@Args('hash') hash: string): Promise<SignInResponseModel> {
-    return this.authService.confirmEmail(
-      hash
-    ) as unknown as SignInResponseModel;
+    return this.authService.confirmEmail(hash);
   }
 
   @Mutation(() => SignInResponseModel)
   async signIn(
     @Args('signInInput') signInInput: SignInInput
   ): Promise<SignInResponseModel> {
-    return this.authService.signIn(
-      signInInput
-    ) as unknown as SignInResponseModel;
+    return this.authService.signIn(signInInput);
   }
 
   @UseGuards(JwtRefreshGuard)
@@ -59,9 +55,7 @@ export class AuthResolver {
   async resetPassword(
     @Args('resetPasswordInput') resetPasswordInput: ResetPasswordInput
   ): Promise<SignInResponseModel> {
-    return this.authService.resetPassword(
-      resetPasswordInput
-    ) as unknown as SignInResponseModel;
+    return this.authService.resetPassword(resetPasswordInput);
   }
 
   @UseGuards(JwtAccessGuard)

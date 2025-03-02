@@ -10,6 +10,8 @@ from langchain_core.documents import Document
 
 from chromadb.config import Settings
 
+from .dtos import DocumentDto
+
 
 class RagService:
     def __init__(self):
@@ -47,47 +49,22 @@ class RagService:
         self.retriever = self.vector_store.as_retriever()
         self.retrieval_chain = create_retrieval_chain(self.retriever, self.docs_chain)
 
-    def process_event(self, event):
-        print("event", event)
-        event_type = event.get("type")
-        payload = event.get("payload", {})
-
-        required_fields = ["id", "content", "metadata"]
-        if not all(field in payload for field in required_fields):
-            print("Invalid payload: missing required fields")
-            return
-
-        document_id = payload["id"]
-        content = payload["content"]
-        metadata = payload["metadata"]
-
+    def store_document(self, payload: DocumentDto):
         doc = Document(
-            page_content=content,
-            metadata={
-                "id": document_id,
-                "authorId": metadata["authorId"],
-                "version": metadata["version"],
-                "title": metadata.get("title"),
-                "createdAt": metadata["createdAt"],
-                "updatedAt": metadata["updatedAt"],
-            },
+            id=payload.id,
+            page_content=payload.content,
+            metadata=payload.model_dump(exclude={"content"}),
         )
+        splits = self.text_splitter.split_documents([doc])
+        self.vector_store.add_documents(documents=splits)
 
-        split_docs = self.text_splitter.split_documents([doc])
+    def update_document(self, payload: DocumentDto):
+        ids = self.vector_store.get(where={"id": payload.id})["ids"]
+        
+        if len(ids):
+            self.vector_store.delete(ids)
 
-        if event_type == "document.store_content":
-            self.vector_store.add_documents(split_docs)
-            print(f"Stored document {document_id} (v{metadata['version']})")
-
-        elif event_type == "document.update_content":
-            self.vector_store.delete(
-                where={"id": document_id, "version": {"$lt": metadata["version"]}}
-            )
-            self.vector_store.add_documents(split_docs)
-            print(f"Updated document {document_id} to v{metadata['version']}")
-
-        else:
-            print(f"Unknown event type: {event_type}")
+        self.store_document(payload)
 
     def handle_query(self, query):
         docs = self.retriever.invoke(query)

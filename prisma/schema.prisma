@@ -8,19 +8,18 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
+  id        Int        @id @default(autoincrement())
+  email     String     @unique
   password  String
   firstName String
   lastName  String
-  role      Role      @default(user)
-  status    Status    @default(inactive)
-  createdAt DateTime  @default(now()) @db.Timestamp(6)
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime? @db.Timestamp(6)
+  role      Role       @default(user)
+  status    UserStatus @default(inactive)
+  createdAt DateTime   @default(now()) @db.Timestamp(6)
+  updatedAt DateTime   @updatedAt
+  deletedAt DateTime?  @db.Timestamp(6)
 
-  documents       Document[]
-  DocumentVersion DocumentVersion[]
+  documents Document[]
 
   @@map("users")
 }
@@ -30,34 +29,26 @@ enum Role {
   user
 }
 
-enum Status {
+enum UserStatus {
   active
   inactive
 }
 
-model Document {
-  id        Int               @id @default(autoincrement())
-  title     String
-  author    User              @relation(fields: [authorId], references: [id])
-  authorId  Int
-  createdAt DateTime          @default(now()) @db.Timestamp(6)
-  updatedAt DateTime          @updatedAt
-  deletedAt DateTime?         @db.Timestamp(6)
-  versions  DocumentVersion[]
-
-  @@map("documents")
+enum DocumentStatus {
+  processing
+  processed
 }
 
-model DocumentVersion {
-  id         Int      @id @default(autoincrement())
-  version    Int
-  content    String
-  document   Document @relation(fields: [documentId], references: [id])
-  documentId Int
-  author     User     @relation(fields: [authorId], references: [id])
-  authorId   Int
-  createdAt  DateTime @default(now()) @db.Timestamp(6)
+model Document {
+  id        Int            @id @default(autoincrement())
+  title     String
+  author    User           @relation(fields: [authorId], references: [id])
+  authorId  Int
+  content   String
+  status    DocumentStatus @default(processing)
+  createdAt DateTime       @default(now()) @db.Timestamp(6)
+  updatedAt DateTime       @updatedAt
+  deletedAt DateTime?      @db.Timestamp(6)
 
-  @@unique([documentId, version])
-  @@map("document_versions")
+  @@map("documents")
 }

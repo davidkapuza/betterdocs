@@ -20,13 +20,16 @@ class RabbitMQ:
         self.connection = pika.BlockingConnection(parameters)
         self.channel = self.connection.channel()
 
+        self.channel.queue_declare("documents_queue", durable=True)
+        self.channel.queue_declare("documents_response_queue", durable=True)
+
     def close(self):
         if self.connection and not self.connection.is_closed:
             self.connection.close()
 
     def consume(self, queue_name, callback):
         if not self.channel:
-            raise Exception("Connection is not established.")
+            raise ConnectionError()
         self.channel.basic_consume(
             queue=queue_name, on_message_callback=callback, auto_ack=False
         )
@@ -34,17 +37,13 @@ class RabbitMQ:
 
     def publish(self, queue_name, message):
         if not self.channel:
-            raise Exception("Connection is not established.")
-        self.channel.queue_declare(
-            queue=queue_name,
-            durable=True,
-            arguments={"x-queue-mode": "lazy"},  # Optional: match if used in NestJS
-        )
+            raise ConnectionError()
+
         self.channel.basic_publish(
             exchange="",
             routing_key=queue_name,
             body=message,
             properties=pika.BasicProperties(
-                delivery_mode=2,  # make message persistent
+                delivery_mode=2,
             ),
         )

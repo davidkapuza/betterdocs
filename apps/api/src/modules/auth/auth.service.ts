@@ -11,7 +11,7 @@ import bcrypt from 'bcryptjs';
 import { ConfigService } from '@nestjs/config';
 import { Config } from '@shared/config';
 import { MailService } from '@modules/mail/mail.service';
-import { Status, User } from '@prisma/client';
+import { UserStatus, User } from '@prisma/client';
 import { RedisService } from '@modules/redis/redis.service';
 import { JwtPayload } from '@shared/types';
 import { v4 as uuid } from 'uuid';
@@ -31,7 +31,7 @@ export class AuthService {
   async signUp(signUpInput: SignUpInput): Promise<void> {
     let user = await this.usersService.findByEmail(signUpInput.email);
 
-    if (user && user.status === Status.active) {
+    if (user && user.status === UserStatus.active) {
       throw new ConflictException('User already exists');
     }
 
@@ -90,7 +90,7 @@ export class AuthService {
     }
 
     const user = await this.usersService.updateById(userId, {
-      status: Status.active,
+      status: UserStatus.active,
     });
 
     const { accessToken, refreshToken } = await this.generateTokens({
@@ -111,7 +111,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    if (user.status === Status.inactive) {
+    if (user.status === UserStatus.inactive) {
       throw new ForbiddenException('Email confirmation is awaited');
     }
 

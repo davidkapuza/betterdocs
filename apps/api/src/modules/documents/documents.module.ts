@@ -2,27 +2,15 @@ import { Module } from '@nestjs/common';
 import { DocumentsService } from './documents.service';
 import { PrismaService } from '@shared/libs/prisma';
 import { DocumentsResolver } from './documents.resolver';
-import { ClientsModule, Transport } from '@nestjs/microservices';
 import { PubSub } from 'graphql-subscriptions';
+import { RabbitMQModule } from '@modules/rabbitmq/rabbitmq.module';
+import { DocumentsController } from './documents.controller';
 
 @Module({
   imports: [
-    ClientsModule.register([
-      {
-        name: 'RAG_SERVICE',
-        transport: Transport.RMQ,
-        options: {
-          urls: ['amqp://localhost:5673'],
-          queue: 'documents_queue',
-          queueOptions: {
-            durable: true,
-            arguments: {
-              'x-queue-mode': 'lazy',
-            },
-          },
-        },
-      },
-    ]),
+    RabbitMQModule.register({
+      queue: 'documents_queue',
+    }),
   ],
   providers: [
     DocumentsService,
@@ -33,6 +21,7 @@ import { PubSub } from 'graphql-subscriptions';
       useValue: new PubSub(),
     },
   ],
-  exports: [DocumentsService, ClientsModule],
+  controllers: [DocumentsController],
+  exports: [DocumentsService],
 })
 export class DocumentsModule {}
