@@ -59,12 +59,14 @@ class RagService:
         self.vector_store.add_documents(documents=splits)
 
     def update_document(self, payload: DocumentDto):
-        ids = self.vector_store.get(where={"id": payload.id})["ids"]
-        
+        self.delete_document(payload.id)
+        self.store_document(payload)
+
+    def delete_document(self, document_id: int):
+        ids = self.vector_store.get(where={"id": document_id})["ids"]
+
         if len(ids):
             self.vector_store.delete(ids)
-
-        self.store_document(payload)
 
     def handle_query(self, query):
         docs = self.retriever.invoke(query)

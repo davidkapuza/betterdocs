@@ -9,6 +9,7 @@ from .dtos import (
     ResponseDataDto,
     ProcessedDocumentResponseDto,
     ProcessedDocumentResponseDataDto,
+    DeletedDocumentResponseDto,
 )
 
 load_dotenv()
@@ -17,7 +18,7 @@ load_dotenv()
 def main():
     rabbitmq = RabbitMQ()
     rag_service = RagService()
-    
+
     def callback(channel, method, properties, body):
         try:
             event = json.loads(body)
@@ -50,6 +51,27 @@ def main():
                 message = ProcessedDocumentResponseDto(
                     pattern="document.processed",
                     data=ProcessedDocumentResponseDataDto(documentId=document_model.id),
+                )
+
+                channel.basic_publish(
+                    exchange="",
+                    routing_key="documents_response_queue",
+                    body=json.dumps(message.to_dict()),
+                )
+
+                channel.basic_ack(method.delivery_tag)
+
+            elif event_type == "document.delete_content":
+                if "documentId" not in payload:
+                    raise Exception("Missing document id")
+
+                rag_service.delete_document(payload.get("documentId"))
+
+                message = DeletedDocumentResponseDto(
+                    pattern="document.deleted",
+                    data=ProcessedDocumentResponseDataDto(
+                        documentId=payload.get("documentId")
+                    ),
                 )
 
                 channel.basic_publish(

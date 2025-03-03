@@ -55,3 +55,8 @@ class ProcessedDocumentResponseDto:
                 "documentId": self.data.documentId,
             },
         }
+
+
+@dataclass
+class DeletedDocumentResponseDto(ProcessedDocumentResponseDto):
+    pattern: Literal["document.deleted"]

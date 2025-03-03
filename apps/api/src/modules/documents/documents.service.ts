@@ -7,6 +7,7 @@ import { DocumentStatus } from '@prisma/client';
 enum DocumentEventType {
   STORE_CONTENT = 'document.store_content',
   UPDATE_CONTENT = 'document.update_content',
+  DELETE_CONTENT = 'document.delete_content',
   QUERY_REQUEST = 'query.request',
 }
 
@@ -71,5 +72,13 @@ export class DocumentsService {
       query,
       userId,
     });
+  }
+
+  async emitDeleteEvent(documentId: number) {
+    this.documentsQueue.emit(DocumentEventType.DELETE_CONTENT, { documentId });
+  }
+
+  async deleteDocument(documentId: number) {
+    await this.prisma.document.delete({ where: { id: documentId } });
   }
 }

@@ -32,6 +32,11 @@ export class DocumentsResolver {
     await this.documentsService.update(updateDocumentInput, jwtPayload.userId);
   }
 
+  @Mutation(() => VoidResolver, { nullable: true })
+  async deleteDocument(@Args('documentId') documentId: number): Promise<void> {
+    await this.documentsService.emitDeleteEvent(documentId);
+  }
+
   @Query(() => DocumentModel)
   async getDocument(
     @Args('documentId') documentId: number

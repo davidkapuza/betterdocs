@@ -53,6 +53,7 @@ type Mutation {
   signOut: Void
   createDocument(createDocumentInput: CreateDocumentInput!): Void
   updateDocument(updateDocumentInput: UpdateDocumentInput!): Void
+  deleteDocument(documentId: Float!): Void
 }
 
 """Represents NULL values"""

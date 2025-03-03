@@ -17,6 +17,13 @@ export class DocumentsController {
     // TODO publish to GraphQL subscriptions to notify clients
   }
 
+  @EventPattern('document.deleted')
+  async handleDeletedDocument(data: { documentId: number }) {
+    await this.documentsService.deleteDocument(data.documentId);
+
+    // TODO publish to GraphQL subscriptions to notify clients
+  }
+
   @EventPattern('query.response')
   async queryDocument(data: {
     userId: number;
