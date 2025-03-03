@@ -74,8 +74,11 @@ export class DocumentsService {
     });
   }
 
-  async emitDeleteEvent(documentId: number) {
-    this.documentsQueue.emit(DocumentEventType.DELETE_CONTENT, { documentId });
+  async emitDeleteEvent(userId: number, documentId: number) {
+    this.documentsQueue.emit(DocumentEventType.DELETE_CONTENT, {
+      documentId,
+      userId,
+    });
   }
 
   async deleteDocument(documentId: number) {

@@ -5,6 +5,7 @@ from typing import Dict, Any, Literal
 
 class DocumentDto(BaseModel):
     id: int
+    authorId: int
     title: str
     authorId: int
     content: str
@@ -12,6 +13,10 @@ class DocumentDto(BaseModel):
 
 class QueryDocumentDto(BaseModel):
     query: str
+    userId: int
+
+class DeleteDocumentDto(BaseModel):
+    documentId: int
     userId: int
 
 

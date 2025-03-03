@@ -10,7 +10,7 @@ from langchain_core.documents import Document
 
 from chromadb.config import Settings
 
-from .dtos import DocumentDto
+from .dtos import DocumentDto, QueryDocumentDto
 
 
 class RagService:
@@ -19,7 +19,6 @@ class RagService:
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=500,
             chunk_overlap=50,
-            separators=["\n\n", "\n", "。", "!", "?", ";", ",", " "],
         )
 
         self.client_settings = Settings(
@@ -28,11 +27,6 @@ class RagService:
             chroma_server_http_port=8000,
         )
 
-        self.vector_store = Chroma(
-            collection_name="documents",
-            embedding_function=self.embeddings,
-            client_settings=self.client_settings,
-        )
         self.llm = OllamaLLM(model="llama3.2")
         self.prompt = ChatPromptTemplate.from_template(
             """
@@ -46,34 +40,41 @@ class RagService:
             """
         )
         self.docs_chain = create_stuff_documents_chain(self.llm, self.prompt)
-        self.retriever = self.vector_store.as_retriever()
-        self.retrieval_chain = create_retrieval_chain(self.retriever, self.docs_chain)
+
+    def _get_user_collection(self, user_id: int) -> Chroma:
+        return Chroma(
+            collection_name=f"user_{user_id}_documents",
+            embedding_function=self.embeddings,
+            client_settings=self.client_settings,
+        )
 
     def store_document(self, payload: DocumentDto):
+        vector_store = self._get_user_collection(payload.authorId)
         doc = Document(
             id=payload.id,
             page_content=payload.content,
             metadata=payload.model_dump(exclude={"content"}),
         )
         splits = self.text_splitter.split_documents([doc])
-        self.vector_store.add_documents(documents=splits)
+        vector_store.add_documents(documents=splits)
 
     def update_document(self, payload: DocumentDto):
-        self.delete_document(payload.id)
+        self.delete_document(payload.authorId, payload.id)
         self.store_document(payload)
 
-    def delete_document(self, document_id: int):
-        ids = self.vector_store.get(where={"id": document_id})["ids"]
-
+    def delete_document(self, user_id: int, document_id: int):
+        vector_store = self._get_user_collection(user_id)
+        ids = vector_store.get(where={"id": document_id})["ids"]
         if len(ids):
-            self.vector_store.delete(ids)
+            vector_store.delete(ids)
 
-    def handle_query(self, query):
-        docs = self.retriever.invoke(query)
+    def handle_query(self, payload: QueryDocumentDto):
+        vector_store = self._get_user_collection(payload.userId)
 
-        context = "\n\n".join([doc.page_content for doc in docs])
-        formatted_prompt = self.prompt.format(context=context, input=query)
+        retriever = vector_store.as_retriever()
+        retrieval_chain = create_retrieval_chain(retriever, self.docs_chain)
 
-        stream = self.llm.stream(formatted_prompt)
-        for token in stream:
-            yield token
+        response = retrieval_chain.stream({"input": payload.query})
+        for chunk in response:
+            if "answer" in chunk:
+                yield chunk["answer"]

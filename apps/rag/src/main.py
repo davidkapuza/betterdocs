@@ -10,6 +10,7 @@ from .dtos import (
     ProcessedDocumentResponseDto,
     ProcessedDocumentResponseDataDto,
     DeletedDocumentResponseDto,
+    DeleteDocumentDto,
 )
 
 load_dotenv()
@@ -65,7 +66,11 @@ def main():
                 if "documentId" not in payload:
                     raise Exception("Missing document id")
 
-                rag_service.delete_document(payload.get("documentId"))
+                delete_document_model = DeleteDocumentDto.model_validate(payload)
+
+                rag_service.delete_document(
+                    delete_document_model.userId, delete_document_model.documentId
+                )
 
                 message = DeletedDocumentResponseDto(
                     pattern="document.deleted",
@@ -86,10 +91,9 @@ def main():
                 query_document_model = QueryDocumentDto.model_validate(payload)
                 channel.basic_ack(method.delivery_tag)
 
-                token_generator = rag_service.handle_query(query_document_model.query)
+                token_generator = rag_service.handle_query(query_document_model)
 
                 for token in token_generator:
-
                     message = QueryResponseDto(
                         pattern="query.response",
                         data=ResponseDataDto(
