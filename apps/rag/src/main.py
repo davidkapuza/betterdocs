@@ -27,13 +27,12 @@ def main():
             payload = event.get("data", {})
 
             if event_type == "document.store_content":
-                document_model = DocumentDto.model_validate(payload)
-
-                rag_service.store_document(document_model)
+                document_dto = DocumentDto.from_dict(payload)
+                rag_service.store_document(document_dto)
 
                 message = ProcessedDocumentResponseDto(
                     pattern="document.processed",
-                    data=ProcessedDocumentResponseDataDto(documentId=document_model.id),
+                    data=ProcessedDocumentResponseDataDto(documentId=document_dto.id),
                 )
 
                 channel.basic_publish(
@@ -45,13 +44,13 @@ def main():
                 channel.basic_ack(method.delivery_tag)
 
             elif event_type == "document.update_content":
-                document_model = DocumentDto.model_validate(payload)
+                docuemnt_dto = DocumentDto.from_dict(payload)
 
-                rag_service.update_document(document_model)
+                rag_service.update_document(docuemnt_dto)
 
                 message = ProcessedDocumentResponseDto(
                     pattern="document.processed",
-                    data=ProcessedDocumentResponseDataDto(documentId=document_model.id),
+                    data=ProcessedDocumentResponseDataDto(documentId=docuemnt_dto.id),
                 )
 
                 channel.basic_publish(
@@ -66,10 +65,10 @@ def main():
                 if "documentId" not in payload:
                     raise Exception("Missing document id")
 
-                delete_document_model = DeleteDocumentDto.model_validate(payload)
+                delete_document_dto = DeleteDocumentDto.from_dict(payload)
 
                 rag_service.delete_document(
-                    delete_document_model.userId, delete_document_model.documentId
+                    delete_document_dto.userId, delete_document_dto.documentId
                 )
 
                 message = DeletedDocumentResponseDto(
@@ -88,16 +87,16 @@ def main():
                 channel.basic_ack(method.delivery_tag)
 
             elif event_type == "query.request":
-                query_document_model = QueryDocumentDto.model_validate(payload)
+                query_document_dto = QueryDocumentDto.from_dict(payload)
                 channel.basic_ack(method.delivery_tag)
 
-                token_generator = rag_service.handle_query(query_document_model)
+                token_generator = rag_service.handle_query(query_document_dto)
 
                 for token in token_generator:
                     message = QueryResponseDto(
                         pattern="query.response",
                         data=ResponseDataDto(
-                            userId=query_document_model.userId,
+                            userId=query_document_dto.userId,
                             token=token,
                             completed=False,
                         ),
@@ -112,7 +111,7 @@ def main():
                 completion_msg = QueryResponseDto(
                     pattern="query.response",
                     data=ResponseDataDto(
-                        userId=query_document_model.userId, token="", completed=True
+                        userId=query_document_dto.userId, token="", completed=True
                     ),
                 )
 

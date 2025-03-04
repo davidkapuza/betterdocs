@@ -48,19 +48,19 @@ class RagService:
             client_settings=self.client_settings,
         )
 
-    def store_document(self, payload: DocumentDto):
-        vector_store = self._get_user_collection(payload.authorId)
+    def store_document(self, document_dto: DocumentDto):
+        vector_store = self._get_user_collection(document_dto.authorId)
         doc = Document(
-            id=payload.id,
-            page_content=payload.content,
-            metadata=payload.model_dump(exclude={"content"}),
+            id=document_dto.id,
+            page_content=document_dto.content,
+            metadata=document_dto.to_dict(exclude="content"),
         )
         splits = self.text_splitter.split_documents([doc])
         vector_store.add_documents(documents=splits)
 
-    def update_document(self, payload: DocumentDto):
-        self.delete_document(payload.authorId, payload.id)
-        self.store_document(payload)
+    def update_document(self, document_dto: DocumentDto):
+        self.delete_document(document_dto.authorId, document_dto.id)
+        self.store_document(document_dto)
 
     def delete_document(self, user_id: int, document_id: int):
         vector_store = self._get_user_collection(user_id)
@@ -68,13 +68,13 @@ class RagService:
         if len(ids):
             vector_store.delete(ids)
 
-    def handle_query(self, payload: QueryDocumentDto):
-        vector_store = self._get_user_collection(payload.userId)
+    def handle_query(self, query_document_dto: QueryDocumentDto):
+        vector_store = self._get_user_collection(query_document_dto.userId)
 
         retriever = vector_store.as_retriever()
         retrieval_chain = create_retrieval_chain(retriever, self.docs_chain)
 
-        response = retrieval_chain.stream({"input": payload.query})
+        response = retrieval_chain.stream({"input": query_document_dto.query})
         for chunk in response:
             if "answer" in chunk:
                 yield chunk["answer"]

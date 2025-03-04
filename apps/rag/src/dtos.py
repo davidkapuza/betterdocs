@@ -1,9 +1,35 @@
-from pydantic import BaseModel
-from dataclasses import dataclass
-from typing import Dict, Any, Literal
+from dataclasses import dataclass, asdict
+from typing import Optional, List, Union, Literal
+import inspect
 
 
-class DocumentDto(BaseModel):
+@dataclass
+class BaseDto:
+    @classmethod
+    def from_dict(cls, params):
+        return cls(
+            **{
+                k: v
+                for k, v in params.items()
+                if k in inspect.signature(cls).parameters
+            }
+        )
+
+    def to_dict(self, exclude: Optional[Union[str, List[str]]] = None):
+        if isinstance(exclude, str):
+            exclude = [exclude]
+
+        dict_repr = asdict(self)
+
+        if exclude:
+            for field in exclude:
+                dict_repr.pop(field, None)
+
+        return dict_repr
+
+
+@dataclass
+class DocumentDto(BaseDto):
     id: int
     authorId: int
     title: str
@@ -11,55 +37,40 @@ class DocumentDto(BaseModel):
     content: str
 
 
-class QueryDocumentDto(BaseModel):
+@dataclass
+class QueryDocumentDto(BaseDto):
     query: str
     userId: int
 
-class DeleteDocumentDto(BaseModel):
+
+@dataclass
+class DeleteDocumentDto(BaseDto):
     documentId: int
     userId: int
 
 
 @dataclass
-class ResponseDataDto:
+class ResponseDataDto(BaseDto):
     userId: int
     token: str
     completed: bool
 
 
 @dataclass
-class QueryResponseDto:
+class QueryResponseDto(BaseDto):
     pattern: Literal["query.response"]
     data: ResponseDataDto
 
-    def to_dict(self) -> Dict[str, Any]:
-        return {
-            "pattern": self.pattern,
-            "data": {
-                "userId": self.data.userId,
-                "token": self.data.token,
-                "completed": self.data.completed,
-            },
-        }
-
 
 @dataclass
-class ProcessedDocumentResponseDataDto:
+class ProcessedDocumentResponseDataDto(BaseDto):
     documentId: int
 
 
 @dataclass
-class ProcessedDocumentResponseDto:
+class ProcessedDocumentResponseDto(BaseDto):
     pattern: Literal["document.processed"]
     data: ProcessedDocumentResponseDataDto
-
-    def to_dict(self) -> Dict[str, Any]:
-        return {
-            "pattern": self.pattern,
-            "data": {
-                "documentId": self.data.documentId,
-            },
-        }
 
 
 @dataclass
