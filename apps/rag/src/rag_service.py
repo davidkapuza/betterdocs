@@ -1,80 +1,67 @@
-from langchain_community.document_loaders import TextLoader
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain.chains import create_retrieval_chain
+import psycopg
+from typing import Iterator, List
+from ollama import Client, GenerateResponse
+from dataclasses import dataclass
 
-from langchain_ollama import OllamaLLM, OllamaEmbeddings
-from langchain_chroma import Chroma
-from langchain_core.documents import Document
+from .db import create_db_connection
 
-from chromadb.config import Settings
 
-from .dtos import DocumentDto, QueryDocumentDto
+@dataclass
+class ChunkData:
+    title: str
+    chunk: str
 
 
 class RagService:
     def __init__(self):
-        self.embeddings = OllamaEmbeddings(model="llama3.2")
-        self.text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=500,
-            chunk_overlap=50,
-        )
+        self.client = Client(host="http://localhost:11434")
 
-        self.client_settings = Settings(
-            chroma_client_auth_provider="chromadb.auth.token.TokenAuthClientProvider",
-            chroma_server_host="chromadb",
-            chroma_server_http_port=8000,
-        )
+    def get_embedding(self, text: str) -> list[float]:
+        response = self.client.embeddings(model="all-minilm", prompt=text)
+        return response["embedding"]
 
-        self.llm = OllamaLLM(model="llama3.2")
-        self.prompt = ChatPromptTemplate.from_template(
-            """
-            Answer the following question only based on the given context
+    def get_relevant_chunks(
+        self, cur: psycopg.Cursor, embedding: list[float], limit: int = 1
+    ) -> List[ChunkData]:
+        """
+        Retrieve the most relevant chunks based on vector similarity.
+        """
+        query = """
+        SELECT title, chunk
+        FROM document_embeddings 
+        ORDER BY embedding <=> %s::vector
+        LIMIT %s
+        """
 
-            <context>
-            {context}
-            </context>
+        cur.execute(query, (embedding, limit))
+        return [ChunkData(title=row[0], chunk=row[1]) for row in cur.fetchall()]
 
-            Question: {input}
-            """
-        )
-        self.docs_chain = create_stuff_documents_chain(self.llm, self.prompt)
+    def format_context(self, chunks: List[ChunkData]) -> str:
+        """
+        Format the chunks into a single context string.
+        """
+        return "\n\n".join(f"{chunk.title}:\n{chunk.chunk}" for chunk in chunks)
 
-    def _get_user_collection(self, user_id: int) -> Chroma:
-        return Chroma(
-            collection_name=f"user_{user_id}_documents",
-            embedding_function=self.embeddings,
-            client_settings=self.client_settings,
-        )
+    def generate_rag_response(self, query_text: str) -> Iterator[GenerateResponse]:
+        """
+        Generate a RAG response using pgai, Ollama embeddings, and database content.
+        """
+        with create_db_connection() as conn:
+            with conn.cursor() as cur:
+                query_embedding = self.get_embedding(query_text)
 
-    def store_document(self, document_dto: DocumentDto):
-        vector_store = self._get_user_collection(document_dto.authorId)
-        doc = Document(
-            id=document_dto.id,
-            page_content=document_dto.content,
-            metadata=document_dto.to_dict(exclude="content"),
-        )
-        splits = self.text_splitter.split_documents([doc])
-        vector_store.add_documents(documents=splits)
+                relevant_chunks = self.get_relevant_chunks(cur, query_embedding)
 
-    def update_document(self, document_dto: DocumentDto):
-        self.delete_document(document_dto.authorId, document_dto.id)
-        self.store_document(document_dto)
+                context = self.format_context(relevant_chunks)
 
-    def delete_document(self, user_id: int, document_id: int):
-        vector_store = self._get_user_collection(user_id)
-        ids = vector_store.get(where={"id": document_id})["ids"]
-        if len(ids):
-            vector_store.delete(ids)
+                prompt = f"""Question: {query_text}
 
-    def handle_query(self, query_document_dto: QueryDocumentDto):
-        vector_store = self._get_user_collection(query_document_dto.userId)
+                    Please use the following context to provide an accurate response:
 
-        retriever = vector_store.as_retriever()
-        retrieval_chain = create_retrieval_chain(retriever, self.docs_chain)
+                    {context}
 
-        response = retrieval_chain.stream({"input": query_document_dto.query})
-        for chunk in response:
-            if "answer" in chunk:
-                yield chunk["answer"]
+                    Answer:"""
+
+                return self.client.generate(
+                    model="tinyllama", prompt=prompt, stream=True
+                )
