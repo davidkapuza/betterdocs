@@ -18,10 +18,22 @@ model User {
   createdAt DateTime   @default(now()) @db.Timestamp(6)
   updatedAt DateTime   @updatedAt
   deletedAt DateTime?  @db.Timestamp(6)
-
   documents Document[]
 
   @@map("users")
+}
+
+model Document {
+  id        Int       @id @default(autoincrement())
+  title     String
+  authorId  Int
+  content   String
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? @db.Timestamp(6)
+  author    User      @relation(fields: [authorId], references: [id])
+
+  @@map("documents")
 }
 
 enum Role {
@@ -32,23 +44,4 @@ enum Role {
 enum UserStatus {
   active
   inactive
-}
-
-enum DocumentStatus {
-  processing
-  processed
-}
-
-model Document {
-  id        Int            @id @default(autoincrement())
-  title     String
-  author    User           @relation(fields: [authorId], references: [id])
-  authorId  Int
-  content   String
-  status    DocumentStatus @default(processing)
-  createdAt DateTime       @default(now()) @db.Timestamp(6)
-  updatedAt DateTime       @updatedAt
-  deletedAt DateTime?      @db.Timestamp(6)
-
-  @@map("documents")
 }

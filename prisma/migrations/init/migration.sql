@@ -4,9 +4,6 @@ CREATE TYPE "Role" AS ENUM ('admin', 'user');
 -- CreateEnum
 CREATE TYPE "UserStatus" AS ENUM ('active', 'inactive');
 
--- CreateEnum
-CREATE TYPE "DocumentStatus" AS ENUM ('processing', 'processed');
-
 -- CreateTable
 CREATE TABLE "users" (
     "id" SERIAL NOT NULL,
@@ -29,7 +26,6 @@ CREATE TABLE "documents" (
     "title" TEXT NOT NULL,
     "authorId" INTEGER NOT NULL,
     "content" TEXT NOT NULL,
-    "status" "DocumentStatus" NOT NULL DEFAULT 'processing',
     "createdAt" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "deletedAt" TIMESTAMP(6),
