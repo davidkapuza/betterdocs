@@ -3,8 +3,8 @@ from .rabbitmq import RabbitMQ
 from .rag_service import RagService
 from dotenv import load_dotenv
 from .dtos import (
-    QueryDocumentDto,
-    QueryResponseDto,
+    QueryCollectionDto,
+    QueryCollectionResponseDto,
     ResponseDataDto,
 )
 
@@ -20,16 +20,16 @@ def main():
             event = json.loads(body)
             data = event.get("data", {})
 
-            query_document_dto = QueryDocumentDto.from_dict(data)
+            query_collection_dto = QueryCollectionDto.from_dict(data)
             channel.basic_ack(method.delivery_tag)
 
-            stream = rag_service.generate_rag_response(query_document_dto.query)
+            stream = rag_service.generate_rag_response(query_collection_dto)
 
             for chunk in stream:
-                message = QueryResponseDto(
+                message = QueryCollectionResponseDto(
                     pattern="query.response",
                     data=ResponseDataDto(
-                        userId=query_document_dto.userId,
+                        userId=query_collection_dto.userId,
                         token=chunk["response"],
                         completed=False,
                     ),
@@ -37,20 +37,20 @@ def main():
 
                 channel.basic_publish(
                     exchange="",
-                    routing_key="documents_response_queue",
+                    routing_key="collections_queue.output",
                     body=json.dumps(message.to_dict()),
                 )
 
-            completion_msg = QueryResponseDto(
+            completion_msg = QueryCollectionResponseDto(
                 pattern="query.response",
                 data=ResponseDataDto(
-                    userId=query_document_dto.userId, token="", completed=True
+                    userId=query_collection_dto.userId, token="", completed=True
                 ),
             )
 
             channel.basic_publish(
                 exchange="",
-                routing_key="documents_response_queue",
+                routing_key="collections_queue.output",
                 body=json.dumps(completion_msg.to_dict()),
             )
 
@@ -60,7 +60,7 @@ def main():
 
     try:
         print("[*] Waiting for messages. Press CTRL+C to exit")
-        rabbitmq.consume(queue_name="documents_queue", callback=callback)
+        rabbitmq.consume(queue_name="collections_queue.input", callback=callback)
     except KeyboardInterrupt:
         print("\nService stopped")
     finally:

@@ -7,13 +7,27 @@ export class CreateDocumentInput {
   title: string;
   @IsString()
   content: string;
+  @IsNumber()
+  collectionId: number;
 }
 
 @InputType()
 export class UpdateDocumentInput {
   @IsNumber()
+  collectionId: number;
+
+  @IsNumber()
   documentId: number;
 
   @IsString()
   content: string;
+}
+
+@InputType()
+export class DeleteDocumentInput {
+  @IsNumber()
+  collectionId: number;
+
+  @IsNumber()
+  documentId: number;
 }

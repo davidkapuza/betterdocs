@@ -2,8 +2,9 @@ import { User } from '@modules/users/gql';
 import { ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class DocumentModel {
+export class Document {
   id: number;
+  title: string;
   content: string;
   author: User;
 }

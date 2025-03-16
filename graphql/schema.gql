@@ -32,15 +32,24 @@ type SignInResponseModel {
   user: User!
 }
 
-type DocumentModel {
+type Document {
   id: Float!
+  title: String!
   content: String!
   author: User!
 }
 
+type Collection {
+  id: Float!
+  name: String!
+  description: String!
+  documents: [Document!]!
+}
+
 type Query {
   user: User!
-  getDocument(documentId: Float!): DocumentModel!
+  document(documentId: Float!): Document!
+  collections: [Collection!]!
 }
 
 type Mutation {
@@ -51,9 +60,9 @@ type Mutation {
   resetPasswordRequest(email: String!): Void
   resetPassword(resetPasswordInput: ResetPasswordInput!): SignInResponseModel!
   signOut: Void
-  createDocument(createDocumentInput: CreateDocumentInput!): Void
-  updateDocument(updateDocumentInput: UpdateDocumentInput!): Void
-  deleteDocument(documentId: Float!): Void
+  createDocument(createDocumentInput: CreateDocumentInput!): Document!
+  updateDocument(updateDocumentInput: UpdateDocumentInput!): Document!
+  deleteDocument(deleteDocumentInput: DeleteDocumentInput!): Document!
 }
 
 """Represents NULL values"""
@@ -79,13 +88,25 @@ input ResetPasswordInput {
 input CreateDocumentInput {
   title: String!
   content: String!
+  collectionId: Float!
 }
 
 input UpdateDocumentInput {
+  collectionId: Float!
   documentId: Float!
   content: String!
 }
 
+input DeleteDocumentInput {
+  collectionId: Float!
+  documentId: Float!
+}
+
 type Subscription {
-  queryDocument(query: String!): String!
+  queryCollection(queryCollectionInput: QueryCollectionInput!): String!
+}
+
+input QueryCollectionInput {
+  collectionId: Float!
+  query: String!
 }

@@ -8,32 +8,66 @@ datasource db {
 }
 
 model User {
-  id        Int        @id @default(autoincrement())
-  email     String     @unique
-  password  String
-  firstName String
-  lastName  String
-  role      Role       @default(user)
-  status    UserStatus @default(inactive)
-  createdAt DateTime   @default(now()) @db.Timestamp(6)
-  updatedAt DateTime   @updatedAt
-  deletedAt DateTime?  @db.Timestamp(6)
-  documents Document[]
+  id          Int              @id @default(autoincrement())
+  email       String           @unique
+  password    String
+  firstName   String
+  lastName    String
+  role        Role             @default(user)
+  status      UserStatus       @default(inactive)
+  createdAt   DateTime         @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime         @updatedAt
+  deletedAt   DateTime?        @db.Timestamp(6)
+  documents   Document[]
+  collections UserCollection[]
 
   @@map("users")
 }
 
 model Document {
-  id        Int       @id @default(autoincrement())
-  title     String
-  authorId  Int
-  content   String
-  createdAt DateTime  @default(now()) @db.Timestamp(6)
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime? @db.Timestamp(6)
-  author    User      @relation(fields: [authorId], references: [id])
+  id           Int        @id @default(autoincrement())
+  title        String
+  authorId     Int
+  collectionId Int
+  content      String
+  createdAt    DateTime   @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime   @updatedAt
+  deletedAt    DateTime?  @db.Timestamp(6)
+  author       User       @relation(fields: [authorId], references: [id])
+  collection   Collection @relation(fields: [collectionId], references: [id])
 
   @@map("documents")
+}
+
+model Collection {
+  id          Int              @id @default(autoincrement())
+  name        String
+  description String?
+  createdAt   DateTime         @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime         @updatedAt
+  deletedAt   DateTime?        @db.Timestamp(6)
+  documents   Document[]
+  users       UserCollection[]
+
+  @@map("collections")
+}
+
+model UserCollection {
+  userId       Int
+  collectionId Int
+  role         UserCollectionRole
+  createdAt    DateTime           @default(now()) @db.Timestamp(6)
+  user         User               @relation(fields: [userId], references: [id])
+  collection   Collection         @relation(fields: [collectionId], references: [id])
+
+  @@id([userId, collectionId])
+  @@map("user_collections")
+}
+
+enum UserCollectionRole {
+  owner
+  editor
+  viewer
 }
 
 enum Role {

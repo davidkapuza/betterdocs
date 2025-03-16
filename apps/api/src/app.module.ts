@@ -1,4 +1,5 @@
 import { AuthModule } from '@modules/auth/auth.module';
+import { CollectionsModule } from '@modules/collections/collections.module';
 import { DocumentsModule } from '@modules/documents/documents.module';
 import { GraphQLModule } from '@modules/graphql/graphql.module';
 import { UsersModule } from '@modules/users/users.module';
@@ -9,6 +10,7 @@ import { authConfig } from '@shared/config/auth';
 import { mailConfig } from '@shared/config/mail';
 import { rabbitMQConfig } from '@shared/config/rabbitmq';
 import { redisConfig } from '@shared/config/redis';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,6 +22,7 @@ import { redisConfig } from '@shared/config/redis';
     AuthModule,
     UsersModule,
     DocumentsModule,
+    CollectionsModule,
   ],
 })
 export class AppModule {}

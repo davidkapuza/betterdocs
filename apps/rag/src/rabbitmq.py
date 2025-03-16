@@ -20,8 +20,8 @@ class RabbitMQ:
         self.connection = pika.BlockingConnection(parameters)
         self.channel = self.connection.channel()
 
-        self.channel.queue_declare("documents_queue", durable=True)
-        self.channel.queue_declare("documents_response_queue", durable=True)
+        self.channel.queue_declare("collections_queue.input", durable=True)
+        self.channel.queue_declare("collections_queue.output", durable=True)
 
     def close(self):
         if self.connection and not self.connection.is_closed:

@@ -3,7 +3,7 @@ import { EventPattern } from '@nestjs/microservices';
 import { PubSub } from 'graphql-subscriptions';
 
 @Controller()
-export class DocumentsController {
+export class CollectionsController {
   constructor(@Inject('PUB_SUB') private readonly pubSub: PubSub) {}
 
   @EventPattern('query.response')

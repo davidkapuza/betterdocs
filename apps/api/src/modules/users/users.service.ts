@@ -8,7 +8,20 @@ export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createUserInput: CreateUserInput) {
-    return this.prisma.user.create({ data: createUserInput });
+    return await this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({ data: createUserInput });
+
+      await tx.collection.create({
+        data: {
+          name: 'My Collection',
+          description: '...',
+          users: {
+            create: { userId: user.id, role: 'owner' },
+          },
+        },
+      });
+      return user;
+    });
   }
 
   async findByEmail(email: User['email']) {

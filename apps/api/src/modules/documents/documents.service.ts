@@ -1,58 +1,59 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/libs/prisma';
-import { CreateDocumentInput, DocumentModel, UpdateDocumentInput } from './gql';
-import { ClientProxy } from '@nestjs/microservices';
+import {
+  CreateDocumentInput,
+  DeleteDocumentInput,
+  UpdateDocumentInput,
+} from './gql';
 
 @Injectable()
 export class DocumentsService {
-  constructor(
-    private readonly prisma: PrismaService,
-    @Inject('documents_queue') private readonly documentsQueue: ClientProxy
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  async getDocument(documentId: number): Promise<DocumentModel> {
+  async getCollectionDocuments(collectionId: number) {
+    return this.prisma.document.findMany({
+      where: { collectionId },
+    });
+  }
+
+  async getDocument(documentId: number) {
     return this.prisma.document.findUnique({
       where: { id: documentId },
-      include: {
-        author: true,
-      },
     });
   }
 
-  async create(
-    createDocumentInput: CreateDocumentInput,
-    authorId: number
-  ): Promise<void> {
-    await this.prisma.document.create({
+  async create(userId: number, createDocumentInput: CreateDocumentInput) {
+    return this.prisma.document.create({
       data: {
+        collectionId: createDocumentInput.collectionId,
         title: createDocumentInput.title,
         content: createDocumentInput.content,
-        authorId,
+        authorId: userId,
       },
     });
   }
 
-  async update(
-    updateDocumentInput: UpdateDocumentInput,
-    authorId: number
-  ): Promise<void> {
-    await this.prisma.document.update({
+  async update(userId: number, updateDocumentInput: UpdateDocumentInput) {
+    return this.prisma.document.update({
       where: { id: updateDocumentInput.documentId },
       data: {
-        authorId,
+        authorId: userId,
         content: updateDocumentInput.content,
       },
     });
   }
 
-  async handleQuery(query: string, userId: number) {
-    this.documentsQueue.emit('query.request', {
-      query,
-      userId,
+  async deleteDocument(deleteDocumentInput: DeleteDocumentInput) {
+    return this.prisma.document.delete({
+      where: { id: deleteDocumentInput.documentId },
     });
   }
 
-  async deleteDocument(documentId: number) {
-    await this.prisma.document.delete({ where: { id: documentId } });
+  async getDocumentAuthor(documentId: number) {
+    const document = await this.prisma.document.findUnique({
+      where: { id: documentId },
+      select: { author: true },
+    });
+    return document.author;
   }
 }

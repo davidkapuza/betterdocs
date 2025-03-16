@@ -29,23 +29,9 @@ class BaseDto:
 
 
 @dataclass
-class DocumentDto(BaseDto):
-    id: int
-    authorId: int
-    title: str
-    authorId: int
-    content: str
-
-
-@dataclass
-class QueryDocumentDto(BaseDto):
+class QueryCollectionDto(BaseDto):
     query: str
-    userId: int
-
-
-@dataclass
-class DeleteDocumentDto(BaseDto):
-    documentId: int
+    collectionId: int
     userId: int
 
 
@@ -57,22 +43,6 @@ class ResponseDataDto(BaseDto):
 
 
 @dataclass
-class QueryResponseDto(BaseDto):
+class QueryCollectionResponseDto(BaseDto):
     pattern: Literal["query.response"]
     data: ResponseDataDto
-
-
-@dataclass
-class ProcessedDocumentResponseDataDto(BaseDto):
-    documentId: int
-
-
-@dataclass
-class ProcessedDocumentResponseDto(BaseDto):
-    pattern: Literal["document.processed"]
-    data: ProcessedDocumentResponseDataDto
-
-
-@dataclass
-class DeletedDocumentResponseDto(ProcessedDocumentResponseDto):
-    pattern: Literal["document.deleted"]

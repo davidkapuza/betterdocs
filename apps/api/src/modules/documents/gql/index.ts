@@ -1,2 +1,2 @@
 export * from './document.inputs';
-export * from './documents.models';
+export * from './document.models';

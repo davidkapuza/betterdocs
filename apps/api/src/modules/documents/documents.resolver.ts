@@ -1,58 +1,62 @@
-import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { DocumentsService } from './documents.service';
-import { CreateDocumentInput, DocumentModel, UpdateDocumentInput } from './gql';
-import { Inject, UseGuards } from '@nestjs/common';
+import {
+  CreateDocumentInput,
+  DeleteDocumentInput,
+  Document,
+  UpdateDocumentInput,
+} from './gql';
+import { UseGuards } from '@nestjs/common';
 import { JwtAccessGuard } from '@modules/auth/guards';
 import { ReqUser } from '@modules/auth/decorators';
 import { JwtPayload } from '@shared/types';
-import { PubSub } from 'graphql-subscriptions';
-import { VoidResolver } from 'graphql-scalars';
+import { User } from '@modules/users/gql';
+import { CollectionMembershipGuard } from '@modules/collections/guards';
 
-@Resolver(() => DocumentModel)
-@UseGuards(JwtAccessGuard)
+// [ ] Versioning documents
+
+@Resolver(() => Document)
+@UseGuards(JwtAccessGuard, CollectionMembershipGuard)
 export class DocumentsResolver {
-  constructor(
-    private readonly documentsService: DocumentsService,
-    @Inject('PUB_SUB') private readonly pubSub: PubSub
-  ) {}
+  constructor(private readonly documentsService: DocumentsService) {}
 
-  @Mutation(() => VoidResolver, { nullable: true })
+  @Mutation(() => Document)
   async createDocument(
     @ReqUser() jwtPayload: JwtPayload,
     @Args('createDocumentInput') createDocumentInput: CreateDocumentInput
-  ): Promise<void> {
-    await this.documentsService.create(createDocumentInput, jwtPayload.userId);
+  ) {
+    return this.documentsService.create(jwtPayload.userId, createDocumentInput);
   }
 
-  @Mutation(() => VoidResolver, { nullable: true })
+  @Mutation(() => Document)
   async updateDocument(
     @ReqUser() jwtPayload: JwtPayload,
     @Args('updateDocumentInput') updateDocumentInput: UpdateDocumentInput
-  ): Promise<void> {
-    await this.documentsService.update(updateDocumentInput, jwtPayload.userId);
+  ) {
+    return this.documentsService.update(jwtPayload.userId, updateDocumentInput);
   }
 
-  @Mutation(() => VoidResolver, { nullable: true })
-  async deleteDocument(@Args('documentId') documentId: number): Promise<void> {
-    await this.documentsService.deleteDocument(documentId);
+  @Mutation(() => Document)
+  async deleteDocument(
+    @Args('deleteDocumentInput') deleteDocumentInput: DeleteDocumentInput
+  ) {
+    return this.documentsService.deleteDocument(deleteDocumentInput);
   }
 
-  @Query(() => DocumentModel)
-  async getDocument(
-    @Args('documentId') documentId: number
-  ): Promise<DocumentModel> {
+  @Query(() => Document, { name: 'document' })
+  async getDocument(@Args('documentId') documentId: number) {
     return this.documentsService.getDocument(documentId);
   }
 
-  @Subscription(() => String, {
-    resolve: (payload) => payload.token,
-  })
-  async queryDocument(
-    @ReqUser() jwtPayload: JwtPayload,
-    @Args('query') query: string
-  ) {
-    this.documentsService.handleQuery(query, jwtPayload.userId);
-
-    return this.pubSub.asyncIterableIterator(`query.${jwtPayload.userId}`);
+  @ResolveField('author', () => User)
+  async getDocuments(@Parent() document: Document) {
+    return this.documentsService.getDocumentAuthor(document.id);
   }
 }
