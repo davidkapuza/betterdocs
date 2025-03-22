@@ -5,6 +5,7 @@
   "scripts": {},
   "private": true,
   "dependencies": {
+    "@apollo/client": "^3.13.5",
     "@apollo/server": "^4.11.3",
     "@nestjs/apollo": "^13.0.2",
     "@nestjs/common": "^11.0.6",
@@ -36,6 +37,8 @@
     "passport-jwt": "^4.0.1",
     "react": "18.3.1",
     "react-dom": "18.3.1",
+    "react-error-boundary": "^5.0.0",
+    "react-router": "^7.4.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",
     "subscriptions-transport-ws": "^0.11.0",
@@ -44,6 +47,10 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",
+    "@graphql-codegen/cli": "^5.0.5",
+    "@graphql-codegen/typescript": "^4.1.5",
+    "@graphql-codegen/typescript-react-apollo": "^4.3.2",
+    "@graphql-codegen/typescript-resolvers": "^4.4.4",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.6",
     "@nx/devkit": "20.6.0",

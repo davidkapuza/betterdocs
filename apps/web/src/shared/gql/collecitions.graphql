@@ -1,0 +1,12 @@
+query Collections {
+  collections {
+    id
+    name
+    description
+    documents {
+      id
+      title
+      content
+    }
+  }
+}

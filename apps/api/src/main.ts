@@ -8,7 +8,7 @@ import { MicroserviceOptions } from '@nestjs/microservices';
 import { RabbitMQService } from '@modules/rabbitmq/rabbitmq.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
 
   const configService = app.get(ConfigService<Config>);
 

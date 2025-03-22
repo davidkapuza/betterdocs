@@ -7,7 +7,26 @@
       "@nx/react/typings/cssmodule.d.ts",
       "@nx/react/typings/image.d.ts",
       "vite/client"
-    ]
+    ],
+    "paths": {
+      "@/app": ["apps/web/src/app"],
+      "@/app/*": ["apps/web/src/app/*"],
+
+      "@/pages": ["apps/web/src/pages"],
+      "@/pages/*": ["apps/web/src/pages/*"],
+
+      "@/widgets": ["apps/web/src/widgets"],
+      "@/widgets/*": ["apps/web/src/widgets/*"],
+
+      "@/features": ["apps/web/src/features"],
+      "@/features/*": ["apps/web/src/features/*"],
+
+      "@/entities": ["apps/web/src/entities"],
+      "@/entities/*": ["apps/web/src/entities/*"],
+
+      "@/shared": ["apps/web/src/shared"],
+      "@/shared/*": ["apps/web/src/shared/*"]
+    }
   },
   "exclude": [
     "src/**/*.spec.ts",
