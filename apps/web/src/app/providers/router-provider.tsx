@@ -3,7 +3,9 @@ import {
   RouterProvider,
   useRouteError,
 } from 'react-router';
-import { collectionsPageRoute } from '@/pages/collections';
+import { signInPageRoute } from '@/pages/sign-in';
+import { signUpPageRoute } from '@/pages/sign-up';
+import React from 'react';
 
 // https://github.com/remix-run/react-router/discussions/10166
 function BubbleError() {
@@ -13,10 +15,21 @@ function BubbleError() {
   return null;
 }
 
+const AuthLayout = React.lazy(() =>
+  import('@/pages/layouts').then((module) => ({
+    default: module.AuthLayout,
+  }))
+);
+
 const browserRouter = createBrowserRouter([
   {
     errorElement: <BubbleError />,
-    children: [collectionsPageRoute],
+    children: [
+      {
+        element: React.createElement(AuthLayout),
+        children: [signInPageRoute, signUpPageRoute],
+      },
+    ],
   },
 ]);
 

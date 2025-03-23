@@ -48,6 +48,8 @@ export default defineConfig(() => ({
       '@/pages': path.resolve('src/pages'),
       '@/shared': path.resolve('src/shared'),
       '@/widgets': path.resolve('src/widgets'),
+      '@betterdocs/ui': path.resolve('../../libs/ui/src/ui'),
+      '@betterdocs/styles': path.resolve('../../libs/ui/src/styles'),
     },
   },
 }));

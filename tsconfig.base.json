@@ -13,7 +13,13 @@
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@betterdocs/styles/*": ["libs/ui/src/styles/*"],
+      "@betterdocs/ui": ["libs/ui/src/ui"],
+      "@betterdocs/ui/*": ["libs/ui/*"],
+      "@betterdocs/utils": ["libs/utils/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

@@ -3,6 +3,8 @@ import { ErrorHandler } from '@/shared/ui/error-handler';
 import { withErrorBoundary } from 'react-error-boundary';
 import { BrowserRouter } from './router-provider';
 import { ApolloProvider } from './apollo-provider';
+import { Toaster } from '@betterdocs/ui/sonner';
+import { ThemeProvider } from '@betterdocs/ui/theme-provider';
 
 const enhance = compose((component) =>
   withErrorBoundary(component, {
@@ -12,6 +14,9 @@ const enhance = compose((component) =>
 
 export const Providers = enhance(() => (
   <ApolloProvider>
-    <BrowserRouter />
+    <ThemeProvider>
+      <Toaster />
+      <BrowserRouter />
+    </ThemeProvider>
   </ApolloProvider>
 ));

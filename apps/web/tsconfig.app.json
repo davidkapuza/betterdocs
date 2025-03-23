@@ -25,7 +25,12 @@
       "@/entities/*": ["apps/web/src/entities/*"],
 
       "@/shared": ["apps/web/src/shared"],
-      "@/shared/*": ["apps/web/src/shared/*"]
+      "@/shared/*": ["apps/web/src/shared/*"],
+
+      "@betterdocs/ui/*": ["libs/ui/src/ui/*"],
+      "@betterdocs/styles/*": ["libs/ui/src/styles/*"],
+
+      "@betterdocs/utils": ["libs/utils/src/index.ts"]
     }
   },
   "exclude": [
@@ -38,7 +43,7 @@
     "src/**/*.spec.jsx",
     "src/**/*.test.jsx",
     "vite.config.ts",
-    "vite.config.mts",
+    "vite.config.ts",
     "vitest.config.ts",
     "vitest.config.mts"
   ],
