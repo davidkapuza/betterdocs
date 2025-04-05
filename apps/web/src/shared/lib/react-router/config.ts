@@ -11,4 +11,12 @@ export const pathKeys = {
       return pathKeys.auth.root().concat('/sign-up');
     },
   },
+  collections: {
+    root() {
+      return pathKeys.root.concat('collections');
+    },
+    byId(id: string) {
+      return pathKeys.collections.root().concat('/', id);
+    },
+  },
 };

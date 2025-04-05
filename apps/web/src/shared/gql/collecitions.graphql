@@ -10,3 +10,24 @@ query Collections {
     }
   }
 }
+
+query Collection($collectionId: Int!) {
+  collection(collectionId: $collectionId) {
+    id
+    name
+    description
+    documents {
+      id
+      title
+      content
+      author {
+        role
+        status
+        id
+        email
+        firstName
+        lastName
+      }
+    }
+  }
+}

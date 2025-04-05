@@ -1,18 +1,10 @@
-import {
-  ApolloClient,
-  InMemoryCache,
-  ApolloProvider as Apollo,
-} from '@apollo/client';
+import { ApolloProvider as Apollo } from '@apollo/client';
 import { ReactNode } from 'react';
+import { client } from '@/shared/lib/apollo';
 
 type ApolloProviderProps = {
   children: ReactNode;
 };
-
-const client = new ApolloClient({
-  uri: 'http://localhost:3000/graphql',
-  cache: new InMemoryCache(),
-});
 
 export function ApolloProvider({ children }: ApolloProviderProps) {
   return <Apollo client={client}>{children}</Apollo>;

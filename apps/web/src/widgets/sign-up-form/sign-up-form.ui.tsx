@@ -17,7 +17,6 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import { ApolloError } from '@apollo/client';
 
 const signUpSchema = z.object({
   firstName: z.string().min(2),
@@ -32,7 +31,19 @@ export function SignUpForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<'div'>) {
-  const [signUp, { loading }] = useSignUpMutation();
+  const [signUp, { loading }] = useSignUpMutation({
+    onCompleted: () => {
+      toast('Account created successfully', {
+        description:
+          'A confirmation email has been sent to your email address. Please check your email to verify your account.',
+        duration: Infinity,
+        icon: <Mail className="size-4" />,
+      });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   const form = useForm<SignUpInput>({
     resolver: zodResolver(signUpSchema),
@@ -44,26 +55,12 @@ export function SignUpForm({
     },
   });
 
-  const onSubmit = async (values: SignUpInput) => {
-    try {
-      await signUp({
-        variables: {
-          signUpInput: values,
-        },
-      });
-
-      toast('Account created successfully', {
-        description:
-          'A confirmation email has been sent to your email address. Please check your email to verify your account.',
-        duration: Infinity,
-        icon: <Mail className="size-4" />,
-      });
-    } catch (error) {
-      if (error instanceof ApolloError) {
-        toast.error(error.message);
-      }
-    }
-  };
+  const onSubmit = async (values: SignUpInput) =>
+    signUp({
+      variables: {
+        signUpInput: values,
+      },
+    });
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -75,13 +72,13 @@ export function SignUpForm({
                 href="#"
                 className="flex flex-col items-center gap-2 font-medium"
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-md">
+                <div className="flex items-center justify-center w-8 h-8 rounded-md">
                   <GalleryVerticalEnd className="size-6" />
                 </div>
                 <span className="sr-only">Acme Inc.</span>
               </a>
               <h1 className="text-xl font-bold">Welcome to Acme Inc.</h1>
-              <div className="text-center text-sm">
+              <div className="text-sm text-center">
                 Already have an account?{' '}
                 <NavLink
                   to={pathKeys.auth.signIn()}

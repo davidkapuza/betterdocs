@@ -3,6 +3,7 @@ import { JwtAccessGuard } from '@modules/auth/guards';
 import { Inject, UseGuards } from '@nestjs/common';
 import {
   Args,
+  Int,
   Parent,
   Query,
   ResolveField,
@@ -21,7 +22,7 @@ import { PubSub } from 'graphql-subscriptions';
 // [ ] Removing members from a collection
 
 @Resolver(() => Collection)
-@UseGuards(JwtAccessGuard, CollectionMembershipGuard)
+@UseGuards(JwtAccessGuard)
 export class CollectionsResolver {
   constructor(
     private readonly collectionsService: CollectionsService,
@@ -34,11 +35,20 @@ export class CollectionsResolver {
     return await this.collectionsService.getUserCollections(jwtPayload.userId);
   }
 
+  @UseGuards(CollectionMembershipGuard)
+  @Query(() => Collection, { name: 'collection' })
+  async getCollection(
+    @Args('collectionId', { type: () => Int }) collectionId: number
+  ) {
+    return await this.collectionsService.getCollection(collectionId);
+  }
+
   @ResolveField('documents', () => [Document])
   async getDocuments(@Parent() collection: Collection) {
     return await this.documentsService.getCollectionDocuments(collection.id);
   }
 
+  @UseGuards(CollectionMembershipGuard)
   @Subscription(() => String, {
     resolve: (payload) => payload.token,
   })

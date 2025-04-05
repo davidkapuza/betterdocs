@@ -10,11 +10,26 @@ const CollectionsPage = React.lazy(() =>
   }))
 );
 
+const CollectionPage = React.lazy(() =>
+  import('./collections-page.ui').then((module) => ({
+    default: module.CollectionPage,
+  }))
+);
+
 const enhance = compose((component) =>
   withSuspense(component, { FallbackComponent: CollectionsPageSkeleton })
 );
 
 export const collectionsPageRoute: RouteObject = {
   path: pathKeys.root,
-  element: React.createElement(enhance(CollectionsPage)),
+  children: [
+    {
+      index: true,
+      element: React.createElement(enhance(CollectionsPage)),
+    },
+    {
+      path: ':collectionId',
+      element: React.createElement(enhance(CollectionPage)),
+    },
+  ],
 };

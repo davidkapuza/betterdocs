@@ -15,7 +15,13 @@ export class CollectionsService {
     const col = await this.prisma.collection.findMany({
       where: { users: { some: { userId } } },
     });
-    console.log(col);
+    return col;
+  }
+
+  async getCollection(collectionId: number) {
+    const col = await this.prisma.collection.findUnique({
+      where: { id: collectionId },
+    });
     return col;
   }
 
