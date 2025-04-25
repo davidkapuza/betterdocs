@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChevronRight, File, Folder } from 'lucide-react';
+import { ChevronRight, File, Files } from 'lucide-react';
 
 import {
   Collapsible,
@@ -20,16 +20,18 @@ import {
 } from '@betterdocs/ui/sidebar';
 import { useParams } from 'react-router';
 import { routerTypes } from '@/shared/lib/react-router';
-import { useCollectionSuspenseQuery } from '@/shared/gql/__generated__/operations';
-
-// TODO
+import {
+  useCollectionDocumentsSuspenseQuery,
+  useDocumentTreeQuery,
+} from '@/shared/gql/__generated__/operations';
+import { documentModel } from '@/entities/document';
 
 export function DocumentsSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   const params = useParams() as routerTypes.CollectionPageParams;
 
-  const { data } = useCollectionSuspenseQuery({
+  const { data } = useCollectionDocumentsSuspenseQuery({
     variables: {
       collectionId: Number(params.collectionId),
     },
@@ -42,8 +44,8 @@ export function DocumentsSidebar({
           <SidebarGroupLabel>Documents</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {data?.collection.documents.map((item, index) => (
-                <Tree key={index} item={item.title} />
+              {data?.collection.documents.map((document, index) => (
+                <Tree key={index} document={document} />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
@@ -54,17 +56,47 @@ export function DocumentsSidebar({
   );
 }
 
-function Tree({ item }: { item: string | any[] }) {
-  const [name, ...items] = Array.isArray(item) ? item : [item];
+type TreeProps = {
+  document: {
+    id: number;
+    collectionId: number;
+    title: string;
+    children?: TreeProps['document'][];
+  };
+};
 
-  if (!items.length) {
+function Tree(props: TreeProps) {
+  const { document } = props;
+
+  const selectedDocumentId =
+    documentModel.useDocumentStore.use.selectedDocumentId();
+
+  const setSelectedDocumentId =
+    documentModel.useDocumentStore.use.setSelectedDocumentId();
+
+  const { data, loading } = useDocumentTreeQuery({
+    variables: {
+      getDocumentInput: {
+        documentId: document.id,
+        collectionId: document.collectionId,
+      },
+    },
+    skip: !document.children || !document.children.length,
+  });
+
+  if (loading) return 'Loading...';
+
+  if (!document.children || !document.children.length) {
     return (
       <SidebarMenuButton
-        isActive={name === 'selected'}
+        isActive={document.id === selectedDocumentId}
         className="data-[active=true]:bg-transparent"
+        onClick={() => {
+          setSelectedDocumentId(document.id);
+        }}
       >
         <File />
-        {name}
+        {document.title}
       </SidebarMenuButton>
     );
   }
@@ -72,17 +104,22 @@ function Tree({ item }: { item: string | any[] }) {
   return (
     <SidebarMenuItem>
       <Collapsible className="group/collapsible [&[data-state=open]>button>svg:first-child]:rotate-90">
-        <CollapsibleTrigger asChild>
-          <SidebarMenuButton>
+        <SidebarMenuButton
+          isActive={document.id === selectedDocumentId}
+          onClick={() => {
+            setSelectedDocumentId(document.id);
+          }}
+        >
+          <CollapsibleTrigger asChild onClick={(e) => e.stopPropagation()}>
             <ChevronRight className="transition-transform" />
-            <Folder />
-            {name}
-          </SidebarMenuButton>
-        </CollapsibleTrigger>
+          </CollapsibleTrigger>
+          <Files />
+          {document.title}
+        </SidebarMenuButton>
         <CollapsibleContent>
           <SidebarMenuSub>
-            {items.map((subItem, index) => (
-              <Tree key={index} item={subItem} />
+            {data?.document.children.map((subDocument, index) => (
+              <Tree key={index} document={subDocument} />
             ))}
           </SidebarMenuSub>
         </CollapsibleContent>

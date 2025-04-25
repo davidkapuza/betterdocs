@@ -31,3 +31,12 @@ export class DeleteDocumentInput {
   @IsNumber()
   documentId: number;
 }
+
+@InputType()
+export class GetDocumentInput {
+  @IsNumber()
+  collectionId: number;
+
+  @IsNumber()
+  documentId: number;
+}

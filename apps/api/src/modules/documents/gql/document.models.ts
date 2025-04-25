@@ -7,4 +7,7 @@ export class Document {
   title: string;
   content: string;
   author: User;
+  parentId?: number | null;
+  collectionId: number;
+  children: Document[];
 }

@@ -33,6 +33,20 @@ export type CollectionQueryVariables = types.Exact<{
 
 export type CollectionQuery = { __typename?: 'Query', collection: { __typename?: 'Collection', id: number, name: string, description: string, documents: Array<{ __typename?: 'Document', id: number, title: string, content: string, author: { __typename?: 'User', role: types.Role, status: types.UserStatus, id: number, email: string, firstName: string, lastName: string } }> } };
 
+export type CollectionDocumentsQueryVariables = types.Exact<{
+  collectionId: types.Scalars['Int']['input'];
+}>;
+
+
+export type CollectionDocumentsQuery = { __typename?: 'Query', collection: { __typename?: 'Collection', documents: Array<{ __typename?: 'Document', id: number, title: string, collectionId: number, children: Array<{ __typename?: 'Document', id: number, title: string, collectionId: number }> }> } };
+
+export type DocumentTreeQueryVariables = types.Exact<{
+  getDocumentInput: types.GetDocumentInput;
+}>;
+
+
+export type DocumentTreeQuery = { __typename?: 'Query', document: { __typename?: 'Document', id: number, title: string, collectionId: number, children: Array<{ __typename?: 'Document', id: number, title: string, collectionId: number, children: Array<{ __typename?: 'Document', id: number, title: string, collectionId: number, children: Array<{ __typename?: 'Document', id: number, title: string, collectionId: number }> }> }> } };
+
 export type UserQueryVariables = types.Exact<{ [key: string]: never; }>;
 
 
@@ -246,6 +260,112 @@ export type CollectionQueryHookResult = ReturnType<typeof useCollectionQuery>;
 export type CollectionLazyQueryHookResult = ReturnType<typeof useCollectionLazyQuery>;
 export type CollectionSuspenseQueryHookResult = ReturnType<typeof useCollectionSuspenseQuery>;
 export type CollectionQueryResult = Apollo.QueryResult<CollectionQuery, CollectionQueryVariables>;
+export const CollectionDocumentsDocument = gql`
+    query CollectionDocuments($collectionId: Int!) {
+  collection(collectionId: $collectionId) {
+    documents {
+      id
+      title
+      collectionId
+      children {
+        id
+        title
+        collectionId
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useCollectionDocumentsQuery__
+ *
+ * To run a query within a React component, call `useCollectionDocumentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCollectionDocumentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCollectionDocumentsQuery({
+ *   variables: {
+ *      collectionId: // value for 'collectionId'
+ *   },
+ * });
+ */
+export function useCollectionDocumentsQuery(baseOptions: Apollo.QueryHookOptions<CollectionDocumentsQuery, CollectionDocumentsQueryVariables> & ({ variables: CollectionDocumentsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CollectionDocumentsQuery, CollectionDocumentsQueryVariables>(CollectionDocumentsDocument, options);
+      }
+export function useCollectionDocumentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CollectionDocumentsQuery, CollectionDocumentsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CollectionDocumentsQuery, CollectionDocumentsQueryVariables>(CollectionDocumentsDocument, options);
+        }
+export function useCollectionDocumentsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CollectionDocumentsQuery, CollectionDocumentsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<CollectionDocumentsQuery, CollectionDocumentsQueryVariables>(CollectionDocumentsDocument, options);
+        }
+export type CollectionDocumentsQueryHookResult = ReturnType<typeof useCollectionDocumentsQuery>;
+export type CollectionDocumentsLazyQueryHookResult = ReturnType<typeof useCollectionDocumentsLazyQuery>;
+export type CollectionDocumentsSuspenseQueryHookResult = ReturnType<typeof useCollectionDocumentsSuspenseQuery>;
+export type CollectionDocumentsQueryResult = Apollo.QueryResult<CollectionDocumentsQuery, CollectionDocumentsQueryVariables>;
+export const DocumentTreeDocument = gql`
+    query DocumentTree($getDocumentInput: GetDocumentInput!) {
+  document(getDocumentInput: $getDocumentInput) {
+    id
+    title
+    collectionId
+    children {
+      id
+      title
+      collectionId
+      children {
+        id
+        title
+        collectionId
+        children {
+          id
+          title
+          collectionId
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useDocumentTreeQuery__
+ *
+ * To run a query within a React component, call `useDocumentTreeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDocumentTreeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDocumentTreeQuery({
+ *   variables: {
+ *      getDocumentInput: // value for 'getDocumentInput'
+ *   },
+ * });
+ */
+export function useDocumentTreeQuery(baseOptions: Apollo.QueryHookOptions<DocumentTreeQuery, DocumentTreeQueryVariables> & ({ variables: DocumentTreeQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<DocumentTreeQuery, DocumentTreeQueryVariables>(DocumentTreeDocument, options);
+      }
+export function useDocumentTreeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DocumentTreeQuery, DocumentTreeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<DocumentTreeQuery, DocumentTreeQueryVariables>(DocumentTreeDocument, options);
+        }
+export function useDocumentTreeSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<DocumentTreeQuery, DocumentTreeQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<DocumentTreeQuery, DocumentTreeQueryVariables>(DocumentTreeDocument, options);
+        }
+export type DocumentTreeQueryHookResult = ReturnType<typeof useDocumentTreeQuery>;
+export type DocumentTreeLazyQueryHookResult = ReturnType<typeof useDocumentTreeLazyQuery>;
+export type DocumentTreeSuspenseQueryHookResult = ReturnType<typeof useDocumentTreeSuspenseQuery>;
+export type DocumentTreeQueryResult = Apollo.QueryResult<DocumentTreeQuery, DocumentTreeQueryVariables>;
 export const UserDocument = gql`
     query User {
   user {

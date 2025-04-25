@@ -37,6 +37,9 @@ type Document {
   title: String!
   content: String!
   author: User!
+  parentId: Float
+  collectionId: Float!
+  children: [Document!]!
 }
 
 type Collection {
@@ -48,9 +51,14 @@ type Collection {
 
 type Query {
   user: User!
-  document(documentId: Float!): Document!
+  document(getDocumentInput: GetDocumentInput!): Document!
   collections: [Collection!]!
   collection(collectionId: Int!): Collection!
+}
+
+input GetDocumentInput {
+  collectionId: Float!
+  documentId: Float!
 }
 
 type Mutation {

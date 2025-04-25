@@ -12,9 +12,18 @@
   },
   "aliases": {
     "components": "@betterdocs/ui/src",
+    "ui": "@betterdocs/ui/src/components/ui",
     "utils": "@betterdocs/utils",
     "lib": "@betterdocs/ui/src",
     "hooks": "@betterdocs/ui/src"
   },
-  "iconLibrary": "lucide"
+  "iconLibrary": "lucide",
+  "registries": {
+    "plate": {
+      "aliases": {
+        "ui": "@betterdocs/ui/src"
+      },
+      "url": "https://platejs.org/r"
+    }
+  }
 }

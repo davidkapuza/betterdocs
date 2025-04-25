@@ -12,6 +12,7 @@ import {
   DeleteDocumentInput,
   Document,
   UpdateDocumentInput,
+  GetDocumentInput,
 } from './gql';
 import { UseGuards } from '@nestjs/common';
 import { JwtAccessGuard } from '@modules/auth/guards';
@@ -51,12 +52,19 @@ export class DocumentsResolver {
   }
 
   @Query(() => Document, { name: 'document' })
-  async getDocument(@Args('documentId') documentId: number) {
-    return this.documentsService.getDocument(documentId);
+  async getDocument(
+    @Args('getDocumentInput') getDocumentInput: GetDocumentInput
+  ) {
+    return this.documentsService.getDocument(getDocumentInput.documentId);
   }
 
   @ResolveField('author', () => User)
   async getDocuments(@Parent() document: Document) {
     return this.documentsService.getDocumentAuthor(document.id);
+  }
+
+  @ResolveField('children', () => [Document])
+  async getChildren(@Parent() document: Document) {
+    return this.documentsService.getDocumentChildren(document.id);
   }
 }

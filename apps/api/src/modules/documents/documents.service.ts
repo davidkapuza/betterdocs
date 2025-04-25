@@ -12,13 +12,27 @@ export class DocumentsService {
 
   async getCollectionDocuments(collectionId: number) {
     return this.prisma.document.findMany({
-      where: { collectionId },
+      where: { collectionId, parentId: null },
+      include: {
+        children: true,
+      },
+    });
+  }
+
+  async getDocumentChildren(documentId: number) {
+    return this.prisma.document.findMany({
+      where: {
+        parentId: documentId,
+      },
     });
   }
 
   async getDocument(documentId: number) {
     return this.prisma.document.findUnique({
       where: { id: documentId },
+      include: {
+        children: true,
+      },
     });
   }
 

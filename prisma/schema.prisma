@@ -36,6 +36,10 @@ model Document {
   author       User       @relation(fields: [authorId], references: [id])
   collection   Collection @relation(fields: [collectionId], references: [id])
 
+  parentId     Int?
+  parent       Document?  @relation("DocumentLinks", fields: [parentId], references: [id])
+  children     Document[] @relation("DocumentLinks")
+
   @@map("documents")
 }
 
