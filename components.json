@@ -21,7 +21,7 @@
   "registries": {
     "plate": {
       "aliases": {
-        "ui": "@betterdocs/ui/src"
+        "ui": "@betterdocs/ui/src/plate-ui"
       },
       "url": "https://platejs.org/r"
     }

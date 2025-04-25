@@ -15,6 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@betterdocs/plate-ui": ["libs/plate-ui/src"],
+      "@betterdocs/plate-ui/*": ["libs/plate-ui/src/*"],
+      
       "@betterdocs/styles/*": ["libs/ui/src/styles/*"],
       "@betterdocs/ui": ["libs/ui/src/ui"],
       "@betterdocs/ui/*": ["libs/ui/*"],

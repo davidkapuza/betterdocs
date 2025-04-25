@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "moduleResolution": "bundler",
     "outDir": "../../dist/out-tsc",
     "types": [
       "node",
@@ -30,7 +31,9 @@
       "@betterdocs/ui/*": ["libs/ui/src/ui/*"],
       "@betterdocs/styles/*": ["libs/ui/src/styles/*"],
 
-      "@betterdocs/utils": ["libs/utils/src/index.ts"]
+      "@betterdocs/utils": ["libs/utils/src/index.ts"],
+
+      "@betterdocs/plate-ui/*": ["libs/plate-ui/src/ui/*"],
     }
   },
   "exclude": [
@@ -47,5 +50,5 @@
     "vitest.config.ts",
     "vitest.config.mts"
   ],
-  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"]
+  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx", "../../libs/plate-ui/src/transforms.ts"]
 }

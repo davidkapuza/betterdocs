@@ -16,6 +16,7 @@ import {
   SidebarTrigger,
 } from '@betterdocs/ui/sidebar';
 import { DocumentsSidebar } from '@/widgets/documents-sidebar';
+import { DocumentEditor } from '@/widgets/document-editor';
 
 export function CollectionsPage() {
   const { data } = useCollectionsSuspenseQuery();
@@ -47,7 +48,7 @@ export function CollectionPage() {
   return (
     <SidebarProvider>
       <DocumentsSidebar />
-      <SidebarInset>
+      <SidebarInset className="min-w-0">
         <header className="flex items-center h-16 gap-2 px-4 border-b shrink-0">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="h-4 mr-2" />
@@ -67,14 +68,7 @@ export function CollectionPage() {
             </BreadcrumbList>
           </Breadcrumb>
         </header>
-        <div className="flex flex-col flex-1 gap-4 p-4">
-          <div className="grid gap-4 auto-rows-min md:grid-cols-3">
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-          </div>
-          <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
-        </div>
+        <DocumentEditor />
       </SidebarInset>
     </SidebarProvider>
   );
