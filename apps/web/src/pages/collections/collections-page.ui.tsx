@@ -1,22 +1,15 @@
 import { useCollectionsSuspenseQuery } from '@/shared/gql/__generated__/operations';
 import { Navbar } from '@/widgets/navbar';
 import { NavLink } from 'react-router';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@betterdocs/ui/breadcrumb';
-import { Separator } from '@betterdocs/ui/separator';
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from '@betterdocs/ui/sidebar';
+import { SidebarInset, SidebarProvider } from '@betterdocs/ui/sidebar';
 import { DocumentsSidebar } from '@/widgets/documents-sidebar';
 import { DocumentEditor } from '@/widgets/document-editor';
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from '@betterdocs/ui/resizable';
+import { DocumentPrompt } from '@/widgets/document-prompt';
 
 export function CollectionsPage() {
   const { data } = useCollectionsSuspenseQuery();
@@ -47,28 +40,19 @@ export function CollectionsPage() {
 export function CollectionPage() {
   return (
     <SidebarProvider>
-      <DocumentsSidebar />
+      <DocumentsSidebar collapsible="icon" />
       <SidebarInset className="min-w-0">
-        <header className="flex items-center h-16 gap-2 px-4 border-b shrink-0">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="h-4 mr-2" />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">components</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">ui</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>button.tsx</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </header>
-        <DocumentEditor />
+        <div className="w-full h-screen" data-registry="plate">
+          <ResizablePanelGroup direction="horizontal">
+            <ResizablePanel>
+              <DocumentEditor />
+            </ResizablePanel>
+            <ResizableHandle withHandle />
+            <ResizablePanel>
+              <DocumentPrompt />
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );

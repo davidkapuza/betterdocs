@@ -28,6 +28,7 @@
     "@udecode/plate-markdown": "^47.2.2",
     "@udecode/plate-selection": "^47.0.8",
     "ai": "^4.3.10",
-    "lowlight": "^3.3.0"
+    "lowlight": "^3.3.0",
+    "react-resizable-panels": "^2.1.8"
   }
 }

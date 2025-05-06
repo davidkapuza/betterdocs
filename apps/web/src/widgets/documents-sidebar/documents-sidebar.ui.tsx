@@ -17,6 +17,7 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarRail,
+  SidebarTrigger,
 } from '@betterdocs/ui/sidebar';
 import { useParams } from 'react-router';
 import { routerTypes } from '@/shared/lib/react-router';
@@ -41,8 +42,9 @@ export function DocumentsSidebar({
     <Sidebar {...props}>
       <SidebarContent>
         <SidebarGroup>
+          <SidebarTrigger className="z-10" />
           <SidebarGroupLabel>Documents</SidebarGroupLabel>
-          <SidebarGroupContent>
+          <SidebarGroupContent className="group-data-[collapsible=icon]:opacity-0">
             <SidebarMenu>
               {data?.collection.documents.map((document, index) => (
                 <Tree key={index} document={document} />

@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
@@ -32,7 +31,7 @@ export const DocumentEditor = enhance(() => {
     <DndProvider backend={HTML5Backend}>
       <Plate editor={editor}>
         <EditorContainer>
-          <Editor variant="demo" />
+          <Editor />
         </EditorContainer>
       </Plate>
     </DndProvider>
