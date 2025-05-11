@@ -11,11 +11,26 @@ import {
   Observable,
   createHttpLink,
   from,
+  split,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { GraphQLError } from 'graphql';
 import { pathKeys } from '../react-router';
+import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
+import { createClient } from 'graphql-ws';
+import { getMainDefinition } from '@apollo/client/utilities';
+
+const wsLink = new GraphQLWsLink(
+  createClient({
+    url: 'ws://localhost:3000/subscriptions',
+    connectionParams: {
+      Authorization: `Bearer ${
+        useSessionStore.getState().session?.accessToken
+      }`,
+    },
+  })
+);
 
 const httpLink = createHttpLink({
   uri: 'http://localhost:3000/graphql',
@@ -103,13 +118,25 @@ const refreshToken = async () => {
     return tokens?.accessToken;
   } catch (err) {
     useSessionStore.getState().clearSession();
-    window.location.href = pathKeys.auth.signIn()
+    window.location.href = pathKeys.auth.signIn();
     throw err;
   }
 };
 
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === 'OperationDefinition' &&
+      definition.operation === 'subscription'
+    );
+  },
+  wsLink,
+  httpLink
+);
+
 export const client = new ApolloClient({
-  link: from([errorLink, authLink, httpLink]),
+  link: from([errorLink, authLink, splitLink]),
   cache: new InMemoryCache({
     addTypename: false,
   }),

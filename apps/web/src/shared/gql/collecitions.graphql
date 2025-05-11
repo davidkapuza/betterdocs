@@ -69,3 +69,7 @@ query DocumentTree($getDocumentInput: GetDocumentInput!) {
     }
   }
 }
+
+subscription QueryCollection($queryCollectionInput: QueryCollectionInput!) {
+  queryCollection(queryCollectionInput: $queryCollectionInput)
+}

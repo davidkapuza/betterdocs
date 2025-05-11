@@ -47,6 +47,13 @@ export type DocumentTreeQueryVariables = types.Exact<{
 
 export type DocumentTreeQuery = { __typename?: 'Query', document: { __typename?: 'Document', id: number, title: string, collectionId: number, children: Array<{ __typename?: 'Document', id: number, title: string, collectionId: number, children: Array<{ __typename?: 'Document', id: number, title: string, collectionId: number, children: Array<{ __typename?: 'Document', id: number, title: string, collectionId: number }> }> }> } };
 
+export type QueryCollectionSubscriptionVariables = types.Exact<{
+  queryCollectionInput: types.QueryCollectionInput;
+}>;
+
+
+export type QueryCollectionSubscription = { __typename?: 'Subscription', queryCollection: string };
+
 export type UserQueryVariables = types.Exact<{ [key: string]: never; }>;
 
 
@@ -366,6 +373,34 @@ export type DocumentTreeQueryHookResult = ReturnType<typeof useDocumentTreeQuery
 export type DocumentTreeLazyQueryHookResult = ReturnType<typeof useDocumentTreeLazyQuery>;
 export type DocumentTreeSuspenseQueryHookResult = ReturnType<typeof useDocumentTreeSuspenseQuery>;
 export type DocumentTreeQueryResult = Apollo.QueryResult<DocumentTreeQuery, DocumentTreeQueryVariables>;
+export const QueryCollectionDocument = gql`
+    subscription QueryCollection($queryCollectionInput: QueryCollectionInput!) {
+  queryCollection(queryCollectionInput: $queryCollectionInput)
+}
+    `;
+
+/**
+ * __useQueryCollectionSubscription__
+ *
+ * To run a query within a React component, call `useQueryCollectionSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useQueryCollectionSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useQueryCollectionSubscription({
+ *   variables: {
+ *      queryCollectionInput: // value for 'queryCollectionInput'
+ *   },
+ * });
+ */
+export function useQueryCollectionSubscription(baseOptions: Apollo.SubscriptionHookOptions<QueryCollectionSubscription, QueryCollectionSubscriptionVariables> & ({ variables: QueryCollectionSubscriptionVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<QueryCollectionSubscription, QueryCollectionSubscriptionVariables>(QueryCollectionDocument, options);
+      }
+export type QueryCollectionSubscriptionHookResult = ReturnType<typeof useQueryCollectionSubscription>;
+export type QueryCollectionSubscriptionResult = Apollo.SubscriptionResult<QueryCollectionSubscription>;
 export const UserDocument = gql`
     query User {
   user {

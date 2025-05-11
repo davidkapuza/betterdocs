@@ -5,6 +5,7 @@ import { BrowserRouter } from './router-provider';
 import { ApolloProvider } from './apollo-provider';
 import { Toaster } from '@betterdocs/ui/sonner';
 import { ThemeProvider } from '@betterdocs/ui/theme-provider';
+import { AssistantRuntimeProvider } from './assistant-runtime-provider';
 
 const enhance = compose((component) =>
   withErrorBoundary(component, {
@@ -14,9 +15,11 @@ const enhance = compose((component) =>
 
 export const Providers = enhance(() => (
   <ApolloProvider>
-    <ThemeProvider>
-      <Toaster />
-      <BrowserRouter />
-    </ThemeProvider>
+    <AssistantRuntimeProvider>
+      <ThemeProvider>
+        <Toaster />
+        <BrowserRouter />
+      </ThemeProvider>
+    </AssistantRuntimeProvider>
   </ApolloProvider>
 ));

@@ -43,6 +43,7 @@ import { JwtPayload } from '@shared/types';
           autoTransformHttpErrors: true,
           subscriptions: {
             'graphql-ws': {
+              path: '/subscriptions',
               onConnect: async (
                 context: Context<Record<string, string>, { user: JwtPayload }>
               ) => graphQLService.handleSubscriptionConnection(context),
