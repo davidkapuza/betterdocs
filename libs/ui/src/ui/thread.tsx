@@ -74,7 +74,7 @@ const ThreadWelcome: FC = () => {
       <div className="flex w-full max-w-[var(--thread-max-width)] flex-grow flex-col">
         <div className="flex flex-col items-center justify-center flex-grow w-full">
           <h1 className="pb-1 text-3xl font-medium tracking-tight text-transparent bg-clip-text bg-gradient-to-r dark:from-white/90 dark:to-white/40 from-slate-900/90 to-slate-900/60">
-            How can I help today?
+            Search in your documents
           </h1>
         </div>
       </div>

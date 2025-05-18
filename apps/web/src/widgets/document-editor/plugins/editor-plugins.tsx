@@ -98,6 +98,6 @@ export const editorPlugins = [
   JuicePlugin,
 
   // UI
-  FixedToolbarPlugin,
+  // FixedToolbarPlugin, // TODO
   FloatingToolbarPlugin,
 ];

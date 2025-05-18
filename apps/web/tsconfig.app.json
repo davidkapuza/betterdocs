@@ -34,6 +34,7 @@
       "@betterdocs/utils": ["libs/utils/src/index.ts"],
 
       "@betterdocs/plate-ui/*": ["libs/plate-ui/src/ui/*"],
+      "@betterdocs/plate-hooks/*": ["libs/plate-ui/src/hooks/*"],
     }
   },
   "exclude": [

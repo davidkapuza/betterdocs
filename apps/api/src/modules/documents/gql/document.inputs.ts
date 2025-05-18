@@ -1,5 +1,5 @@
 import { InputType } from '@nestjs/graphql';
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class CreateDocumentInput {
@@ -20,7 +20,12 @@ export class UpdateDocumentInput {
   documentId: number;
 
   @IsString()
-  content: string;
+  @IsOptional()
+  title?: string;
+
+  @IsString()
+  @IsOptional()
+  content?: string;
 }
 
 @InputType()

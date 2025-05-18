@@ -1,0 +1,34 @@
+query GetDocument($getDocumentInput: GetDocumentInput!) {
+  document(getDocumentInput: $getDocumentInput) {
+    id
+    title
+    content
+    author {
+      role
+      status
+      id
+      email
+      firstName
+      lastName
+    }
+    collectionId
+  }
+}
+
+mutation UpdateDocument($updateDocumentInput: UpdateDocumentInput!) {
+  updateDocument(updateDocumentInput: $updateDocumentInput) {
+    id
+    title
+    content
+    author {
+      role
+      status
+      id
+      email
+      firstName
+      lastName
+    }
+    parentId
+    collectionId
+  }
+}

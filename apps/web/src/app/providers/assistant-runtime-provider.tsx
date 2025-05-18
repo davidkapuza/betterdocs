@@ -18,8 +18,9 @@ type AssistantRuntimeProviderProps = {
 const MyModelAdapter: ChatModelAdapter = {
   async *run({ messages, abortSignal, context }) {
     let queryMessage;
-    if (messages[0].content[0].type === 'text') {
-      queryMessage = messages[0].content[0].text;
+    const userMessage = messages.at(-1);
+    if (userMessage && userMessage.content[0].type === 'text') {
+      queryMessage = userMessage.content[0].text;
     }
 
     const observable = client.subscribe<

@@ -10,6 +10,7 @@ import {
   ResizablePanelGroup,
 } from '@betterdocs/ui/resizable';
 import { DocumentPrompt } from '@/widgets/document-prompt';
+import { documentModel } from '@/entities/document';
 
 export function CollectionsPage() {
   const { data } = useCollectionsSuspenseQuery();
@@ -38,17 +39,24 @@ export function CollectionsPage() {
 }
 
 export function CollectionPage() {
+  const selectedDocumentId =
+    documentModel.useDocumentStore.use.selectedDocumentId();
+
   return (
     <SidebarProvider>
       <DocumentsSidebar collapsible="icon" />
       <SidebarInset className="min-w-0">
         <div className="w-full h-screen" data-registry="plate">
           <ResizablePanelGroup direction="horizontal">
-            <ResizablePanel>
-              <DocumentEditor />
+            <ResizablePanel minSize={30}>
+              {selectedDocumentId === null ? (
+                'Select document'
+              ) : (
+                <DocumentEditor />
+              )}
             </ResizablePanel>
             <ResizableHandle withHandle />
-            <ResizablePanel>
+            <ResizablePanel minSize={30}>
               <DocumentPrompt />
             </ResizablePanel>
           </ResizablePanelGroup>

@@ -54,6 +54,20 @@ export type QueryCollectionSubscriptionVariables = types.Exact<{
 
 export type QueryCollectionSubscription = { __typename?: 'Subscription', queryCollection: string };
 
+export type GetDocumentQueryVariables = types.Exact<{
+  getDocumentInput: types.GetDocumentInput;
+}>;
+
+
+export type GetDocumentQuery = { __typename?: 'Query', document: { __typename?: 'Document', id: number, title: string, content: string, collectionId: number, author: { __typename?: 'User', role: types.Role, status: types.UserStatus, id: number, email: string, firstName: string, lastName: string } } };
+
+export type UpdateDocumentMutationVariables = types.Exact<{
+  updateDocumentInput: types.UpdateDocumentInput;
+}>;
+
+
+export type UpdateDocumentMutation = { __typename?: 'Mutation', updateDocument: { __typename?: 'Document', id: number, title: string, content: string, parentId?: number | null, collectionId: number, author: { __typename?: 'User', role: types.Role, status: types.UserStatus, id: number, email: string, firstName: string, lastName: string } } };
+
 export type UserQueryVariables = types.Exact<{ [key: string]: never; }>;
 
 
@@ -401,6 +415,102 @@ export function useQueryCollectionSubscription(baseOptions: Apollo.SubscriptionH
       }
 export type QueryCollectionSubscriptionHookResult = ReturnType<typeof useQueryCollectionSubscription>;
 export type QueryCollectionSubscriptionResult = Apollo.SubscriptionResult<QueryCollectionSubscription>;
+export const GetDocumentDocument = gql`
+    query GetDocument($getDocumentInput: GetDocumentInput!) {
+  document(getDocumentInput: $getDocumentInput) {
+    id
+    title
+    content
+    author {
+      role
+      status
+      id
+      email
+      firstName
+      lastName
+    }
+    collectionId
+  }
+}
+    `;
+
+/**
+ * __useGetDocumentQuery__
+ *
+ * To run a query within a React component, call `useGetDocumentQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDocumentQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDocumentQuery({
+ *   variables: {
+ *      getDocumentInput: // value for 'getDocumentInput'
+ *   },
+ * });
+ */
+export function useGetDocumentQuery(baseOptions: Apollo.QueryHookOptions<GetDocumentQuery, GetDocumentQueryVariables> & ({ variables: GetDocumentQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDocumentQuery, GetDocumentQueryVariables>(GetDocumentDocument, options);
+      }
+export function useGetDocumentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDocumentQuery, GetDocumentQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDocumentQuery, GetDocumentQueryVariables>(GetDocumentDocument, options);
+        }
+export function useGetDocumentSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetDocumentQuery, GetDocumentQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetDocumentQuery, GetDocumentQueryVariables>(GetDocumentDocument, options);
+        }
+export type GetDocumentQueryHookResult = ReturnType<typeof useGetDocumentQuery>;
+export type GetDocumentLazyQueryHookResult = ReturnType<typeof useGetDocumentLazyQuery>;
+export type GetDocumentSuspenseQueryHookResult = ReturnType<typeof useGetDocumentSuspenseQuery>;
+export type GetDocumentQueryResult = Apollo.QueryResult<GetDocumentQuery, GetDocumentQueryVariables>;
+export const UpdateDocumentDocument = gql`
+    mutation UpdateDocument($updateDocumentInput: UpdateDocumentInput!) {
+  updateDocument(updateDocumentInput: $updateDocumentInput) {
+    id
+    title
+    content
+    author {
+      role
+      status
+      id
+      email
+      firstName
+      lastName
+    }
+    parentId
+    collectionId
+  }
+}
+    `;
+export type UpdateDocumentMutationFn = Apollo.MutationFunction<UpdateDocumentMutation, UpdateDocumentMutationVariables>;
+
+/**
+ * __useUpdateDocumentMutation__
+ *
+ * To run a mutation, you first call `useUpdateDocumentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateDocumentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateDocumentMutation, { data, loading, error }] = useUpdateDocumentMutation({
+ *   variables: {
+ *      updateDocumentInput: // value for 'updateDocumentInput'
+ *   },
+ * });
+ */
+export function useUpdateDocumentMutation(baseOptions?: Apollo.MutationHookOptions<UpdateDocumentMutation, UpdateDocumentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateDocumentMutation, UpdateDocumentMutationVariables>(UpdateDocumentDocument, options);
+      }
+export type UpdateDocumentMutationHookResult = ReturnType<typeof useUpdateDocumentMutation>;
+export type UpdateDocumentMutationResult = Apollo.MutationResult<UpdateDocumentMutation>;
+export type UpdateDocumentMutationOptions = Apollo.BaseMutationOptions<UpdateDocumentMutation, UpdateDocumentMutationVariables>;
 export const UserDocument = gql`
     query User {
   user {

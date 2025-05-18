@@ -50,9 +50,9 @@ import {
   usePlateEditor,
 } from '@udecode/plate/react';
 
-import { editorPlugins } from './plugins/editor-plugins';
-import { FixedToolbarPlugin } from './plugins/fixed-toolbar-plugin';
-import { FloatingToolbarPlugin } from './plugins/floating-toolbar-plugin';
+import { editorPlugins } from '../plugins/editor-plugins';
+import { FixedToolbarPlugin } from '../plugins/fixed-toolbar-plugin';
+import { FloatingToolbarPlugin } from '../plugins/floating-toolbar-plugin';
 import { BlockquoteElement } from '@betterdocs/plate-ui/blockquote-element';
 import { CodeBlockElement } from '@betterdocs/plate-ui/code-block-element';
 import { CodeLeaf } from '@betterdocs/plate-ui/code-leaf';
@@ -149,22 +149,9 @@ export const useCreateEditor = (
         },
         ...override,
       },
-      plugins: [...editorPlugins, FixedToolbarPlugin, FloatingToolbarPlugin],
-      value: [
-        {
-          children: [{ text: 'Playground' }],
-          type: 'h1',
-        },
-        {
-          children: [
-            { text: 'A rich-text editor with AI capabilities. Try the ' },
-            { bold: true, text: 'AI commands' },
-            { text: ' or use ' },
-            { kbd: true, text: 'Cmd+J' },
-            { text: ' to open the AI menu.' },
-          ],
-          type: ParagraphPlugin.key,
-        },
+      plugins: [
+        ...editorPlugins,
+        /* FixedToolbarPlugin, */ FloatingToolbarPlugin,
       ],
       ...options,
     },

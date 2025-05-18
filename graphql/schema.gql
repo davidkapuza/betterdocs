@@ -103,7 +103,8 @@ input CreateDocumentInput {
 input UpdateDocumentInput {
   collectionId: Float!
   documentId: Float!
-  content: String!
+  title: String
+  content: String
 }
 
 input DeleteDocumentInput {

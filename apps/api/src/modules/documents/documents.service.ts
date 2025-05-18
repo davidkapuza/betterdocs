@@ -53,6 +53,7 @@ export class DocumentsService {
       data: {
         authorId: userId,
         content: updateDocumentInput.content,
+        title: updateDocumentInput.title,
       },
     });
   }

@@ -50,6 +50,7 @@ export default defineConfig(() => ({
       '@/widgets': path.resolve('src/widgets'),
       '@betterdocs/ui': path.resolve('../../libs/ui/src/ui'),
       '@betterdocs/plate-ui': path.resolve('../../libs/plate-ui/src/ui'),
+      '@betterdocs/plate-hooks': path.resolve('../../libs/plate-ui/src/hooks'),
       '@betterdocs/styles': path.resolve('../../libs/ui/src/styles'),
     },
   },
