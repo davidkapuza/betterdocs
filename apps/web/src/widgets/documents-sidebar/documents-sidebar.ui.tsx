@@ -19,18 +19,17 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from '@betterdocs/ui/sidebar';
-import { useParams } from 'react-router';
-import { routerTypes } from '@/shared/lib/react-router';
+import { useMatch, useNavigate, useParams } from 'react-router';
+import { pathKeys, routerTypes } from '@/shared/lib/react-router';
 import {
   useCollectionDocumentsSuspenseQuery,
   useDocumentTreeQuery,
 } from '@/shared/gql/__generated__/operations';
-import { documentModel } from '@/entities/document';
 
 export function DocumentsSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  const params = useParams() as routerTypes.CollectionPageParams;
+  const params = useParams() as routerTypes.DocumentPageParams;
 
   const { data } = useCollectionDocumentsSuspenseQuery({
     variables: {
@@ -70,11 +69,22 @@ type TreeProps = {
 function Tree(props: TreeProps) {
   const { document } = props;
 
-  const selectedDocumentId =
-    documentModel.useDocumentStore.use.selectedDocumentId();
+  // const params = useParams() as routerTypes.DocumentPageParams;
 
-  const setSelectedDocumentId =
-    documentModel.useDocumentStore.use.setSelectedDocumentId();
+  const navigate = useNavigate();
+
+  const match = useMatch(
+    pathKeys.documents.document({
+      collectionId: document.collectionId.toString(),
+      documentId: document.id.toString(),
+    })
+  );
+
+  // const selectedDocumentId =
+  //   documentModel.useDocumentStore.use.selectedDocumentId();
+
+  // const setSelectedDocumentId =
+  //   documentModel.useDocumentStore.use.setSelectedDocumentId();
 
   const { data, loading } = useDocumentTreeQuery({
     variables: {
@@ -91,10 +101,15 @@ function Tree(props: TreeProps) {
   if (!document.children || !document.children.length) {
     return (
       <SidebarMenuButton
-        isActive={document.id === selectedDocumentId}
+        isActive={Boolean(match)}
         className="data-[active=true]:bg-transparent"
         onClick={() => {
-          setSelectedDocumentId(document.id);
+          navigate(
+            pathKeys.documents.document({
+              collectionId: document.collectionId.toString(),
+              documentId: document.id.toString(),
+            })
+          );
         }}
       >
         <File />
@@ -107,9 +122,14 @@ function Tree(props: TreeProps) {
     <SidebarMenuItem>
       <Collapsible className="group/collapsible [&[data-state=open]>button>svg:first-child]:rotate-90">
         <SidebarMenuButton
-          isActive={document.id === selectedDocumentId}
+          isActive={Boolean(match)}
           onClick={() => {
-            setSelectedDocumentId(document.id);
+            navigate(
+              pathKeys.documents.document({
+                collectionId: document.collectionId.toString(),
+                documentId: document.id.toString(),
+              })
+            );
           }}
         >
           <CollapsibleTrigger asChild onClick={(e) => e.stopPropagation()}>

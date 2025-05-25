@@ -10,7 +10,7 @@ import {
   ResizablePanelGroup,
 } from '@betterdocs/ui/resizable';
 import { DocumentPrompt } from '@/widgets/document-prompt';
-import { documentModel } from '@/entities/document';
+import { pathKeys } from '@/shared/lib/react-router';
 
 export function CollectionsPage() {
   const { data } = useCollectionsSuspenseQuery();
@@ -22,7 +22,10 @@ export function CollectionsPage() {
         {data?.collections.map((collection) => (
           <NavLink
             key={collection.id}
-            to={collection.id.toString()}
+            to={pathKeys.documents.document({
+              collectionId: collection.id.toString(),
+              documentId: collection.documents[0].id.toString(),
+            })}
             className="block w-full p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
           >
             <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -38,10 +41,7 @@ export function CollectionsPage() {
   );
 }
 
-export function CollectionPage() {
-  const selectedDocumentId =
-    documentModel.useDocumentStore.use.selectedDocumentId();
-
+export function DocumentPage() {
   return (
     <SidebarProvider>
       <DocumentsSidebar collapsible="icon" />
@@ -49,11 +49,7 @@ export function CollectionPage() {
         <div className="w-full h-screen" data-registry="plate">
           <ResizablePanelGroup direction="horizontal">
             <ResizablePanel minSize={30}>
-              {selectedDocumentId === null ? (
-                'Select document'
-              ) : (
-                <DocumentEditor />
-              )}
+              <DocumentEditor />
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel minSize={30}>

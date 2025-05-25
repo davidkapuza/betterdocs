@@ -10,7 +10,6 @@ import { compose, withSuspense } from '@/shared/lib/react';
 import { ErrorHandler } from '@/shared/ui/error-handler';
 import { withErrorBoundary } from 'react-error-boundary';
 import { DocumentEditorSkeleton } from './document-editor.skeleton';
-import { documentModel } from '@/entities/document';
 import {
   useGetDocumentSuspenseQuery,
   useUpdateDocumentMutation,
@@ -32,23 +31,18 @@ export const DocumentEditor = enhance(() => {
   const editor = useCreateEditor({
     skipInitialization: true,
   });
-  const params = useParams() as routerTypes.CollectionPageParams;
-
-  const selectedDocumentId =
-    documentModel.useDocumentStore.use.selectedDocumentId();
+  const params = useParams() as routerTypes.DocumentPageParams;
 
   const { data } = useGetDocumentSuspenseQuery({
     variables: {
       getDocumentInput: {
         collectionId: Number(params.collectionId),
-        documentId: selectedDocumentId,
+        documentId: Number(params.documentId),
       },
     },
   });
 
-  // editor.tf.init doesnt set data on first render for some reason, therefore
-  // initialValue is being set using intermidiate state
-  const [initialValue, setInitialValue] = React.useState<Value>();
+  const [title, setTitle] = React.useState('');
 
   React.useEffect(() => {
     if (data) {
@@ -58,28 +52,24 @@ export const DocumentEditor = enhance(() => {
       } catch (e) {
         console.error('Error parsing document content:', e);
       }
-      setInitialValue(content);
-    }
-  }, [data]);
-
-  React.useEffect(() => {
-    if (initialValue) {
       editor.tf.init({
-        value: initialValue,
+        value: content,
         autoSelect: 'end',
+        shouldNormalizeEditor: true,
       });
+      setTitle(data.document.title); // <-- update title state when data changes
     }
-  }, [initialValue, editor]);
+  }, [data, editor]);
 
   const [updateDocument] = useUpdateDocumentMutation();
 
-  const onDcoumentChange = useDebouncedCallback(
+  const onDocumentChange = useDebouncedCallback(
     ({ value, title }: Partial<{ value: Value; title: string }>) => {
       updateDocument({
         variables: {
           updateDocumentInput: {
             collectionId: Number(params.collectionId),
-            documentId: selectedDocumentId,
+            documentId: Number(params.documentId),
             content: JSON.stringify(value),
             title,
           },
@@ -89,17 +79,22 @@ export const DocumentEditor = enhance(() => {
     500
   );
 
+  const handleTitleChange = (newTitle: string) => {
+    setTitle(newTitle);
+    onDocumentChange({ title: newTitle });
+  };
+
   const titleRef = React.useRef<HTMLTextAreaElement>(null);
 
   if (!data) return null;
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <Plate editor={editor} onChange={onDcoumentChange}>
+      <Plate editor={editor} onValueChange={onDocumentChange}>
         <EditorContainer>
           <EditorHeader
-            initialTitle={data.document.title}
-            onChange={(title) => onDcoumentChange({ title })}
+            value={title}
+            onChange={handleTitleChange}
             titleRef={titleRef}
             isReadOnly={false}
           />

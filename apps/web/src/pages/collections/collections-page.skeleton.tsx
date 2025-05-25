@@ -1,3 +1,6 @@
+import { PageLoader } from '@/shared/ui/page-loader';
+
 export function CollectionsPageSkeleton() {
-  return <div>Loading...</div>;
+  // TODO
+  return <PageLoader />;
 }

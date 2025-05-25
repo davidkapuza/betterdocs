@@ -12,7 +12,7 @@ import {
 } from '@nestjs/graphql';
 import { JwtPayload } from '@shared/types';
 import { CollectionsService } from './collections.service';
-import { Collection, QueryCollectionInput } from './gql';
+import { Collection, QueryCollectionInput, QueryResponse } from './gql';
 import { DocumentsService } from '@modules/documents/documents.service';
 import { Document } from '@modules/documents/gql';
 import { CollectionMembershipGuard } from './guards';
@@ -49,9 +49,7 @@ export class CollectionsResolver {
   }
 
   @UseGuards(CollectionMembershipGuard)
-  @Subscription(() => String, {
-    resolve: (payload) => payload.token,
-  })
+  @Subscription(() => QueryResponse)
   async queryCollection(
     @ReqUser() jwtPayload: JwtPayload,
     @Args('queryCollectionInput') queryCollectionInput: QueryCollectionInput
@@ -61,6 +59,30 @@ export class CollectionsResolver {
       userId: jwtPayload.userId,
     });
 
-    return this.pubSub.asyncIterableIterator(`query.${jwtPayload.userId}`);
+    const asyncIterator = this.pubSub.asyncIterableIterator(
+      `query.${jwtPayload.userId}`
+    );
+
+    return {
+      async next() {
+        return asyncIterator.next();
+      },
+      async return() {
+        // TODO this.collectionsService.cancelQueryForUser(jwtPayload.userId)
+        if (typeof asyncIterator.return === 'function') {
+          await asyncIterator.return();
+        }
+        return { token: '', completed: true };
+      },
+      async throw(error) {
+        if (typeof asyncIterator.throw === 'function') {
+          return asyncIterator.throw(error);
+        }
+        throw error;
+      },
+      [Symbol.asyncIterator]() {
+        return this;
+      },
+    };
   }
 }

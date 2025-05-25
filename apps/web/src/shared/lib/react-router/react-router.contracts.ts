@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
-export const CollectionPageParamsSchema = z.object({
+export const DocumentPageParamsSchema = z.object({
   collectionId: z.string(),
+  documentId: z.string(),
 });

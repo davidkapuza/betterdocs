@@ -13,7 +13,10 @@ export class CollectionsController {
     completed: boolean;
   }) {
     this.pubSub.publish(`query.${data.userId}`, {
-      token: data.token,
+      queryCollection: {
+        token: data.token,
+        completed: data.completed,
+      },
     });
   }
 }

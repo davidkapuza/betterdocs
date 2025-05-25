@@ -49,6 +49,11 @@ type Collection {
   documents: [Document!]!
 }
 
+type QueryResponse {
+  token: String!
+  completed: Boolean!
+}
+
 type Query {
   user: User!
   document(getDocumentInput: GetDocumentInput!): Document!
@@ -113,7 +118,7 @@ input DeleteDocumentInput {
 }
 
 type Subscription {
-  queryCollection(queryCollectionInput: QueryCollectionInput!): String!
+  queryCollection(queryCollectionInput: QueryCollectionInput!): QueryResponse!
 }
 
 input QueryCollectionInput {

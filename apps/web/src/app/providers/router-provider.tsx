@@ -1,6 +1,7 @@
 import {
   createBrowserRouter,
   LoaderFunctionArgs,
+  redirect,
   RouterProvider,
   useRouteError,
 } from 'react-router';
@@ -9,6 +10,9 @@ import { signUpPageRoute } from '@/pages/sign-up';
 import React from 'react';
 import { collectionsPageRoute } from '@/pages/collections';
 import { compose, withSuspense } from '@/shared/lib/react';
+import { pathKeys } from '@/shared/lib/react-router';
+import { page404Route } from '@/pages/page-404';
+import { PageLoader } from '@/shared/ui/page-loader';
 
 // https://github.com/remix-run/react-router/discussions/10166
 function BubbleError() {
@@ -40,14 +44,18 @@ const browserRouter = createBrowserRouter([
     children: [
       {
         loader: layoutLoader,
-        // TODO Create skeleton
-        HydrateFallback: () => <div>Loading...</div>,
+        HydrateFallback: PageLoader,
         children: [collectionsPageRoute],
       },
       {
         element: React.createElement(enhance(AuthLayout)),
         children: [signInPageRoute, signUpPageRoute],
       },
+      {
+        path: '*',
+        loader: () => redirect(pathKeys.page404()),
+      },
+      page404Route,
     ],
   },
 ]);

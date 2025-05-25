@@ -52,7 +52,7 @@ export type QueryCollectionSubscriptionVariables = types.Exact<{
 }>;
 
 
-export type QueryCollectionSubscription = { __typename?: 'Subscription', queryCollection: string };
+export type QueryCollectionSubscription = { __typename?: 'Subscription', queryCollection: { __typename?: 'QueryResponse', token: string, completed: boolean } };
 
 export type GetDocumentQueryVariables = types.Exact<{
   getDocumentInput: types.GetDocumentInput;
@@ -389,7 +389,10 @@ export type DocumentTreeSuspenseQueryHookResult = ReturnType<typeof useDocumentT
 export type DocumentTreeQueryResult = Apollo.QueryResult<DocumentTreeQuery, DocumentTreeQueryVariables>;
 export const QueryCollectionDocument = gql`
     subscription QueryCollection($queryCollectionInput: QueryCollectionInput!) {
-  queryCollection(queryCollectionInput: $queryCollectionInput)
+  queryCollection(queryCollectionInput: $queryCollectionInput) {
+    token
+    completed
+  }
 }
     `;
 

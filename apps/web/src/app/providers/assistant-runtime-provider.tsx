@@ -54,8 +54,13 @@ const MyModelAdapter: ChatModelAdapter = {
         const content = result.data?.queryCollection;
 
         if (content) {
-          contentQueue.push(content);
-          resolveNext(content);
+          contentQueue.push(content.token);
+          resolveNext(content.token);
+
+          if (content?.completed) {
+            isDone = true;
+            resolveNext(undefined);
+          }
         }
       },
       error: (_error: unknown) => {

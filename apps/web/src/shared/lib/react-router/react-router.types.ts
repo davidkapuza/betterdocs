@@ -1,4 +1,4 @@
-import { z } from "zod";
-import { CollectionPageParamsSchema } from "./react-router.contracts";
+import { z } from 'zod';
+import { DocumentPageParamsSchema } from './react-router.contracts';
 
-export type CollectionPageParams = z.infer<typeof CollectionPageParamsSchema>;
+export type DocumentPageParams = z.infer<typeof DocumentPageParamsSchema>;

@@ -8,3 +8,9 @@ export class Collection {
   description: string;
   documents: Document[];
 }
+
+@ObjectType()
+export class QueryResponse {
+  token: string;
+  completed: boolean;
+}

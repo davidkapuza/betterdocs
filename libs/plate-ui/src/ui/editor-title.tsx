@@ -8,7 +8,6 @@ import {
 import { TextareaAutosize } from './textarea-autosize';
 
 export interface EditorTitleProps {
-  initialTitle: string;
   textareaProps?: Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'style'>;
   onChange: (title: string) => void;
   onEnter?: () => void;
@@ -16,7 +15,6 @@ export interface EditorTitleProps {
 }
 
 export const EditorTitle = ({
-  initialTitle,
   textareaProps = {},
   onChange,
   onEnter,
@@ -36,7 +34,6 @@ export const EditorTitle = ({
         style={{
           lineHeight: '1.2em',
         }}
-        defaultValue={initialTitle}
         placeholder="Untitled"
         aria-label="Document title"
         onChange={(event: ChangeEvent<HTMLTextAreaElement>) => {
