@@ -1,49 +1,47 @@
-import pika
-import os
+import aio_pika
+from aio_pika.abc import AbstractIncomingMessage
+from .config import config
 
 
 class RabbitMQ:
     def __init__(self):
-        self.user = os.getenv("RABBITMQ_USER", "guest")
-        self.password = os.getenv("RABBITMQ_PASSWORD", "guest")
-        self.host = os.getenv("RABBITMQ_HOST", "localhost")
-        self.port = int(os.getenv("RABBITMQ_PORT", 5673))
         self.connection = None
         self.channel = None
-        self.connect()
 
-    def connect(self):
-        credentials = pika.PlainCredentials(self.user, self.password)
-        parameters = pika.ConnectionParameters(
-            host=self.host, port=self.port, credentials=credentials
-        )
-        self.connection = pika.BlockingConnection(parameters)
-        self.channel = self.connection.channel()
+    async def connect(self):
+        connection_url = f"amqp://{config.RABBITMQ_USER}:{config.RABBITMQ_PASSWORD}@{config.RABBITMQ_HOST}:{config.RABBITMQ_PORT}/"
 
-        self.channel.queue_declare("collections_queue.input", durable=True)
-        self.channel.queue_declare("collections_queue.output", durable=True)
+        self.connection = await aio_pika.connect_robust(connection_url)
+        self.channel = await self.connection.channel()
 
-    def close(self):
+        await self.channel.declare_queue(config.COLLECTIONS_QUEUE_INPUT, durable=True)
+        await self.channel.declare_queue(config.COLLECTIONS_QUEUE_OUTPUT, durable=True)
+
+    async def close(self):
         if self.connection and not self.connection.is_closed:
-            self.connection.close()
+            await self.connection.close()
 
-    def consume(self, queue_name, callback):
+    async def consume(self, queue_name: str, callback):
         if not self.channel:
-            raise ConnectionError()
-        self.channel.basic_consume(
-            queue=queue_name, on_message_callback=callback, auto_ack=False
-        )
-        self.channel.start_consuming()
+            raise ConnectionError(
+                "Connection not established. Call connect() first.")
 
-    def publish(self, queue_name, message):
+        queue = await self.channel.declare_queue(queue_name, durable=True)
+
+        async def wrapper(message: AbstractIncomingMessage):
+            await callback(message)
+
+        await queue.consume(wrapper)
+
+    async def publish(self, queue_name: str, message: str):
         if not self.channel:
-            raise ConnectionError()
+            raise ConnectionError(
+                "Connection not established. Call connect() first.")
 
-        self.channel.basic_publish(
-            exchange="",
-            routing_key=queue_name,
-            body=message,
-            properties=pika.BasicProperties(
-                delivery_mode=2,
+        await self.channel.default_exchange.publish(
+            aio_pika.Message(
+                message.encode(),
+                delivery_mode=aio_pika.DeliveryMode.PERSISTENT,
             ),
+            routing_key=queue_name,
         )

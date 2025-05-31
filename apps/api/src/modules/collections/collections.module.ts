@@ -7,11 +7,14 @@ import { PubSub } from 'graphql-subscriptions';
 import { RabbitMQModule } from '@modules/rabbitmq/rabbitmq.module';
 import { CollectionsController } from './collections.controller';
 
+const COLLECTIONS_QUEUE_INPUT =
+  process.env.COLLECTIONS_QUEUE_INPUT || 'collections_queue.input';
+
 @Module({
   imports: [
     DocumentsModule,
     RabbitMQModule.register({
-      queue: 'collections_queue.input',
+      queue: COLLECTIONS_QUEUE_INPUT,
     }),
   ],
   providers: [

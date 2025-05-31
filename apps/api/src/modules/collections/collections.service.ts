@@ -2,13 +2,19 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { PrismaService } from '@shared/libs/prisma';
 import { QueryCollectionInput } from './gql';
+import { ConfigService } from '@nestjs/config';
+import { Config } from '@shared/config';
+
+const COLLECTIONS_QUEUE_INPUT =
+  process.env.COLLECTIONS_QUEUE_INPUT || 'collections_queue.input';
 
 @Injectable()
 export class CollectionsService {
   constructor(
     private readonly prisma: PrismaService,
-    @Inject('collections_queue.input')
-    private readonly documentsQueue: ClientProxy
+    @Inject(COLLECTIONS_QUEUE_INPUT)
+    private readonly documentsQueue: ClientProxy,
+    private readonly configService: ConfigService<Config>
   ) {}
 
   async getUserCollections(userId: number) {
@@ -28,6 +34,9 @@ export class CollectionsService {
   async queryCollection(
     queryCollectionInput: QueryCollectionInput & { userId: number }
   ) {
-    this.documentsQueue.emit('query.request', queryCollectionInput);
+    this.documentsQueue.emit(
+      this.configService.get('rmq.requestPattern', { infer: true }),
+      queryCollectionInput
+    );
   }
 }

@@ -7,5 +7,9 @@ export const rabbitMQConfig = registerAs<RabbitMQConfig>('rmq', () => {
 
   return {
     uri: config.RABBIT_MQ_URI,
+    collectionQueueInput: config.COLLECTIONS_QUEUE_INPUT,
+    collectionQueueOutput: config.COLLECTIONS_QUEUE_OUTPUT,
+    responsePattern: config.RESPONSE_PATTERN,
+    requestPattern: config.REQUEST_PATTERN,
   };
 });

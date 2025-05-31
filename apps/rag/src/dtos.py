@@ -44,5 +44,5 @@ class ResponseDataDto(BaseDto):
 
 @dataclass
 class QueryCollectionResponseDto(BaseDto):
-    pattern: Literal["query.response"]
+    pattern: str
     data: ResponseDataDto

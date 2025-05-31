@@ -55,7 +55,9 @@ async function bootstrap() {
 
   const rabbitMQService = app.get<RabbitMQService>(RabbitMQService);
   app.connectMicroservice<MicroserviceOptions>(
-    rabbitMQService.getOptions('collections_queue.output')
+    rabbitMQService.getOptions(
+      configService.get('rmq.collectionQueueOutput', { infer: true })
+    )
   );
   await app.startAllMicroservices();
 

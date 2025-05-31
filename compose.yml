@@ -6,18 +6,8 @@ services:
       - "5432:5432"
     volumes:
       - data:/home/postgres/pgdata/data
-    command: [ "-c", "ai.ollama_host=http://ollama:11434" ]
     env_file:
       - .env
-  vectorizer-worker:
-    image: timescale/pgai-vectorizer-worker:latest
-    command: [ "--poll-interval", "5s", "--log-level", "DEBUG" ]
-    env_file:
-      - .env
-  ollama:
-    image: ollama/ollama
-    ports:
-      - "11434:11434"
 
   rabbitmq:
     image: rabbitmq:3.8-management-alpine
