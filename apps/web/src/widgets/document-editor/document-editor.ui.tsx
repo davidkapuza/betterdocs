@@ -26,8 +26,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@betterdocs/ui/dropdown-menu';
-import { Ellipsis, Trash2 } from 'lucide-react';
+import { Check, Ellipsis, Trash2 } from 'lucide-react';
 import { Button } from '@betterdocs/ui/button';
+import { SidebarTrigger } from '@betterdocs/ui/sidebar';
+import { useIsMobile } from '@/shared/hooks/use-mobile';
+import { Loader2 } from 'lucide-react';
+import { cn } from '@betterdocs/utils';
 
 const enhance = compose(
   (component) =>
@@ -65,13 +69,14 @@ export const DocumentEditor = enhance(() => {
       editor.tf.init({
         value: content,
         autoSelect: 'end',
-        shouldNormalizeEditor: true,
       });
-      setTitle(data.document.title); // <-- update title state when data changes
-    }
-  }, [data, editor]);
 
-  const [updateDocument] = useUpdateDocumentMutation();
+      setTitle(data.document.title);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params, editor]);
+
+  const [updateDocument, { loading: saving }] = useUpdateDocumentMutation();
 
   const onDocumentChange = useDebouncedCallback(
     ({ value, title }: Partial<{ value: Value; title: string }>) => {
@@ -113,31 +118,69 @@ export const DocumentEditor = enhance(() => {
     navigate(pathKeys.documents.root());
   };
 
+  const isMobile = useIsMobile();
+
+  const [showUpToDate, setShowUpToDate] = React.useState(false);
+  const prevSavingRef = React.useRef(saving);
+  React.useEffect(() => {
+    if (prevSavingRef.current && !saving) {
+      setShowUpToDate(true);
+      const timeout = setTimeout(() => setShowUpToDate(false), 5000);
+      return () => clearTimeout(timeout);
+    }
+    prevSavingRef.current = saving;
+  }, [saving]);
+
   if (!data) return null;
 
   return (
     <DndProvider backend={HTML5Backend}>
       <Plate editor={editor} onValueChange={onDocumentChange}>
         <EditorContainer>
-          <div className="flex items-center gap-3 px-16 pt-10 mb-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button size="icon" variant="ghost">
-                  <Ellipsis />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="start">
-                <DropdownMenuItem variant="destructive" onClick={handleDelete}>
-                  {deleting ? (
-                    'Deleting...'
-                  ) : (
-                    <>
-                      Delete <Trash2 className="ms-auto" />
-                    </>
-                  )}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          <div className="flex flex-col gap-4 px-16 py-8">
+            <div className="flex items-center w-full max-w-3xl gap-2">
+              {isMobile && <SidebarTrigger />}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="icon-sm" variant="ghost">
+                    <Ellipsis />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="start">
+                  <DropdownMenuItem
+                    variant="destructive"
+                    onClick={handleDelete}
+                  >
+                    {deleting ? (
+                      'Deleting...'
+                    ) : (
+                      <>
+                        Delete <Trash2 className="ms-auto" />
+                      </>
+                    )}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <div className="ms-auto text-sm min-w-[80px] h-6 flex items-center relative">
+                {saving ? (
+                  <span className="flex items-center gap-2 text-muted-foreground animate-fade-in">
+                    <Loader2 className="animate-spin size-4" /> Saving...
+                  </span>
+                ) : (
+                  <span
+                    className={cn(
+                      `flex items-center gap-2 text-sm text-green-600 transition-opacity duration-700`,
+                      showUpToDate
+                        ? 'opacity-100 animate-fade-in'
+                        : 'opacity-0 pointer-events-none'
+                    )}
+                  >
+                    <Check className="size-4" />
+                    Saved
+                  </span>
+                )}
+              </div>
+            </div>
             <EditorHeader
               value={title}
               onChange={handleTitleChange}

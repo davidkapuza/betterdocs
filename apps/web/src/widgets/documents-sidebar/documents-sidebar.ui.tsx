@@ -1,12 +1,13 @@
 import * as React from 'react';
 import {
   ChevronRight,
+  ChevronUp,
   File,
   Files,
   List,
   LogOut,
   Plus,
-  User,
+  User2,
 } from 'lucide-react';
 
 import {
@@ -17,6 +18,7 @@ import {
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -48,9 +50,11 @@ import {
   DropdownMenuTrigger,
 } from '@betterdocs/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@betterdocs/ui/avatar';
+import { useIsMobile } from '@/shared/hooks/use-mobile';
 
-// [ ] Decomoposition into widgets
+// [ ] Decomoposition into widgets and features
 // [ ] "Recent" feature for collections page
+// [ ] Log out functionality
 
 export function DocumentsSidebar({
   ...props
@@ -61,6 +65,8 @@ export function DocumentsSidebar({
 
   const { data } = useUserSuspenseQuery();
 
+  const isMobile = useIsMobile();
+
   if (!data) return null;
 
   const initials =
@@ -69,9 +75,8 @@ export function DocumentsSidebar({
   return (
     <Sidebar {...props}>
       <SidebarContent>
-        <SidebarGroup className="h-full gap-2 py-4">
-          <SidebarTrigger className="z-10" />
-
+        <SidebarGroup className="gap-2">
+          {!isMobile && <SidebarTrigger className="z-10" />}
           <SidebarMenuButton isActive={Boolean(match)} className="z-10" asChild>
             <NavLink to={pathKeys.documents.root()}>
               <List />
@@ -88,16 +93,22 @@ export function DocumentsSidebar({
               </SidebarGroupContent>
             </>
           )}
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarRail />
+      <SidebarFooter>
+        <SidebarMenuItem className="list-none">
           <DropdownMenu>
-            <SidebarMenuButton asChild className="mt-auto">
-              <DropdownMenuTrigger>
-                <User />
+            <DropdownMenuTrigger asChild>
+              <SidebarMenuButton>
+                <User2 />
                 <span className="truncate">
                   {data.user.firstName} {data.user.lastName}
                 </span>
-              </DropdownMenuTrigger>
-            </SidebarMenuButton>
-            <DropdownMenuContent className="w-56">
+                <ChevronUp className="ml-auto" />
+              </SidebarMenuButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="top" className="w-56">
               <DropdownMenuLabel>
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="w-8 h-8 rounded-lg">
@@ -122,9 +133,8 @@ export function DocumentsSidebar({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarRail />
+        </SidebarMenuItem>
+      </SidebarFooter>
     </Sidebar>
   );
 }
@@ -141,7 +151,6 @@ const enhance = compose<CollectionDocumentsProps>(
 
 const CollectionDocuments = enhance((props) => {
   const { collectionId } = props;
-  // TODO Move document creation into feature
   const [createDocument, { loading }] = useCreateDocumentMutation();
 
   const { data } = useCollectionDocumentsSuspenseQuery({
@@ -150,7 +159,6 @@ const CollectionDocuments = enhance((props) => {
     },
   });
 
-  // Handler to create a new document
   const handleCreateDocument = async () => {
     await createDocument({
       variables: {

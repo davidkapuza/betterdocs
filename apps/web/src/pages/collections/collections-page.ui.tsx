@@ -8,12 +8,27 @@ import {
 } from '@betterdocs/ui/resizable';
 import { DocumentPrompt } from '@/widgets/document-prompt';
 import { pathKeys } from '@/shared/lib/react-router';
+import { SidebarTrigger } from '@betterdocs/ui/sidebar';
+import { useIsMobile } from '@/shared/hooks/use-mobile';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@betterdocs/ui/drawer';
+import { Button } from '@betterdocs/ui/button';
+import { MessageCircle } from 'lucide-react';
 
 export function CollectionsPage() {
   const { data } = useCollectionsSuspenseQuery();
 
+  const isMobile = useIsMobile();
+
   return (
-    <div className="flex flex-col items-center gap-6 p-6 min-h-svh bg-background md:p-10">
+    <div className="flex flex-col gap-6 p-6 min-h-svh bg-background md:p-10">
+      {isMobile && <SidebarTrigger />}
       {data?.collections.map((collection) => (
         <NavLink
           key={collection.id}
@@ -36,6 +51,29 @@ export function CollectionsPage() {
 }
 
 export function DocumentPage() {
+  const isMobile = useIsMobile();
+
+  if (isMobile)
+    return (
+      <>
+        <DocumentEditor />
+        <Drawer>
+          <DrawerTrigger className="absolute bottom-6 right-6" asChild>
+            <Button size="icon-lg" className="rounded-full shadow-lg">
+              <MessageCircle />
+            </Button>
+          </DrawerTrigger>
+          <DrawerContent className="h-[90vh]">
+            <DrawerHeader className="invisible">
+              <DrawerTitle>Use AI to search in your documents</DrawerTitle>
+              <DrawerDescription>TODO</DrawerDescription>
+            </DrawerHeader>
+            <DocumentPrompt />
+          </DrawerContent>
+        </Drawer>
+      </>
+    );
+
   return (
     <ResizablePanelGroup direction="horizontal">
       <ResizablePanel minSize={30}>
