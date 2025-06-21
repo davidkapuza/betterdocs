@@ -32,3 +32,20 @@ mutation UpdateDocument($updateDocumentInput: UpdateDocumentInput!) {
     collectionId
   }
 }
+
+mutation CreateDocument($createDocumentInput: CreateDocumentInput!) {
+  createDocument(createDocumentInput: $createDocumentInput) {
+    id
+    title
+    content
+    author {
+      role
+      status
+      id
+      email
+      firstName
+      lastName
+    }
+    collectionId
+  }
+}

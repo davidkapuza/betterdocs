@@ -68,6 +68,13 @@ export type UpdateDocumentMutationVariables = types.Exact<{
 
 export type UpdateDocumentMutation = { __typename?: 'Mutation', updateDocument: { __typename?: 'Document', id: number, title: string, content: string, parentId?: number | null, collectionId: number, author: { __typename?: 'User', role: types.Role, status: types.UserStatus, id: number, email: string, firstName: string, lastName: string } } };
 
+export type CreateDocumentMutationVariables = types.Exact<{
+  createDocumentInput: types.CreateDocumentInput;
+}>;
+
+
+export type CreateDocumentMutation = { __typename?: 'Mutation', createDocument: { __typename?: 'Document', id: number, title: string, content: string, collectionId: number, author: { __typename?: 'User', role: types.Role, status: types.UserStatus, id: number, email: string, firstName: string, lastName: string } } };
+
 export type UserQueryVariables = types.Exact<{ [key: string]: never; }>;
 
 
@@ -514,6 +521,50 @@ export function useUpdateDocumentMutation(baseOptions?: Apollo.MutationHookOptio
 export type UpdateDocumentMutationHookResult = ReturnType<typeof useUpdateDocumentMutation>;
 export type UpdateDocumentMutationResult = Apollo.MutationResult<UpdateDocumentMutation>;
 export type UpdateDocumentMutationOptions = Apollo.BaseMutationOptions<UpdateDocumentMutation, UpdateDocumentMutationVariables>;
+export const CreateDocumentDocument = gql`
+    mutation CreateDocument($createDocumentInput: CreateDocumentInput!) {
+  createDocument(createDocumentInput: $createDocumentInput) {
+    id
+    title
+    content
+    author {
+      role
+      status
+      id
+      email
+      firstName
+      lastName
+    }
+    collectionId
+  }
+}
+    `;
+export type CreateDocumentMutationFn = Apollo.MutationFunction<CreateDocumentMutation, CreateDocumentMutationVariables>;
+
+/**
+ * __useCreateDocumentMutation__
+ *
+ * To run a mutation, you first call `useCreateDocumentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDocumentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createDocumentMutation, { data, loading, error }] = useCreateDocumentMutation({
+ *   variables: {
+ *      createDocumentInput: // value for 'createDocumentInput'
+ *   },
+ * });
+ */
+export function useCreateDocumentMutation(baseOptions?: Apollo.MutationHookOptions<CreateDocumentMutation, CreateDocumentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateDocumentMutation, CreateDocumentMutationVariables>(CreateDocumentDocument, options);
+      }
+export type CreateDocumentMutationHookResult = ReturnType<typeof useCreateDocumentMutation>;
+export type CreateDocumentMutationResult = Apollo.MutationResult<CreateDocumentMutation>;
+export type CreateDocumentMutationOptions = Apollo.BaseMutationOptions<CreateDocumentMutation, CreateDocumentMutationVariables>;
 export const UserDocument = gql`
     query User {
   user {

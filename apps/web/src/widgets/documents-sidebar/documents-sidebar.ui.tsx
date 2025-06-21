@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChevronRight, File, Files } from 'lucide-react';
+import { ChevronRight, File, Files, Plus } from 'lucide-react';
 
 import {
   Collapsible,
@@ -19,17 +19,20 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from '@betterdocs/ui/sidebar';
+import { Button } from '@betterdocs/ui/button';
 import { useMatch, useNavigate, useParams } from 'react-router';
 import { pathKeys, routerTypes } from '@/shared/lib/react-router';
 import {
   useCollectionDocumentsSuspenseQuery,
   useDocumentTreeQuery,
+  useCreateDocumentMutation,
 } from '@/shared/gql/__generated__/operations';
 
 export function DocumentsSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   const params = useParams() as routerTypes.DocumentPageParams;
+  const [createDocument, { loading }] = useCreateDocumentMutation();
 
   const { data } = useCollectionDocumentsSuspenseQuery({
     variables: {
@@ -37,12 +40,41 @@ export function DocumentsSidebar({
     },
   });
 
+  // Handler to create a new document
+  const handleCreateDocument = async () => {
+    if (!params.collectionId) return;
+    await createDocument({
+      variables: {
+        createDocumentInput: {
+          collectionId: Number(params.collectionId),
+          title: 'Untitled Document',
+          content: JSON.stringify([{ type: 'p', children: [{ text: '' }] }]),
+        },
+      },
+      refetchQueries: ['CollectionDocuments'],
+    });
+  };
+
   return (
     <Sidebar {...props}>
       <SidebarContent>
         <SidebarGroup>
           <SidebarTrigger className="z-10" />
           <SidebarGroupLabel>Documents</SidebarGroupLabel>
+          <Button
+            size="sm"
+            className="my-2"
+            onClick={handleCreateDocument}
+            disabled={loading}
+          >
+            {loading ? (
+              'Creating...'
+            ) : (
+              <>
+                <Plus /> New Document
+              </>
+            )}
+          </Button>
           <SidebarGroupContent className="group-data-[collapsible=icon]:opacity-0">
             <SidebarMenu>
               {data?.collection.documents.map((document, index) => (
