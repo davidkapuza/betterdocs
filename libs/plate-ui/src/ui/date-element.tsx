@@ -60,7 +60,6 @@ export const DateElement = withRef<typeof PlateElement>(
       <PlateElement
         ref={ref}
         className={cn(className, 'inline-block')}
-        contentEditable={false}
         {...props}
       >
         <Popover>
