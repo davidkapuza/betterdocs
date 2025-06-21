@@ -75,6 +75,13 @@ export type CreateDocumentMutationVariables = types.Exact<{
 
 export type CreateDocumentMutation = { __typename?: 'Mutation', createDocument: { __typename?: 'Document', id: number, title: string, content: string, collectionId: number, author: { __typename?: 'User', role: types.Role, status: types.UserStatus, id: number, email: string, firstName: string, lastName: string } } };
 
+export type DeleteDocumentMutationVariables = types.Exact<{
+  deleteDocumentInput: types.DeleteDocumentInput;
+}>;
+
+
+export type DeleteDocumentMutation = { __typename?: 'Mutation', deleteDocument: { __typename?: 'Document', id: number, title: string, collectionId: number } };
+
 export type UserQueryVariables = types.Exact<{ [key: string]: never; }>;
 
 
@@ -565,6 +572,41 @@ export function useCreateDocumentMutation(baseOptions?: Apollo.MutationHookOptio
 export type CreateDocumentMutationHookResult = ReturnType<typeof useCreateDocumentMutation>;
 export type CreateDocumentMutationResult = Apollo.MutationResult<CreateDocumentMutation>;
 export type CreateDocumentMutationOptions = Apollo.BaseMutationOptions<CreateDocumentMutation, CreateDocumentMutationVariables>;
+export const DeleteDocumentDocument = gql`
+    mutation DeleteDocument($deleteDocumentInput: DeleteDocumentInput!) {
+  deleteDocument(deleteDocumentInput: $deleteDocumentInput) {
+    id
+    title
+    collectionId
+  }
+}
+    `;
+export type DeleteDocumentMutationFn = Apollo.MutationFunction<DeleteDocumentMutation, DeleteDocumentMutationVariables>;
+
+/**
+ * __useDeleteDocumentMutation__
+ *
+ * To run a mutation, you first call `useDeleteDocumentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteDocumentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteDocumentMutation, { data, loading, error }] = useDeleteDocumentMutation({
+ *   variables: {
+ *      deleteDocumentInput: // value for 'deleteDocumentInput'
+ *   },
+ * });
+ */
+export function useDeleteDocumentMutation(baseOptions?: Apollo.MutationHookOptions<DeleteDocumentMutation, DeleteDocumentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteDocumentMutation, DeleteDocumentMutationVariables>(DeleteDocumentDocument, options);
+      }
+export type DeleteDocumentMutationHookResult = ReturnType<typeof useDeleteDocumentMutation>;
+export type DeleteDocumentMutationResult = Apollo.MutationResult<DeleteDocumentMutation>;
+export type DeleteDocumentMutationOptions = Apollo.BaseMutationOptions<DeleteDocumentMutation, DeleteDocumentMutationVariables>;
 export const UserDocument = gql`
     query User {
   user {

@@ -13,6 +13,7 @@ import { compose, withSuspense } from '@/shared/lib/react';
 import { pathKeys } from '@/shared/lib/react-router';
 import { page404Route } from '@/pages/page-404';
 import { PageLoader } from '@/shared/ui/page-loader';
+import { RootLayout } from '@/pages/layouts';
 
 // https://github.com/remix-run/react-router/discussions/10166
 function BubbleError() {
@@ -45,6 +46,7 @@ const browserRouter = createBrowserRouter([
       {
         loader: layoutLoader,
         HydrateFallback: PageLoader,
+        element: React.createElement(RootLayout),
         children: [collectionsPageRoute],
       },
       {

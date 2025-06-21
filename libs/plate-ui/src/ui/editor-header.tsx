@@ -12,7 +12,7 @@ export const EditorHeader = memo(
   ({ titleRef, onChange, isReadOnly, value }: EditorHeaderProps) => {
     return (
       <div
-        className="px-16 pt-10 cursor-text"
+        className="cursor-text"
         onClick={() => titleRef.current?.focus()}
       >
         <div className="flex items-center gap-2 lg:narrow">

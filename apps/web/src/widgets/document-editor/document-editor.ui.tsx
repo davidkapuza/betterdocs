@@ -11,14 +11,23 @@ import { ErrorHandler } from '@/shared/ui/error-handler';
 import { withErrorBoundary } from 'react-error-boundary';
 import { DocumentEditorSkeleton } from './document-editor.skeleton';
 import {
+  useDeleteDocumentMutation,
   useGetDocumentSuspenseQuery,
   useUpdateDocumentMutation,
 } from '@/shared/gql/__generated__/operations';
-import { useParams } from 'react-router';
-import { routerTypes } from '@/shared/lib/react-router';
+import { useNavigate, useParams } from 'react-router';
+import { pathKeys, routerTypes } from '@/shared/lib/react-router';
 import React from 'react';
 import { useDebouncedCallback } from '@/shared/hooks/use-debounced-callback';
 import { Value } from '@udecode/plate';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@betterdocs/ui/dropdown-menu';
+import { Ellipsis, Trash2 } from 'lucide-react';
+import { Button } from '@betterdocs/ui/button';
 
 const enhance = compose(
   (component) =>
@@ -32,6 +41,7 @@ export const DocumentEditor = enhance(() => {
     skipInitialization: true,
   });
   const params = useParams() as routerTypes.DocumentPageParams;
+  const navigate = useNavigate();
 
   const { data } = useGetDocumentSuspenseQuery({
     variables: {
@@ -86,18 +96,55 @@ export const DocumentEditor = enhance(() => {
 
   const titleRef = React.useRef<HTMLTextAreaElement>(null);
 
+  const [deleteDocument, { loading: deleting }] = useDeleteDocumentMutation();
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    await deleteDocument({
+      variables: {
+        deleteDocumentInput: {
+          collectionId: Number(params.collectionId),
+          documentId: Number(params.documentId),
+        },
+      },
+      refetchQueries: ['CollectionDocuments'],
+    });
+    // TODO redirect to the last document in the collection
+    navigate(pathKeys.documents.root());
+  };
+
   if (!data) return null;
 
   return (
     <DndProvider backend={HTML5Backend}>
       <Plate editor={editor} onValueChange={onDocumentChange}>
         <EditorContainer>
-          <EditorHeader
-            value={title}
-            onChange={handleTitleChange}
-            titleRef={titleRef}
-            isReadOnly={false}
-          />
+          <div className="flex items-center gap-3 px-16 pt-10 mb-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="icon" variant="ghost">
+                  <Ellipsis />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="start">
+                <DropdownMenuItem variant="destructive" onClick={handleDelete}>
+                  {deleting ? (
+                    'Deleting...'
+                  ) : (
+                    <>
+                      Delete <Trash2 className="ms-auto" />
+                    </>
+                  )}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <EditorHeader
+              value={title}
+              onChange={handleTitleChange}
+              titleRef={titleRef}
+              isReadOnly={false}
+            />
+          </div>
           <Editor />
         </EditorContainer>
       </Plate>

@@ -49,3 +49,11 @@ mutation CreateDocument($createDocumentInput: CreateDocumentInput!) {
     collectionId
   }
 }
+
+mutation DeleteDocument($deleteDocumentInput: DeleteDocumentInput!) {
+  deleteDocument(deleteDocumentInput: $deleteDocumentInput) {
+    id
+    title
+    collectionId
+  }
+}
