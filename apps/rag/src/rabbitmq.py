@@ -1,5 +1,6 @@
 import aio_pika
 from aio_pika.abc import AbstractIncomingMessage
+
 from .config import config
 
 

@@ -30,6 +30,7 @@ CREATE TABLE "documents" (
     "authorId" INTEGER NOT NULL,
     "collectionId" INTEGER NOT NULL,
     "content" TEXT NOT NULL,
+    "plainContent" TEXT NOT NULL,
     "createdAt" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "deletedAt" TIMESTAMP(6),

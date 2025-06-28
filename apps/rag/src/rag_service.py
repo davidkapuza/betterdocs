@@ -1,15 +1,20 @@
 from dataclasses import dataclass
-from typing import List
+
+import numpy as np
 import pgai
 import psycopg
-import numpy as np
-from pgai.vectorizer import Worker
 from ollama import AsyncClient
-from psycopg_pool import AsyncConnectionPool
-from psycopg.rows import class_row
+from pgai.vectorizer import CreateVectorizer, Worker
+from pgai.vectorizer.configuration import (
+    ChunkingCharacterTextSplitterConfig,
+    DestinationTableConfig,
+    EmbeddingOllamaConfig,
+    FormattingPythonTemplateConfig,
+    LoadingColumnConfig,
+)
 from pgvector.psycopg import register_vector_async
-from pgai.vectorizer import CreateVectorizer
-from pgai.vectorizer.configuration import EmbeddingOllamaConfig, ChunkingCharacterTextSplitterConfig, FormattingPythonTemplateConfig, LoadingColumnConfig, DestinationTableConfig
+from psycopg.rows import class_row
+from psycopg_pool import AsyncConnectionPool
 
 
 @dataclass
@@ -64,10 +69,11 @@ class RagService:
         vectorizer_statement = CreateVectorizer(
             source="documents",
             name="documents_content_embedder",
-            destination=DestinationTableConfig(
-                destination='document_embeddings'
+            destination=DestinationTableConfig(destination="document_embeddings"),
+            loading=LoadingColumnConfig(column_name="plainContent"),
+            formatting=FormattingPythonTemplateConfig(
+                template="Title: $title\nContent: $chunk"
             ),
-            loading=LoadingColumnConfig(column_name='content'),
             embedding=EmbeddingOllamaConfig(
                 model="nomic-embed-text",
                 dimensions=768,
@@ -76,9 +82,9 @@ class RagService:
             chunking=ChunkingCharacterTextSplitterConfig(
                 chunk_size=800,
                 chunk_overlap=400,
-                separator='.',
-                is_separator_regex=False
-            )
+                separator=".",
+                is_separator_regex=False,
+            ),
         ).to_sql()
 
         async with self.pool.connection() as conn:
@@ -91,22 +97,23 @@ class RagService:
                         WHERE name = %s
                     )
                     """,
-                    (self.vectorizer_name, )
+                    (self.vectorizer_name,),
                 )
                 exists = await cur.fetchone()
 
-                if (exists and not exists[0]):
+                if exists and not exists[0]:
                     await cur.execute(
-                        vectorizer_statement.encode('utf-8'),
+                        vectorizer_statement.encode("utf-8"),
                     )
 
             await conn.commit()
 
     async def find_relevant_chunks(
-        self, client: AsyncClient, query: str, limit: int = 1
-    ) -> List[DocumentSearchResult]:
+        self, client: AsyncClient, query: str, user_id: int, limit: int = 1
+    ) -> list[DocumentSearchResult]:
         """
-        Find the most relevant text chunks for a given query using vector similarity search.
+        Find the most relevant text chunks for a given query
+        using vector similarity search, filtered by user's accessible collections.
         """
         response = await client.embed(
             model=self.embedding_model,
@@ -114,18 +121,24 @@ class RagService:
         )
         embedding = np.array(response["embeddings"][0])
 
-        async with self.pool.connection() as conn:
-            async with conn.cursor(row_factory=class_row(DocumentSearchResult)) as cur:
-                await cur.execute(
-                    """
-                    SELECT w.id, w.title, w.content, w.chunk, w.embedding <=> %s as distance
-                    FROM document_embeddings w
-                    ORDER BY distance
-                    LIMIT %s
-                    """,
-                    (embedding, limit),
-                )
-                return await cur.fetchall()
+        async with (
+            self.pool.connection() as conn,
+            conn.cursor(row_factory=class_row(DocumentSearchResult)) as cur,
+        ):
+            await cur.execute(
+                """
+                SELECT de.id, de.title, de.content, de.chunk, 
+                       de.embedding <=> %s as distance
+                FROM document_embeddings de
+                INNER JOIN documents d ON de.id = d.id
+                INNER JOIN user_collections uc ON d."collectionId" = uc."collectionId"
+                WHERE uc."userId" = %s
+                ORDER BY distance
+                LIMIT %s
+                """,
+                (embedding, user_id, limit),
+            )
+            return await cur.fetchall()
 
     async def process_embeddings(self):
         """Process document embeddings using pgai worker"""
@@ -137,9 +150,9 @@ class RagService:
         if self.pool:
             await self.pool.close()
 
-    async def process_query(self, query: str):
+    async def process_query(self, query: str, user_id: int):
         """Process a query and return a chat completion generator"""
-        relevant_chunks = await self.find_relevant_chunks(self.client, query)
+        relevant_chunks = await self.find_relevant_chunks(self.client, query, user_id)
         context = "\n\n".join(
             f"{chunk.title}:\n{chunk.content}" for chunk in relevant_chunks
         )
@@ -155,5 +168,5 @@ class RagService:
         return await self.client.chat(
             model=self.query_model,
             messages=[{"role": "user", "content": prompt}],
-            stream=True
+            stream=True,
         )

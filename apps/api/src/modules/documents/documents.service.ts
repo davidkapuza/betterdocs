@@ -5,6 +5,7 @@ import {
   DeleteDocumentInput,
   UpdateDocumentInput,
 } from './gql';
+import { extractFields } from '@shared/utils';
 
 @Injectable()
 export class DocumentsService {
@@ -42,6 +43,11 @@ export class DocumentsService {
         collectionId: createDocumentInput.collectionId,
         title: createDocumentInput.title,
         content: createDocumentInput.content,
+        plainContent: extractFields(
+          JSON.parse(createDocumentInput.content),
+          'text'
+        ),
+
         authorId: userId,
       },
     });
@@ -53,6 +59,10 @@ export class DocumentsService {
       data: {
         authorId: userId,
         content: updateDocumentInput.content,
+        plainContent: extractFields(
+          JSON.parse(updateDocumentInput.content),
+          'text'
+        ),
         title: updateDocumentInput.title,
       },
     });

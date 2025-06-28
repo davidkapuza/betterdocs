@@ -1,6 +1,6 @@
-from pydantic_settings import BaseSettings
+
 from dotenv import load_dotenv
-from typing import Literal
+from pydantic_settings import BaseSettings
 
 load_dotenv()
 

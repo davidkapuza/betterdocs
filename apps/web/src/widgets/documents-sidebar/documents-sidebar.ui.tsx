@@ -37,6 +37,7 @@ import {
   useDocumentTreeQuery,
   useCreateDocumentMutation,
   useUserSuspenseQuery,
+  useSignOutMutation,
 } from '@/shared/gql/__generated__/operations';
 import { compose, withSuspense } from '@/shared/lib/react';
 import { withErrorBoundary } from 'react-error-boundary';
@@ -51,21 +52,41 @@ import {
 } from '@betterdocs/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@betterdocs/ui/avatar';
 import { useIsMobile } from '@/shared/hooks/use-mobile';
+import { useSessionStore } from '@/shared/session';
 
 // [ ] Decomoposition into widgets and features
 // [ ] "Recent" feature for collections page
-// [ ] Log out functionality
+// [x] Log out functionality
 
 export function DocumentsSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   const params = useParams() as routerTypes.DocumentPageParams;
+  const navigate = useNavigate();
 
   const match = useMatch(pathKeys.documents.root());
 
   const { data } = useUserSuspenseQuery();
+  const clearSession = useSessionStore.use.clearSession();
+
+  const [signOut] = useSignOutMutation({
+    onCompleted: () => {
+      clearSession();
+      navigate(pathKeys.auth.signIn());
+    },
+  });
 
   const isMobile = useIsMobile();
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+    } catch {
+      // If the signOut mutation fails, still clear the local session and redirect
+      clearSession();
+      navigate(pathKeys.auth.signIn());
+    }
+  };
 
   if (!data) return null;
 
@@ -127,7 +148,7 @@ export function DocumentsSidebar({
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>
                 <LogOut />
                 <span>Log out</span>
               </DropdownMenuItem>

@@ -1,6 +1,5 @@
-from dataclasses import dataclass, asdict
-from typing import Optional, List, Union, Literal
 import inspect
+from dataclasses import asdict, dataclass
 
 
 @dataclass
@@ -15,7 +14,7 @@ class BaseDto:
             }
         )
 
-    def to_dict(self, exclude: Optional[Union[str, List[str]]] = None):
+    def to_dict(self, exclude: str | list[str] | None = None):
         if isinstance(exclude, str):
             exclude = [exclude]
 

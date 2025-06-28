@@ -1,13 +1,15 @@
-import json
 import asyncio
+import json
+
 from aio_pika.abc import AbstractIncomingMessage
-from .rabbitmq import RabbitMQ
+
+from .config import config
 from .dtos import (
     QueryCollectionDto,
     QueryCollectionResponseDto,
     ResponseDataDto,
 )
-from .config import config
+from .rabbitmq import RabbitMQ
 from .rag_service import RagService
 
 
@@ -29,7 +31,11 @@ async def main():
 
                 query_collection_dto = QueryCollectionDto.from_dict(data)
 
-                async for part in await rag.process_query(query_collection_dto.query):
+                query_result = await rag.process_query(
+                    query_collection_dto.query, 
+                    query_collection_dto.userId
+                )
+                async for part in query_result:
                     token = part["message"]["content"]
 
                     response_message = QueryCollectionResponseDto(

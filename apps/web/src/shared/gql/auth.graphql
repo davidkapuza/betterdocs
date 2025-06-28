@@ -23,3 +23,7 @@ mutation RefreshTokens {
     refreshToken
   }
 }
+
+mutation SignOut {
+  signOut
+}

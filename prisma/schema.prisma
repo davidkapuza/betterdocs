@@ -30,15 +30,16 @@ model Document {
   authorId     Int
   collectionId Int
   content      String
+  plainContent String
   createdAt    DateTime   @default(now()) @db.Timestamp(6)
   updatedAt    DateTime   @updatedAt
   deletedAt    DateTime?  @db.Timestamp(6)
   author       User       @relation(fields: [authorId], references: [id])
   collection   Collection @relation(fields: [collectionId], references: [id])
 
-  parentId     Int?
-  parent       Document?  @relation("DocumentLinks", fields: [parentId], references: [id])
-  children     Document[] @relation("DocumentLinks")
+  parentId Int?
+  parent   Document?  @relation("DocumentLinks", fields: [parentId], references: [id])
+  children Document[] @relation("DocumentLinks")
 
   @@map("documents")
 }
