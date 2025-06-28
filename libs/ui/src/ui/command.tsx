@@ -21,7 +21,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from './dialog';
-import { inputVariants } from './input';
+import { inputVariants } from './plate-input';
 
 const commandVariants = cva(
   'flex size-full flex-col rounded-md bg-popover text-popover-foreground focus-visible:outline-hidden',

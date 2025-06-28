@@ -25,7 +25,7 @@ import {
 import { cva } from 'class-variance-authority';
 
 import { blockSelectionVariants } from './block-selection';
-import { ResizeHandle } from './resizable';
+import { ResizeHandle } from './plate-resizable';
 
 export const TableCellElement = withRef<
   typeof PlateElement,

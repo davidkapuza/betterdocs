@@ -3,7 +3,7 @@
 import { DndPlugin } from '@udecode/plate-dnd';
 import { NodeIdPlugin } from '@udecode/plate-node-id';
 
-import { DraggableAboveNodes } from '@betterdocs/plate-ui/draggable';
+import { DraggableAboveNodes } from '@betterdocs/ui';
 
 export const dndPlugins = [
   NodeIdPlugin,

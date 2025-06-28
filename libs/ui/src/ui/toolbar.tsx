@@ -8,7 +8,7 @@ import { type VariantProps, cva } from 'class-variance-authority';
 import { ChevronDown } from 'lucide-react';
 
 import { Separator } from './separator';
-import { withTooltip } from './tooltip';
+import { withTooltip } from './plate-tooltip';
 
 export const Toolbar = withCn(
   ToolbarPrimitive.Root,

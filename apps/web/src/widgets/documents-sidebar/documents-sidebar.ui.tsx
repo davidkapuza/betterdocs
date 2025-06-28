@@ -14,7 +14,7 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@betterdocs/ui/collapsible';
+} from '@betterdocs/ui';
 import {
   Sidebar,
   SidebarContent,
@@ -28,8 +28,8 @@ import {
   SidebarMenuSub,
   SidebarRail,
   SidebarTrigger,
-} from '@betterdocs/ui/sidebar';
-import { Button } from '@betterdocs/ui/button';
+} from '@betterdocs/ui';
+import { Button } from '@betterdocs/ui';
 import { NavLink, useMatch, useNavigate, useParams } from 'react-router';
 import { pathKeys, routerTypes } from '@/shared/lib/react-router';
 import {
@@ -49,8 +49,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@betterdocs/ui/dropdown-menu';
-import { Avatar, AvatarFallback } from '@betterdocs/ui/avatar';
+} from '@betterdocs/ui';
+import { Avatar, AvatarFallback } from '@betterdocs/ui';
 import { useIsMobile } from '@/shared/hooks/use-mobile';
 import { useSessionStore } from '@/shared/session';
 

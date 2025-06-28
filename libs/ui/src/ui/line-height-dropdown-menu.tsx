@@ -17,7 +17,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
   useOpenState,
-} from './dropdown-menu';
+} from './plate-dropdown-menu';
 import { ToolbarButton } from './toolbar';
 
 export function LineHeightDropdownMenu({ ...props }: DropdownMenuProps) {

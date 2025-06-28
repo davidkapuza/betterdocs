@@ -8,13 +8,13 @@ import { cn } from '@udecode/cn';
 import { Check } from 'lucide-react';
 
 import { buttonVariants } from './button';
-import { DropdownMenuItem } from './dropdown-menu';
+import { DropdownMenuItem } from './plate-dropdown-menu';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from './tooltip';
+} from './plate-tooltip';
 
 export type TColor = {
   isBrightColor: boolean;
@@ -43,7 +43,6 @@ export function ColorDropdownMenuItem({
     <DropdownMenuItem
       className={cn(
         buttonVariants({
-          isMenu: true,
           size: 'icon',
           variant: 'outline',
         }),

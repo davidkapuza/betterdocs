@@ -13,7 +13,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from './dropdown-menu';
+} from './plate-dropdown-menu';
 import { ToolbarButton } from './toolbar';
 
 type ColorDropdownMenuProps = {

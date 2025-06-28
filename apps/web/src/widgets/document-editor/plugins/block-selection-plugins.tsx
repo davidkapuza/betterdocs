@@ -2,7 +2,7 @@
 
 import { BlockSelectionPlugin } from '@udecode/plate-selection/react';
 
-import { BlockSelection } from '@betterdocs/plate-ui/block-selection';
+import { BlockSelection } from '@betterdocs/ui';
 
 export const blockSelectionPlugins = [
   BlockSelectionPlugin.configure(({ editor }) => ({

@@ -17,7 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   useOpenState,
-} from './dropdown-menu';
+} from './plate-dropdown-menu';
 import { ToolbarButton } from './toolbar';
 
 type ImportType = 'html' | 'markdown';

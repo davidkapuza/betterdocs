@@ -24,7 +24,7 @@ import {
   TooltipPortal,
   TooltipProvider,
   TooltipTrigger,
-} from './tooltip';
+} from './plate-tooltip';
 
 export const ColumnElement = withHOC(
   ResizableProvider,

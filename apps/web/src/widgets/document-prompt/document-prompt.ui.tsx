@@ -1,4 +1,4 @@
-import { Thread } from '@betterdocs/ui/thread';
+import { Thread } from '@betterdocs/ui';
 
 export function DocumentPrompt() {
   return (
