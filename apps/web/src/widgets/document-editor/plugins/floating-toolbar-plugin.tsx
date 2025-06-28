@@ -2,8 +2,8 @@
 
 import { createPlatePlugin } from '@udecode/plate/react';
 
-import { FloatingToolbar } from '@betterdocs/plate-ui/floating-toolbar';
-import { FloatingToolbarButtons } from '@betterdocs/plate-ui/floating-toolbar-buttons';
+import { FloatingToolbar } from '@betterdocs/ui';
+import { FloatingToolbarButtons } from '@betterdocs/ui';
 
 export const FloatingToolbarPlugin = createPlatePlugin({
   key: 'floating-toolbar',

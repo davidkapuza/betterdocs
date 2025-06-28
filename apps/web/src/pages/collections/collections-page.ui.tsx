@@ -5,10 +5,10 @@ import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from '@betterdocs/ui/resizable';
+} from '@betterdocs/ui';
 import { DocumentPrompt } from '@/widgets/document-prompt';
 import { pathKeys } from '@/shared/lib/react-router';
-import { SidebarTrigger } from '@betterdocs/ui/sidebar';
+import { SidebarTrigger } from '@betterdocs/ui';
 import { useIsMobile } from '@/shared/hooks/use-mobile';
 import {
   Drawer,
@@ -17,8 +17,8 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from '@betterdocs/ui/drawer';
-import { Button } from '@betterdocs/ui/button';
+} from '@betterdocs/ui';
+import { Button } from '@betterdocs/ui';
 import { MessageCircle, FolderOpen } from 'lucide-react';
 import { CreateCollectionDialog } from '@/widgets/create-collection-dialog';
 
@@ -30,7 +30,7 @@ export function CollectionsPage() {
   return (
     <div className="flex flex-col gap-6 p-6 min-h-svh bg-background md:p-10">
       {isMobile && <SidebarTrigger />}
-      
+
       <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between">
           <div>
@@ -44,9 +44,9 @@ export function CollectionsPage() {
 
         {data?.collections.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12">
-            <FolderOpen className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No collections yet</h3>
-            <p className="text-muted-foreground text-center mb-6">
+            <FolderOpen className="w-12 h-12 mb-4 text-muted-foreground" />
+            <h3 className="mb-2 text-lg font-semibold">No collections yet</h3>
+            <p className="mb-6 text-center text-muted-foreground">
               Create your first collection to start organizing your documents
             </p>
             <CreateCollectionDialog />
@@ -60,16 +60,17 @@ export function CollectionsPage() {
                   collectionId: collection.id.toString(),
                   documentId: collection.documents[0]?.id.toString(),
                 })}
-                className="block w-full p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 transition-colors"
+                className="block w-full p-6 transition-colors bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
               >
                 <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
                   {collection.name}
                 </h5>
-                <p className="font-normal text-gray-700 dark:text-gray-400 mb-3">
+                <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
                   {collection.description || 'No description'}
                 </p>
                 <div className="text-sm text-muted-foreground">
-                  {collection.documents.length} document{collection.documents.length !== 1 ? 's' : ''}
+                  {collection.documents.length} document
+                  {collection.documents.length !== 1 ? 's' : ''}
                 </div>
               </NavLink>
             ))}

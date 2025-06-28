@@ -28,13 +28,11 @@
       "@/shared": ["apps/web/src/shared"],
       "@/shared/*": ["apps/web/src/shared/*"],
 
-      "@betterdocs/ui/*": ["libs/ui/src/ui/*"],
+      "@betterdocs/ui/*": ["libs/ui/src/*"],
+      "@betterdocs/ui": ["libs/ui/src/index.ts"],
       "@betterdocs/styles/*": ["libs/ui/src/styles/*"],
 
       "@betterdocs/utils": ["libs/utils/src/index.ts"],
-
-      "@betterdocs/plate-ui/*": ["libs/plate-ui/src/ui/*"],
-      "@betterdocs/plate-hooks/*": ["libs/plate-ui/src/hooks/*"],
     }
   },
   "exclude": [

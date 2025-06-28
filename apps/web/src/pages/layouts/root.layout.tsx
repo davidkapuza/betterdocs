@@ -1,5 +1,5 @@
 import { DocumentsSidebar } from '@/widgets/documents-sidebar';
-import { SidebarInset, SidebarProvider } from '@betterdocs/ui/sidebar';
+import { SidebarInset, SidebarProvider } from '@betterdocs/ui';
 import { Outlet } from 'react-router';
 import { AssistantRuntimeProvider } from '@/app/providers/assistant-runtime-provider';
 

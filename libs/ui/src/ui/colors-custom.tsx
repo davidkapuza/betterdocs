@@ -16,7 +16,7 @@ import {
 } from './color-dropdown-menu-items';
 import { ColorInput } from './color-input';
 // import { ColorInput } from './color-input';
-import { DropdownMenuItem } from './dropdown-menu';
+import { DropdownMenuItem } from './plate-dropdown-menu';
 
 type ColorCustomProps = {
   colors: TColor[];
@@ -54,7 +54,6 @@ export function ColorCustom({
           <DropdownMenuItem
             className={cn(
               buttonVariants({
-                isMenu: true,
                 size: 'icon',
                 variant: 'outline',
               }),

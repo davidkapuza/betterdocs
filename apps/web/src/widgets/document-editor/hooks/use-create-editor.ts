@@ -53,35 +53,35 @@ import {
 import { editorPlugins } from '../plugins/editor-plugins';
 import { FixedToolbarPlugin } from '../plugins/fixed-toolbar-plugin';
 import { FloatingToolbarPlugin } from '../plugins/floating-toolbar-plugin';
-import { BlockquoteElement } from '@betterdocs/plate-ui/blockquote-element';
-import { CodeBlockElement } from '@betterdocs/plate-ui/code-block-element';
-import { CodeLeaf } from '@betterdocs/plate-ui/code-leaf';
-import { CodeLineElement } from '@betterdocs/plate-ui/code-line-element';
-import { CodeSyntaxLeaf } from '@betterdocs/plate-ui/code-syntax-leaf';
-import { ColumnElement } from '@betterdocs/plate-ui/column-element';
-import { ColumnGroupElement } from '@betterdocs/plate-ui/column-group-element';
-import { DateElement } from '@betterdocs/plate-ui/date-element';
-import { EmojiInputElement } from '@betterdocs/plate-ui/emoji-input-element';
-import { EquationElement } from '@betterdocs/plate-ui/equation-element';
-import { HeadingElement } from '@betterdocs/plate-ui/heading-element';
-import { HighlightLeaf } from '@betterdocs/plate-ui/highlight-leaf';
-import { HrElement } from '@betterdocs/plate-ui/hr-element';
-import { InlineEquationElement } from '@betterdocs/plate-ui/inline-equation-element';
-import { KbdLeaf } from '@betterdocs/plate-ui/kbd-leaf';
-import { LinkElement } from '@betterdocs/plate-ui/link-element';
-import { MentionElement } from '@betterdocs/plate-ui/mention-element';
-import { MentionInputElement } from '@betterdocs/plate-ui/mention-input-element';
-import { ParagraphElement } from '@betterdocs/plate-ui/paragraph-element';
-import { withPlaceholders } from '@betterdocs/plate-ui/placeholder';
-import { SlashInputElement } from '@betterdocs/plate-ui/slash-input-element';
-import {
+import { 
+  BlockquoteElement,
+  CodeBlockElement,
+  CodeLeaf,
+  CodeLineElement,
+  CodeSyntaxLeaf,
+  ColumnElement,
+  ColumnGroupElement,
+  DateElement,
+  EmojiInputElement,
+  EquationElement,
+  HeadingElement,
+  HighlightLeaf,
+  HrElement,
+  InlineEquationElement,
+  KbdLeaf,
+  LinkElement,
+  MentionElement,
+  MentionInputElement,
+  ParagraphElement,
+  withPlaceholders,
+  SlashInputElement,
   TableCellElement,
   TableCellHeaderElement,
-} from '@betterdocs/plate-ui/table-cell-element';
-import { TableElement } from '@betterdocs/plate-ui/table-element';
-import { TableRowElement } from '@betterdocs/plate-ui/table-row-element';
-import { TocElement } from '@betterdocs/plate-ui/toc-element';
-import { ToggleElement } from '@betterdocs/plate-ui/toggle-element';
+  TableElement,
+  TableRowElement,
+  TocElement,
+  ToggleElement
+} from '@betterdocs/ui';
 
 export const viewComponents = {
   [BlockquotePlugin.key]: BlockquoteElement,

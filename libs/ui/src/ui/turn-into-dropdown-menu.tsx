@@ -41,7 +41,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
   useOpenState,
-} from './dropdown-menu';
+} from './plate-dropdown-menu';
 import { ToolbarButton } from './toolbar';
 
 const turnIntoItems = [

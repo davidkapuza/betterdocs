@@ -28,6 +28,11 @@ export default defineConfig(() => ({
     outDir: '../../dist/libs/ui',
     emptyOutDir: true,
     reportCompressedSize: true,
+    lib: {
+      entry: 'src/index.ts',
+      name: 'ui',
+      fileName: 'index',
+    },
     commonjsOptions: {
       transformMixedEsModules: true,
     },

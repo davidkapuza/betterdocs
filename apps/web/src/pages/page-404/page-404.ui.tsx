@@ -1,5 +1,5 @@
 import { pathKeys } from '@/shared/lib/react-router';
-import { Button } from '@betterdocs/ui/button';
+import { Button } from '@betterdocs/ui';
 import { ArrowLeft } from 'lucide-react';
 import { Link, useNavigate } from 'react-router';
 

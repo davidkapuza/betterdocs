@@ -51,7 +51,7 @@ import {
   DropdownMenuItem,
   DropdownMenuPortal,
   DropdownMenuTrigger,
-} from './dropdown-menu';
+} from './plate-dropdown-menu';
 import { Popover, PopoverContent } from './popover';
 import {
   BorderAll,

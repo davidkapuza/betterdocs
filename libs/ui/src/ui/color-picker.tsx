@@ -10,7 +10,7 @@ import {
   ColorDropdownMenuItems,
 } from './color-dropdown-menu-items';
 import { ColorCustom } from './colors-custom';
-import { DropdownMenuGroup, DropdownMenuItem } from './dropdown-menu';
+import { DropdownMenuGroup, DropdownMenuItem } from './plate-dropdown-menu';
 
 export const ColorPickerContent = withRef<
   'div',

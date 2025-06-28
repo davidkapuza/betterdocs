@@ -11,10 +11,10 @@
     "prefix": ""
   },
   "aliases": {
-    "components": "@betterdocs/ui/src",
+    "components": "libs/ui/src/ui",
     "utils": "@betterdocs/utils",
-    "lib": "@betterdocs/ui/src",
-    "hooks": "@betterdocs/ui/src"
+    "lib": "@betterdocs/utils",
+    "hooks": "libs/ui/src/hooks"
   },
   "iconLibrary": "lucide"
 }

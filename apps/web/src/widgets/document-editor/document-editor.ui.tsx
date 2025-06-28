@@ -4,8 +4,8 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Plate } from '@udecode/plate/react';
 import { useCreateEditor } from './hooks/use-create-editor';
-import { Editor, EditorContainer } from '@betterdocs/plate-ui/editor';
-import { EditorHeader } from '@betterdocs/plate-ui/editor-header';
+import { Editor, EditorContainer } from '@betterdocs/ui';
+import { EditorHeader } from '@betterdocs/ui';
 import { compose, withSuspense } from '@/shared/lib/react';
 import { ErrorHandler } from '@/shared/ui/error-handler';
 import { withErrorBoundary } from 'react-error-boundary';
@@ -25,10 +25,10 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@betterdocs/ui/dropdown-menu';
+  Button,
+  SidebarTrigger,
+} from '@betterdocs/ui';
 import { Check, Ellipsis, Trash2 } from 'lucide-react';
-import { Button } from '@betterdocs/ui/button';
-import { SidebarTrigger } from '@betterdocs/ui/sidebar';
 import { useIsMobile } from '@/shared/hooks/use-mobile';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@betterdocs/utils';

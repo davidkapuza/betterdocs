@@ -1,4 +1,4 @@
-import { ThemeToggle } from '@betterdocs/ui/theme-toggle';
+import { ThemeToggle } from '@betterdocs/ui';
 import { Outlet } from 'react-router';
 
 export function AuthLayout() {

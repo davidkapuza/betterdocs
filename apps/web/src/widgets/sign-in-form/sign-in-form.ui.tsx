@@ -1,7 +1,7 @@
 import { useSignInMutation } from '@/shared/gql/__generated__/operations';
 import { pathKeys } from '@/shared/lib/react-router';
 import { useSessionStore } from '@/shared/session';
-import { Button } from '@betterdocs/ui/button';
+import { Button } from '@betterdocs/ui';
 import {
   Form,
   FormControl,
@@ -9,8 +9,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@betterdocs/ui/form';
-import { Input } from '@betterdocs/ui/input';
+} from '@betterdocs/ui';
+import { Input } from '@betterdocs/ui';
 import { cn } from '@betterdocs/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { GalleryVerticalEnd, Loader2 } from 'lucide-react';

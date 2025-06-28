@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@betterdocs/plate-ui/dialog';
+} from '@betterdocs/ui';
 import {
   Drawer,
   DrawerClose,
@@ -17,18 +17,16 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from '@betterdocs/ui/drawer';
-import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '@betterdocs/ui/form';
-import { Button } from '@betterdocs/ui/button';
-import { Input } from '@betterdocs/ui/input';
-import { Textarea } from '@betterdocs/ui/textarea';
+  Button,
+  Input,
+  Textarea
+} from '@betterdocs/ui';
 import { Plus } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
