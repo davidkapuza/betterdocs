@@ -15,6 +15,24 @@ query GetDocument($getDocumentInput: GetDocumentInput!) {
   }
 }
 
+query DocumentTree($getDocumentInput: GetDocumentInput!) {
+  document(getDocumentInput: $getDocumentInput) {
+    id
+    title
+    collectionId
+    children {
+      id
+      title
+      collectionId
+      children {
+        id
+        title
+        collectionId
+      }
+    }
+  }
+}
+
 mutation UpdateDocument($updateDocumentInput: UpdateDocumentInput!) {
   updateDocument(updateDocumentInput: $updateDocumentInput) {
     id

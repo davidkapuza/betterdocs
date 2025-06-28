@@ -29,14 +29,14 @@ export type SignOutMutation = { __typename?: 'Mutation', signOut?: any | null };
 export type CollectionsQueryVariables = types.Exact<{ [key: string]: never; }>;
 
 
-export type CollectionsQuery = { __typename?: 'Query', collections: Array<{ __typename?: 'Collection', id: number, name: string, description: string, documents: Array<{ __typename?: 'Document', id: number, title: string, content: string }> }> };
+export type CollectionsQuery = { __typename?: 'Query', collections: Array<{ __typename?: 'Collection', id: number, name: string, description?: string | null, documents: Array<{ __typename?: 'Document', id: number, title: string, content: string }> }> };
 
 export type CollectionQueryVariables = types.Exact<{
   collectionId: types.Scalars['Int']['input'];
 }>;
 
 
-export type CollectionQuery = { __typename?: 'Query', collection: { __typename?: 'Collection', id: number, name: string, description: string, documents: Array<{ __typename?: 'Document', id: number, title: string, content: string, author: { __typename?: 'User', role: types.Role, status: types.UserStatus, id: number, email: string, firstName: string, lastName: string } }> } };
+export type CollectionQuery = { __typename?: 'Query', collection: { __typename?: 'Collection', id: number, name: string, description?: string | null, documents: Array<{ __typename?: 'Document', id: number, title: string, content: string, author: { __typename?: 'User', role: types.Role, status: types.UserStatus, id: number, email: string, firstName: string, lastName: string } }> } };
 
 export type CollectionDocumentsQueryVariables = types.Exact<{
   collectionId: types.Scalars['Int']['input'];
@@ -45,12 +45,12 @@ export type CollectionDocumentsQueryVariables = types.Exact<{
 
 export type CollectionDocumentsQuery = { __typename?: 'Query', collection: { __typename?: 'Collection', documents: Array<{ __typename?: 'Document', id: number, title: string, collectionId: number, children: Array<{ __typename?: 'Document', id: number, title: string, collectionId: number }> }> } };
 
-export type DocumentTreeQueryVariables = types.Exact<{
-  getDocumentInput: types.GetDocumentInput;
+export type CreateCollectionMutationVariables = types.Exact<{
+  createCollectionInput: types.CreateCollectionInput;
 }>;
 
 
-export type DocumentTreeQuery = { __typename?: 'Query', document: { __typename?: 'Document', id: number, title: string, collectionId: number, children: Array<{ __typename?: 'Document', id: number, title: string, collectionId: number, children: Array<{ __typename?: 'Document', id: number, title: string, collectionId: number, children: Array<{ __typename?: 'Document', id: number, title: string, collectionId: number }> }> }> } };
+export type CreateCollectionMutation = { __typename?: 'Mutation', createCollection: { __typename?: 'Collection', id: number, name: string, description?: string | null } };
 
 export type QueryCollectionSubscriptionVariables = types.Exact<{
   queryCollectionInput: types.QueryCollectionInput;
@@ -65,6 +65,13 @@ export type GetDocumentQueryVariables = types.Exact<{
 
 
 export type GetDocumentQuery = { __typename?: 'Query', document: { __typename?: 'Document', id: number, title: string, content: string, collectionId: number, author: { __typename?: 'User', role: types.Role, status: types.UserStatus, id: number, email: string, firstName: string, lastName: string } } };
+
+export type DocumentTreeQueryVariables = types.Exact<{
+  getDocumentInput: types.GetDocumentInput;
+}>;
+
+
+export type DocumentTreeQuery = { __typename?: 'Query', document: { __typename?: 'Document', id: number, title: string, collectionId: number, children: Array<{ __typename?: 'Document', id: number, title: string, collectionId: number, children: Array<{ __typename?: 'Document', id: number, title: string, collectionId: number }> }> } };
 
 export type UpdateDocumentMutationVariables = types.Exact<{
   updateDocumentInput: types.UpdateDocumentInput;
@@ -379,63 +386,41 @@ export type CollectionDocumentsQueryHookResult = ReturnType<typeof useCollection
 export type CollectionDocumentsLazyQueryHookResult = ReturnType<typeof useCollectionDocumentsLazyQuery>;
 export type CollectionDocumentsSuspenseQueryHookResult = ReturnType<typeof useCollectionDocumentsSuspenseQuery>;
 export type CollectionDocumentsQueryResult = Apollo.QueryResult<CollectionDocumentsQuery, CollectionDocumentsQueryVariables>;
-export const DocumentTreeDocument = gql`
-    query DocumentTree($getDocumentInput: GetDocumentInput!) {
-  document(getDocumentInput: $getDocumentInput) {
+export const CreateCollectionDocument = gql`
+    mutation CreateCollection($createCollectionInput: CreateCollectionInput!) {
+  createCollection(createCollectionInput: $createCollectionInput) {
     id
-    title
-    collectionId
-    children {
-      id
-      title
-      collectionId
-      children {
-        id
-        title
-        collectionId
-        children {
-          id
-          title
-          collectionId
-        }
-      }
-    }
+    name
+    description
   }
 }
     `;
+export type CreateCollectionMutationFn = Apollo.MutationFunction<CreateCollectionMutation, CreateCollectionMutationVariables>;
 
 /**
- * __useDocumentTreeQuery__
+ * __useCreateCollectionMutation__
  *
- * To run a query within a React component, call `useDocumentTreeQuery` and pass it any options that fit your needs.
- * When your component renders, `useDocumentTreeQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
+ * To run a mutation, you first call `useCreateCollectionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCollectionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
  *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const { data, loading, error } = useDocumentTreeQuery({
+ * const [createCollectionMutation, { data, loading, error }] = useCreateCollectionMutation({
  *   variables: {
- *      getDocumentInput: // value for 'getDocumentInput'
+ *      createCollectionInput: // value for 'createCollectionInput'
  *   },
  * });
  */
-export function useDocumentTreeQuery(baseOptions: Apollo.QueryHookOptions<DocumentTreeQuery, DocumentTreeQueryVariables> & ({ variables: DocumentTreeQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+export function useCreateCollectionMutation(baseOptions?: Apollo.MutationHookOptions<CreateCollectionMutation, CreateCollectionMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<DocumentTreeQuery, DocumentTreeQueryVariables>(DocumentTreeDocument, options);
+        return Apollo.useMutation<CreateCollectionMutation, CreateCollectionMutationVariables>(CreateCollectionDocument, options);
       }
-export function useDocumentTreeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DocumentTreeQuery, DocumentTreeQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<DocumentTreeQuery, DocumentTreeQueryVariables>(DocumentTreeDocument, options);
-        }
-export function useDocumentTreeSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<DocumentTreeQuery, DocumentTreeQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<DocumentTreeQuery, DocumentTreeQueryVariables>(DocumentTreeDocument, options);
-        }
-export type DocumentTreeQueryHookResult = ReturnType<typeof useDocumentTreeQuery>;
-export type DocumentTreeLazyQueryHookResult = ReturnType<typeof useDocumentTreeLazyQuery>;
-export type DocumentTreeSuspenseQueryHookResult = ReturnType<typeof useDocumentTreeSuspenseQuery>;
-export type DocumentTreeQueryResult = Apollo.QueryResult<DocumentTreeQuery, DocumentTreeQueryVariables>;
+export type CreateCollectionMutationHookResult = ReturnType<typeof useCreateCollectionMutation>;
+export type CreateCollectionMutationResult = Apollo.MutationResult<CreateCollectionMutation>;
+export type CreateCollectionMutationOptions = Apollo.BaseMutationOptions<CreateCollectionMutation, CreateCollectionMutationVariables>;
 export const QueryCollectionDocument = gql`
     subscription QueryCollection($queryCollectionInput: QueryCollectionInput!) {
   queryCollection(queryCollectionInput: $queryCollectionInput) {
@@ -518,6 +503,58 @@ export type GetDocumentQueryHookResult = ReturnType<typeof useGetDocumentQuery>;
 export type GetDocumentLazyQueryHookResult = ReturnType<typeof useGetDocumentLazyQuery>;
 export type GetDocumentSuspenseQueryHookResult = ReturnType<typeof useGetDocumentSuspenseQuery>;
 export type GetDocumentQueryResult = Apollo.QueryResult<GetDocumentQuery, GetDocumentQueryVariables>;
+export const DocumentTreeDocument = gql`
+    query DocumentTree($getDocumentInput: GetDocumentInput!) {
+  document(getDocumentInput: $getDocumentInput) {
+    id
+    title
+    collectionId
+    children {
+      id
+      title
+      collectionId
+      children {
+        id
+        title
+        collectionId
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useDocumentTreeQuery__
+ *
+ * To run a query within a React component, call `useDocumentTreeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDocumentTreeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDocumentTreeQuery({
+ *   variables: {
+ *      getDocumentInput: // value for 'getDocumentInput'
+ *   },
+ * });
+ */
+export function useDocumentTreeQuery(baseOptions: Apollo.QueryHookOptions<DocumentTreeQuery, DocumentTreeQueryVariables> & ({ variables: DocumentTreeQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<DocumentTreeQuery, DocumentTreeQueryVariables>(DocumentTreeDocument, options);
+      }
+export function useDocumentTreeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DocumentTreeQuery, DocumentTreeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<DocumentTreeQuery, DocumentTreeQueryVariables>(DocumentTreeDocument, options);
+        }
+export function useDocumentTreeSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<DocumentTreeQuery, DocumentTreeQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<DocumentTreeQuery, DocumentTreeQueryVariables>(DocumentTreeDocument, options);
+        }
+export type DocumentTreeQueryHookResult = ReturnType<typeof useDocumentTreeQuery>;
+export type DocumentTreeLazyQueryHookResult = ReturnType<typeof useDocumentTreeLazyQuery>;
+export type DocumentTreeSuspenseQueryHookResult = ReturnType<typeof useDocumentTreeSuspenseQuery>;
+export type DocumentTreeQueryResult = Apollo.QueryResult<DocumentTreeQuery, DocumentTreeQueryVariables>;
 export const UpdateDocumentDocument = gql`
     mutation UpdateDocument($updateDocumentInput: UpdateDocumentInput!) {
   updateDocument(updateDocumentInput: $updateDocumentInput) {

@@ -47,26 +47,11 @@ query CollectionDocuments($collectionId: Int!) {
   }
 }
 
-query DocumentTree($getDocumentInput: GetDocumentInput!) {
-  document(getDocumentInput: $getDocumentInput) {
+mutation CreateCollection($createCollectionInput: CreateCollectionInput!) {
+  createCollection(createCollectionInput: $createCollectionInput) {
     id
-    title
-    collectionId
-    children {
-      id
-      title
-      collectionId
-      children {
-        id
-        title
-        collectionId
-        children {
-          id
-          title
-          collectionId
-        }
-      }
-    }
+    name
+    description
   }
 }
 

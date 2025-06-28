@@ -4,6 +4,7 @@ import { Inject, UseGuards } from '@nestjs/common';
 import {
   Args,
   Int,
+  Mutation,
   Parent,
   Query,
   ResolveField,
@@ -12,7 +13,7 @@ import {
 } from '@nestjs/graphql';
 import { JwtPayload } from '@shared/types';
 import { CollectionsService } from './collections.service';
-import { Collection, QueryCollectionInput, QueryResponse } from './gql';
+import { Collection, CreateCollectionInput, QueryCollectionInput, QueryResponse } from './gql';
 import { DocumentsService } from '@modules/documents/documents.service';
 import { Document } from '@modules/documents/gql';
 import { CollectionMembershipGuard } from './guards';
@@ -84,5 +85,13 @@ export class CollectionsResolver {
         return this;
       },
     };
+  }
+
+  @Mutation(() => Collection, { name: 'createCollection' })
+  async createCollection(
+    @ReqUser() jwtPayload: JwtPayload,
+    @Args('createCollectionInput') createCollectionInput: CreateCollectionInput
+  ) {
+    return await this.collectionsService.createCollection(jwtPayload.userId, createCollectionInput);
   }
 }

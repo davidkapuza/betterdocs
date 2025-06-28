@@ -5,7 +5,7 @@ import { Document } from '@modules/documents/gql';
 export class Collection {
   id: number;
   name: string;
-  description: string;
+  description?: string;
   documents: Document[];
 }
 

@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { PrismaService } from '@shared/libs/prisma';
-import { QueryCollectionInput } from './gql';
+import { CreateCollectionInput, QueryCollectionInput } from './gql';
 import { ConfigService } from '@nestjs/config';
 import { Config } from '@shared/config';
 
@@ -29,6 +29,21 @@ export class CollectionsService {
       where: { id: collectionId },
     });
     return col;
+  }
+
+  async createCollection(userId: number, createCollectionInput: CreateCollectionInput) {
+    return this.prisma.collection.create({
+      data: {
+        name: createCollectionInput.name,
+        description: createCollectionInput.description,
+        users: {
+          create: {
+            userId,
+            role: 'owner',
+          },
+        },
+      },
+    });
   }
 
   async queryCollection(

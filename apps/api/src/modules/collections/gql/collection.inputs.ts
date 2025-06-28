@@ -1,5 +1,15 @@
 import { InputType } from '@nestjs/graphql';
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
+
+@InputType()
+export class CreateCollectionInput {
+  @IsString()
+  name: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+}
 
 @InputType()
 export class QueryCollectionInput {

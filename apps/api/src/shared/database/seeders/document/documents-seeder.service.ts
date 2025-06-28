@@ -9,13 +9,65 @@ export class DocumentsSeederService {
   constructor(private readonly prisma: PrismaService) {}
 
   async seed() {
+    // Find or create a collection to add the document to
+    let collection = await this.prisma.collection.findFirst({
+      include: {
+        users: true,
+      },
+    });
+
+    if (!collection) {
+      // Create a default collection if none exists
+      const firstUser = await this.prisma.user.findFirst();
+      if (!firstUser) {
+        throw new Error('No users found. Please run the users seeder first.');
+      }
+
+      collection = await this.prisma.collection.create({
+        data: {
+          name: 'Sample Collection',
+          description: 'A collection with sample documents',
+          users: {
+            create: {
+              userId: firstUser.id,
+              role: 'owner',
+            },
+          },
+        },
+        include: {
+          users: true,
+        },
+      });
+    }
+
+    // Use the first owner of the collection as the author
+    const collectionOwner = collection.users.find(user => user.role === 'owner');
+    const authorId = collectionOwner?.userId || collection.users[0]?.userId;
+
+    if (!authorId) {
+      throw new Error('No valid author found for the collection.');
+    }
+
+    // Check if a document with this title already exists to avoid duplicates
+    const existingDocument = await this.prisma.document.findFirst({
+      where: {
+        title: 'Father of Computer Science',
+        collectionId: collection.id,
+      },
+    });
+
+    if (existingDocument) {
+      console.log('Document already exists, skipping creation');
+      return existingDocument;
+    }
+
     return this.prisma.document.create({
       data: {
-        collectionId: 1,
+        collectionId: collection.id,
         title: 'Father of Computer Science',
         content: sampleData,
         plainContent: extractFields(JSON.parse(sampleData), 'text'),
-        authorId: 1,
+        authorId,
       },
     });
   }
