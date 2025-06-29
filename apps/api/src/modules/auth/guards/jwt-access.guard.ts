@@ -1,8 +1,6 @@
-import { RedisService } from '@modules/redis/redis.service';
 import {
   ExecutionContext,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GqlExecutionContext } from '@nestjs/graphql';
@@ -20,8 +18,7 @@ export class JwtAccessStrategy extends PassportStrategy(
   STRATEGY_NAME
 ) {
   constructor(
-    configService: ConfigService<Config>,
-    private readonly redisService: RedisService
+    configService: ConfigService<Config>
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -32,10 +29,7 @@ export class JwtAccessStrategy extends PassportStrategy(
   }
 
   public async validate(payload: JwtPayload): Promise<JwtPayload> {
-    const isRevoked = await this.redisService.isTokenRevoked(payload.jti);
-
-    if (isRevoked) throw new UnauthorizedException();
-
+    // No token revocation check - relying on JWT expiration only
     return payload;
   }
 }

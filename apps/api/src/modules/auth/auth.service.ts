@@ -12,10 +12,8 @@ import { ConfigService } from '@nestjs/config';
 import { Config } from '@shared/config';
 import { MailService } from '@modules/mail/mail.service';
 import { UserStatus, User } from '@prisma/client';
-import { RedisService } from '@modules/redis/redis.service';
 import { JwtPayload } from '@shared/types';
 import { v4 as uuid } from 'uuid';
-import ms from 'ms';
 import { ResetPasswordInput, SignInInput, SignUpInput } from './gql';
 
 @Injectable()
@@ -24,7 +22,6 @@ export class AuthService {
     private jwtService: JwtService,
     private readonly usersService: UsersService,
     private readonly mailService: MailService,
-    private readonly redisService: RedisService,
     private readonly configService: ConfigService<Config>
   ) {}
 
@@ -127,8 +124,6 @@ export class AuthService {
   }
 
   async refreshTokens(data: JwtPayload) {
-    await this.revokeTokens(data.jti);
-
     const { accessToken, refreshToken } = await this.generateTokens(data);
 
     return {
@@ -211,8 +206,9 @@ export class AuthService {
     };
   }
 
-  async signOut(data: JwtPayload) {
-    await this.revokeTokens(data.jti);
+  async signOut(_data: JwtPayload) {
+    // Token revocation is now handled by JWT expiration only
+    // No need to revoke tokens as we're relying on JWT expiration
   }
 
   private async generateTokens(data: Pick<JwtPayload, 'userId'>) {
@@ -261,17 +257,4 @@ export class AuthService {
     };
   }
 
-  private async revokeTokens(jti: string) {
-    // Using longer expiration time
-    const refreshTokenExpiration = this.configService.getOrThrow(
-      'auth.refreshTokenExpiration',
-      {
-        infer: true,
-      }
-    );
-
-    const expirationInSeconds = ms(refreshTokenExpiration) / 1000;
-
-    await this.redisService.revokeToken(jti, expirationInSeconds);
-  }
 }

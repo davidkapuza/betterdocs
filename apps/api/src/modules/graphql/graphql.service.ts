@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { RedisService } from '@modules/redis/redis.service';
 import { Context } from 'graphql-ws';
 import { JwtPayload } from '@shared/types';
 
@@ -9,8 +8,7 @@ import { JwtPayload } from '@shared/types';
 export class GraphQLService {
   constructor(
     private readonly configService: ConfigService,
-    private readonly jwtService: JwtService,
-    private readonly redisService: RedisService
+    private readonly jwtService: JwtService
   ) {}
 
   async handleSubscriptionConnection(
@@ -30,10 +28,7 @@ export class GraphQLService {
       secret,
     });
 
-    const isRevoked = await this.redisService.isTokenRevoked(payload.jti);
-
-    if (isRevoked) throw new Error('Token revoked');
-
+    // No token revocation check - relying on JWT expiration only
     extra.user = payload;
   }
 

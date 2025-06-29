@@ -4,7 +4,6 @@ import { PassportModule } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { UsersModule } from '@modules/users/users.module';
 import { MailModule } from '@modules/mail/mail.module';
-import { RedisModule } from '@modules/redis/redis.module';
 import { AuthResolver } from './auth.resolver';
 import { JwtAccessStrategy, JwtRefreshStrategy } from './guards';
 
@@ -13,7 +12,6 @@ import { JwtAccessStrategy, JwtRefreshStrategy } from './guards';
     UsersModule,
     PassportModule,
     MailModule,
-    RedisModule,
     JwtModule.register({}),
   ],
   providers: [AuthService, AuthResolver, JwtAccessStrategy, JwtRefreshStrategy],

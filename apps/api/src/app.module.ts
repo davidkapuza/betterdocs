@@ -9,13 +9,12 @@ import { appConfig } from '@shared/config/app';
 import { authConfig } from '@shared/config/auth';
 import { mailConfig } from '@shared/config/mail';
 import { rabbitMQConfig } from '@shared/config/rabbitmq';
-import { redisConfig } from '@shared/config/redis';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, authConfig, mailConfig, redisConfig, rabbitMQConfig],
+      load: [appConfig, authConfig, mailConfig, rabbitMQConfig],
       envFilePath: ['.env'],
     }),
     GraphQLModule,

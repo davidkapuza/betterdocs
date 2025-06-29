@@ -3,8 +3,6 @@ import { GraphQLModule as NestGraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule, JwtService } from '@nestjs/jwt';
-import { RedisModule } from '@modules/redis/redis.module';
-import { RedisService } from '@modules/redis/redis.service';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { VoidResolver } from 'graphql-scalars';
 import { join } from 'path';
@@ -15,21 +13,18 @@ import { JwtPayload } from '@shared/types';
 @Module({
   imports: [
     ConfigModule,
-    RedisModule,
     JwtModule,
     NestGraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      imports: [ConfigModule, RedisModule, JwtModule],
-      inject: [ConfigService, RedisService, JwtService],
+      imports: [ConfigModule, JwtModule],
+      inject: [ConfigService, JwtService],
       useFactory: (
         configService: ConfigService,
-        redisService: RedisService,
         jwtService: JwtService
       ) => {
         const graphQLService = new GraphQLService(
           configService,
-          jwtService,
-          redisService
+          jwtService
         );
 
         return {
