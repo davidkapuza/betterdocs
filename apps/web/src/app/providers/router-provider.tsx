@@ -9,6 +9,7 @@ import { signInPageRoute } from '@/pages/sign-in';
 import { signUpPageRoute } from '@/pages/sign-up';
 import React from 'react';
 import { collectionsPageRoute } from '@/pages/collections';
+import { documentsPageRoute } from '@/pages/documents';
 import { compose, withSuspense } from '@/shared/lib/react';
 import { pathKeys } from '@/shared/lib/react-router';
 import { page404Route } from '@/pages/page-404';
@@ -47,7 +48,12 @@ const browserRouter = createBrowserRouter([
         loader: layoutLoader,
         HydrateFallback: PageLoader,
         element: React.createElement(RootLayout),
-        children: [collectionsPageRoute],
+        children: [
+          {
+            path: pathKeys.collections.root(),
+            children: [collectionsPageRoute, documentsPageRoute],
+          },
+        ],
       },
       {
         element: React.createElement(enhance(AuthLayout)),

@@ -1,4 +1,4 @@
-import { DocumentPageParams } from './react-router.types';
+import { DocumentsPageParams } from './react-router.types';
 
 export const pathKeys = {
   root: '/',
@@ -13,14 +13,12 @@ export const pathKeys = {
       return pathKeys.auth.root().concat('/sign-up');
     },
   },
-  documents: {
+  collections: {
     root() {
       return pathKeys.root.concat('collections');
     },
-    document({ collectionId, documentId }: DocumentPageParams) {
-      return pathKeys.documents
-        .root()
-        .concat('/', collectionId, '/', documentId);
+    collection({ collectionId }: DocumentsPageParams) {
+      return pathKeys.collections.root().concat('/', collectionId);
     },
   },
   page404() {

@@ -30,7 +30,13 @@ import {
   SidebarTrigger,
 } from '@betterdocs/ui';
 import { Button } from '@betterdocs/ui';
-import { NavLink, useMatch, useNavigate, useParams } from 'react-router';
+import {
+  NavLink,
+  useMatch,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router';
 import { pathKeys, routerTypes } from '@/shared/lib/react-router';
 import {
   useCollectionDocumentsSuspenseQuery,
@@ -61,10 +67,10 @@ import { useSessionStore } from '@/shared/session';
 export function DocumentsSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  const params = useParams() as routerTypes.DocumentPageParams;
+  const params = useParams() as routerTypes.DocumentsPageParams;
   const navigate = useNavigate();
 
-  const match = useMatch(pathKeys.documents.root());
+  const match = useMatch(pathKeys.collections.root());
 
   const { data } = useUserSuspenseQuery();
   const clearSession = useSessionStore.use.clearSession();
@@ -99,7 +105,7 @@ export function DocumentsSidebar({
         <SidebarGroup className="gap-2">
           {!isMobile && <SidebarTrigger className="z-10" />}
           <SidebarMenuButton isActive={Boolean(match)} className="z-10" asChild>
-            <NavLink to={pathKeys.documents.root()}>
+            <NavLink to={pathKeys.collections.root()}>
               <List />
               <span className="truncate">Collections</span>
             </NavLink>
@@ -186,7 +192,16 @@ const CollectionDocuments = enhance((props) => {
         createDocumentInput: {
           collectionId,
           title: 'Untitled Document',
-          content: JSON.stringify([{ type: 'p', children: [{ text: '' }] }]),
+          content: JSON.stringify([
+            {
+              children: [
+                {
+                  text: '',
+                },
+              ],
+              type: 'p',
+            },
+          ]),
         },
       },
       refetchQueries: ['CollectionDocuments'],
@@ -231,12 +246,17 @@ type TreeProps = {
 function Tree(props: TreeProps) {
   const { document } = props;
   const navigate = useNavigate();
-  const match = useMatch(
-    pathKeys.documents.document({
-      collectionId: document.collectionId.toString(),
-      documentId: document.id.toString(),
-    })
-  );
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const selectedDocumentId = searchParams.get('documentId');
+
+  // const match = useMatch(
+  //   pathKeys.documents.document({
+  //     collectionId: document.collectionId.toString(),
+  //     documentId: document.id.toString(),
+  //   })
+  // );
   const { data, loading } = useDocumentTreeQuery({
     variables: {
       getDocumentInput: {
@@ -252,15 +272,12 @@ function Tree(props: TreeProps) {
   if (!document.children || !document.children.length) {
     return (
       <SidebarMenuButton
-        isActive={Boolean(match)}
+        isActive={selectedDocumentId === document.id.toString()}
         className="data-[active=true]:bg-transparent"
         onClick={() => {
-          navigate(
-            pathKeys.documents.document({
-              collectionId: document.collectionId.toString(),
-              documentId: document.id.toString(),
-            })
-          );
+          setSearchParams({
+            documentId: document.id.toString(),
+          });
         }}
       >
         <File />
@@ -273,14 +290,11 @@ function Tree(props: TreeProps) {
     <SidebarMenuItem>
       <Collapsible className="group/collapsible [&[data-state=open]>button>svg:first-child]:rotate-90">
         <SidebarMenuButton
-          isActive={Boolean(match)}
+          isActive={Boolean(selectedDocumentId === document.id.toString())}
           onClick={() => {
-            navigate(
-              pathKeys.documents.document({
-                collectionId: document.collectionId.toString(),
-                documentId: document.id.toString(),
-              })
-            );
+            setSearchParams({
+              documentId: document.id.toString(),
+            });
           }}
         >
           <CollapsibleTrigger asChild onClick={(e) => e.stopPropagation()}>

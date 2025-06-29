@@ -1,5 +1,6 @@
 'use client';
 
+import { useSearchParams } from 'react-router';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Plate } from '@udecode/plate/react';
@@ -15,8 +16,8 @@ import {
   useGetDocumentSuspenseQuery,
   useUpdateDocumentMutation,
 } from '@/shared/gql/__generated__/operations';
-import { useNavigate, useParams } from 'react-router';
-import { pathKeys, routerTypes } from '@/shared/lib/react-router';
+import { useParams } from 'react-router';
+import { routerTypes } from '@/shared/lib/react-router';
 import React from 'react';
 import { useDebouncedCallback } from '@/shared/hooks/use-debounced-callback';
 import { Value } from '@udecode/plate';
@@ -32,6 +33,7 @@ import { Check, Ellipsis, Trash2 } from 'lucide-react';
 import { useIsMobile } from '@/shared/hooks/use-mobile';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@betterdocs/utils';
+import { skipToken } from '@apollo/client';
 
 const enhance = compose(
   (component) =>
@@ -44,17 +46,23 @@ export const DocumentEditor = enhance(() => {
   const editor = useCreateEditor({
     skipInitialization: true,
   });
-  const params = useParams() as routerTypes.DocumentPageParams;
-  const navigate = useNavigate();
+  const params = useParams() as routerTypes.DocumentsPageParams;
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const { data } = useGetDocumentSuspenseQuery({
-    variables: {
-      getDocumentInput: {
-        collectionId: Number(params.collectionId),
-        documentId: Number(params.documentId),
-      },
-    },
-  });
+  const documentId = searchParams.get('documentId');
+
+  const { data } = useGetDocumentSuspenseQuery(
+    documentId
+      ? {
+          variables: {
+            getDocumentInput: {
+              collectionId: Number(params.collectionId),
+              documentId: Number(documentId),
+            },
+          },
+        }
+      : skipToken
+  );
 
   const [title, setTitle] = React.useState('');
 
@@ -80,11 +88,12 @@ export const DocumentEditor = enhance(() => {
 
   const onDocumentChange = useDebouncedCallback(
     ({ value, title }: Partial<{ value: Value; title: string }>) => {
+      if (!documentId) return;
       updateDocument({
         variables: {
           updateDocumentInput: {
             collectionId: Number(params.collectionId),
-            documentId: Number(params.documentId),
+            documentId: Number(documentId),
             content: JSON.stringify(value ?? '[]'),
             title,
           },
@@ -105,17 +114,17 @@ export const DocumentEditor = enhance(() => {
 
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!documentId) return;
     await deleteDocument({
       variables: {
         deleteDocumentInput: {
           collectionId: Number(params.collectionId),
-          documentId: Number(params.documentId),
+          documentId: Number(documentId),
         },
       },
       refetchQueries: ['CollectionDocuments'],
     });
-    // TODO redirect to the last document in the collection
-    navigate(pathKeys.documents.root());
+    setSearchParams({});
   };
 
   const isMobile = useIsMobile();

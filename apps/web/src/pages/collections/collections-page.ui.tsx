@@ -1,26 +1,10 @@
 import { useCollectionsSuspenseQuery } from '@/shared/gql/__generated__/operations';
-import { NavLink } from 'react-router';
-import { DocumentEditor } from '@/widgets/document-editor';
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from '@betterdocs/ui';
-import { DocumentPrompt } from '@/widgets/document-prompt';
-import { pathKeys } from '@/shared/lib/react-router';
-import { SidebarTrigger } from '@betterdocs/ui';
 import { useIsMobile } from '@/shared/hooks/use-mobile';
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from '@betterdocs/ui';
-import { Button } from '@betterdocs/ui';
-import { MessageCircle, FolderOpen } from 'lucide-react';
+import { pathKeys } from '@/shared/lib/react-router';
 import { CreateCollectionDialog } from '@/widgets/create-collection-dialog';
+import { SidebarTrigger } from '@betterdocs/ui';
+import { FolderOpen } from 'lucide-react';
+import { NavLink } from 'react-router';
 
 export function CollectionsPage() {
   const { data } = useCollectionsSuspenseQuery();
@@ -56,9 +40,8 @@ export function CollectionsPage() {
             {data?.collections.map((collection) => (
               <NavLink
                 key={collection.id}
-                to={pathKeys.documents.document({
+                to={pathKeys.collections.collection({
                   collectionId: collection.id.toString(),
-                  documentId: collection.documents[0]?.id.toString(),
                 })}
                 className="block w-full p-6 transition-colors bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
               >
@@ -78,42 +61,5 @@ export function CollectionsPage() {
         )}
       </div>
     </div>
-  );
-}
-
-export function DocumentPage() {
-  const isMobile = useIsMobile();
-
-  if (isMobile)
-    return (
-      <>
-        <DocumentEditor />
-        <Drawer>
-          <DrawerTrigger className="absolute bottom-6 right-6" asChild>
-            <Button size="icon-lg" className="rounded-full shadow-lg">
-              <MessageCircle />
-            </Button>
-          </DrawerTrigger>
-          <DrawerContent className="h-[90vh]">
-            <DrawerHeader className="invisible">
-              <DrawerTitle>Use AI to search in your documents</DrawerTitle>
-              <DrawerDescription>TODO</DrawerDescription>
-            </DrawerHeader>
-            <DocumentPrompt />
-          </DrawerContent>
-        </Drawer>
-      </>
-    );
-
-  return (
-    <ResizablePanelGroup direction="horizontal">
-      <ResizablePanel minSize={30}>
-        <DocumentEditor />
-      </ResizablePanel>
-      <ResizableHandle withHandle />
-      <ResizablePanel minSize={30}>
-        <DocumentPrompt />
-      </ResizablePanel>
-    </ResizablePanelGroup>
   );
 }
