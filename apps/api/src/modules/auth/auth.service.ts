@@ -3,7 +3,6 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
-  UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -105,7 +104,7 @@ export class AuthService {
     const user = await this.usersService.findByEmail(signInInput.email);
 
     if (!user || !(await bcrypt.compare(signInInput.password, user.password))) {
-      throw new UnauthorizedException('Invalid email or password');
+      throw new UnprocessableEntityException('Invalid email or password');
     }
 
     if (user.status === UserStatus.inactive) {

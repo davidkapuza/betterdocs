@@ -23,7 +23,7 @@ export function DocumentPage() {
       <div className="relative min-h-screen">
         <DocumentEditor />
         <Drawer>
-          <DrawerTrigger className="fixed z-50 bottom-4 right-4" asChild>
+          <DrawerTrigger className="fixed z-50 bottom-5 right-5" asChild>
             <Button size="icon-lg" className="rounded-full shadow-lg">
               <MessageCircle />
             </Button>

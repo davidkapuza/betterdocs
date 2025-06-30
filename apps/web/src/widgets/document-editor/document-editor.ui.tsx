@@ -16,6 +16,7 @@ import {
   useGetDocumentSuspenseQuery,
   useUpdateDocumentMutation,
   useCreateDocumentMutation,
+  CollectionDocumentsDocument,
 } from '@/shared/gql/__generated__/operations';
 import { useParams } from 'react-router';
 import { routerTypes } from '@/shared/lib/react-router';
@@ -122,6 +123,7 @@ export const DocumentEditor = enhance(() => {
           documentId: Number(documentId),
         },
       },
+      refetchQueries: [CollectionDocumentsDocument],
     });
     setSearchParams({});
   };
@@ -144,6 +146,7 @@ export const DocumentEditor = enhance(() => {
           ]),
         },
       },
+      refetchQueries: [CollectionDocumentsDocument],
     });
 
     if (result.data?.createDocument) {
@@ -157,7 +160,7 @@ export const DocumentEditor = enhance(() => {
     return (
       <div className="flex flex-col min-h-screen">
         {isMobile && (
-          <div className="fixed top-0 flex items-center py-8 px-14">
+          <div className="fixed top-0 flex items-center px-10 py-8">
             <SidebarTrigger />
           </div>
         )}
