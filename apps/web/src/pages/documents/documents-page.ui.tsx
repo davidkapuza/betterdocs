@@ -20,23 +20,27 @@ export function DocumentPage() {
 
   if (isMobile)
     return (
-      <>
+      <div className="relative min-h-screen">
         <DocumentEditor />
         <Drawer>
-          <DrawerTrigger className="absolute bottom-6 right-6" asChild>
+          <DrawerTrigger className="fixed z-50 bottom-4 right-4" asChild>
             <Button size="icon-lg" className="rounded-full shadow-lg">
               <MessageCircle />
             </Button>
           </DrawerTrigger>
-          <DrawerContent className="h-[90vh]">
-            <DrawerHeader className="invisible">
-              <DrawerTitle>Use AI to search in your documents</DrawerTitle>
-              <DrawerDescription>TODO</DrawerDescription>
+          <DrawerContent className="h-[85vh] flex flex-col">
+            <DrawerHeader className="flex-shrink-0">
+              <DrawerTitle>AI Assistant</DrawerTitle>
+              <DrawerDescription>
+                Ask questions about your documents or get help with content
+              </DrawerDescription>
             </DrawerHeader>
-            <DocumentPrompt />
+            <div className="flex-1 overflow-hidden">
+              <DocumentPrompt />
+            </div>
           </DrawerContent>
         </Drawer>
-      </>
+      </div>
     );
 
   return (

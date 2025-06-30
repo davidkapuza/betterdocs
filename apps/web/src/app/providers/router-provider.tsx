@@ -50,6 +50,10 @@ const browserRouter = createBrowserRouter([
         element: React.createElement(RootLayout),
         children: [
           {
+            path: pathKeys.root,
+            loader: () => redirect(pathKeys.collections.root()),
+          },
+          {
             path: pathKeys.collections.root(),
             children: [collectionsPageRoute, documentsPageRoute],
           },

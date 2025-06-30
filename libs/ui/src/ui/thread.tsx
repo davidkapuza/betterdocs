@@ -89,7 +89,7 @@ const Composer: FC = () => {
         rows={1}
         autoFocus
         placeholder="Write a message..."
-        className="flex-grow px-2 py-4 text-sm bg-transparent border-none outline-none resize-none placeholder:text-muted-foreground max-h-40 focus:ring-0 disabled:cursor-not-allowed"
+        className="flex-grow px-2 py-4 bg-transparent border-none outline-none resize-none text-md placeholder:text-muted-foreground max-h-40 focus:ring-0 disabled:cursor-not-allowed"
       />
       <ComposerAction />
     </ComposerPrimitive.Root>

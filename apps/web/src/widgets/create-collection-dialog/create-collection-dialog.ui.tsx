@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router';
 import { useCreateCollectionMutation } from '@/shared/gql/__generated__/operations';
 import {
   Dialog,
@@ -25,16 +26,20 @@ import {
   FormMessage,
   Button,
   Input,
-  Textarea
+  Textarea,
 } from '@betterdocs/ui';
 import { Plus } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useIsMobile } from '@/shared/hooks/use-mobile';
+import { pathKeys } from '@/shared/lib/react-router';
 
 const createCollectionSchema = z.object({
-  name: z.string().min(1, 'Collection name is required').max(100, 'Name is too long'),
+  name: z
+    .string()
+    .min(1, 'Collection name is required')
+    .max(100, 'Name is too long'),
   description: z.string().max(500, 'Description is too long').optional(),
 });
 
@@ -44,11 +49,14 @@ interface CreateCollectionDialogProps {
   onCollectionCreated?: () => void;
 }
 
-export function CreateCollectionDialog({ onCollectionCreated }: CreateCollectionDialogProps) {
+export function CreateCollectionDialog({
+  onCollectionCreated,
+}: CreateCollectionDialogProps) {
+  const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const [createCollection, { loading }] = useCreateCollectionMutation();
   const isDesktop = !useIsMobile();
-  
+
   const form = useForm<CreateCollectionForm>({
     resolver: zodResolver(createCollectionSchema),
     defaultValues: {
@@ -59,7 +67,7 @@ export function CreateCollectionDialog({ onCollectionCreated }: CreateCollection
 
   const onSubmit = async (data: CreateCollectionForm) => {
     try {
-      await createCollection({
+      const collection = await createCollection({
         variables: {
           createCollectionInput: {
             name: data.name,
@@ -68,10 +76,15 @@ export function CreateCollectionDialog({ onCollectionCreated }: CreateCollection
         },
         refetchQueries: ['Collections'],
       });
-      
       setOpen(false);
       form.reset();
       onCollectionCreated?.();
+      if (collection.data)
+        navigate(
+          pathKeys.collections.collection({
+            collectionId: collection.data.createCollection.id.toString(),
+          })
+        );
     } catch (error) {
       console.error('Failed to create collection:', error);
     }
@@ -82,7 +95,7 @@ export function CreateCollectionDialog({ onCollectionCreated }: CreateCollection
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button className="mb-6">
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus className="w-4 h-4 mr-2" />
             Create Collection
           </Button>
         </DialogTrigger>
@@ -90,7 +103,8 @@ export function CreateCollectionDialog({ onCollectionCreated }: CreateCollection
           <DialogHeader>
             <DialogTitle>Create New Collection</DialogTitle>
             <DialogDescription>
-              Create a new collection to organize your documents. You can always edit this information later.
+              Create a new collection to organize your documents. You can always
+              edit this information later.
             </DialogDescription>
           </DialogHeader>
           <CollectionForm form={form} onSubmit={onSubmit} loading={loading} />
@@ -103,7 +117,7 @@ export function CreateCollectionDialog({ onCollectionCreated }: CreateCollection
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
         <Button className="mb-6">
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="w-4 h-4 mr-2" />
           Create Collection
         </Button>
       </DrawerTrigger>
@@ -111,10 +125,16 @@ export function CreateCollectionDialog({ onCollectionCreated }: CreateCollection
         <DrawerHeader className="text-left">
           <DrawerTitle>Create New Collection</DrawerTitle>
           <DrawerDescription>
-            Create a new collection to organize your documents. You can always edit this information later.
+            Create a new collection to organize your documents. You can always
+            edit this information later.
           </DrawerDescription>
         </DrawerHeader>
-        <CollectionForm form={form} onSubmit={onSubmit} loading={loading} className="px-4" />
+        <CollectionForm
+          form={form}
+          onSubmit={onSubmit}
+          loading={loading}
+          className="px-4"
+        />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>
@@ -132,10 +152,18 @@ interface CollectionFormProps {
   className?: string;
 }
 
-function CollectionForm({ form, onSubmit, loading, className }: CollectionFormProps) {
+function CollectionForm({
+  form,
+  onSubmit,
+  loading,
+  className,
+}: CollectionFormProps) {
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className={`space-y-6 ${className || ''}`}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className={`space-y-6 ${className || ''}`}
+      >
         <div className="grid gap-4 py-4">
           <FormField
             control={form.control}
@@ -144,10 +172,7 @@ function CollectionForm({ form, onSubmit, loading, className }: CollectionFormPr
               <FormItem>
                 <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Enter collection name"
-                    {...field}
-                  />
+                  <Input placeholder="Enter collection name" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

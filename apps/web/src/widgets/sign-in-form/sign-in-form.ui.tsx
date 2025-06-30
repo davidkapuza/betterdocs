@@ -36,7 +36,7 @@ export function SignInForm({
   const [signIn, { loading }] = useSignInMutation({
     onCompleted: (data) => {
       setSession(data.signIn);
-      navigate(pathKeys.root);
+      navigate(pathKeys.collections.root());
     },
     onError: (error) => {
       toast.error(error.message);

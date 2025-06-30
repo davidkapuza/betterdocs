@@ -1,15 +1,39 @@
-import { useCollectionsSuspenseQuery } from '@/shared/gql/__generated__/operations';
+import {
+  useCollectionsSuspenseQuery,
+  CollectionsQuery,
+} from '@/shared/gql/__generated__/operations';
 import { useIsMobile } from '@/shared/hooks/use-mobile';
 import { pathKeys } from '@/shared/lib/react-router';
 import { CreateCollectionDialog } from '@/widgets/create-collection-dialog';
 import { SidebarTrigger } from '@betterdocs/ui';
 import { FolderOpen } from 'lucide-react';
-import { NavLink } from 'react-router';
+import { createSearchParams, NavLink } from 'react-router';
 
 export function CollectionsPage() {
   const { data } = useCollectionsSuspenseQuery();
 
   const isMobile = useIsMobile();
+
+  const getDocumentLink = (
+    collection: CollectionsQuery['collections'][number]
+  ): string => {
+    if (collection.documents.length > 0) {
+      return pathKeys.collections
+        .collection({
+          collectionId: collection.id.toString(),
+        })
+        .concat(
+          '?',
+          createSearchParams({
+            documentId: collection.documents[0].id.toString(),
+          }).toString()
+        );
+    } else {
+      return pathKeys.collections.collection({
+        collectionId: collection.id.toString(),
+      });
+    }
+  };
 
   return (
     <div className="flex flex-col gap-6 p-6 min-h-svh bg-background md:p-10">
@@ -40,9 +64,7 @@ export function CollectionsPage() {
             {data?.collections.map((collection) => (
               <NavLink
                 key={collection.id}
-                to={pathKeys.collections.collection({
-                  collectionId: collection.id.toString(),
-                })}
+                to={getDocumentLink(collection)}
                 className="block w-full p-6 transition-colors bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
               >
                 <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">

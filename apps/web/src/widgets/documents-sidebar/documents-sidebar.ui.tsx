@@ -245,18 +245,11 @@ type TreeProps = {
 
 function Tree(props: TreeProps) {
   const { document } = props;
-  const navigate = useNavigate();
 
   const [searchParams, setSearchParams] = useSearchParams();
 
   const selectedDocumentId = searchParams.get('documentId');
 
-  // const match = useMatch(
-  //   pathKeys.documents.document({
-  //     collectionId: document.collectionId.toString(),
-  //     documentId: document.id.toString(),
-  //   })
-  // );
   const { data, loading } = useDocumentTreeQuery({
     variables: {
       getDocumentInput: {
