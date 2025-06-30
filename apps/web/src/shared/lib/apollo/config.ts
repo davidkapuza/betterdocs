@@ -23,7 +23,7 @@ import { getMainDefinition } from '@apollo/client/utilities';
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: 'ws://localhost:3000/subscriptions',
+    url: import.meta.env.VITE_GRAPHQL_SUBSCRIPTION_ENDPOINT || 'ws://localhost:3000/subscriptions',
     connectionParams: {
       Authorization: `Bearer ${
         useSessionStore.getState().session?.accessToken
@@ -33,7 +33,7 @@ const wsLink = new GraphQLWsLink(
 );
 
 const httpLink = createHttpLink({
-  uri: 'http://localhost:3000/graphql',
+  uri: import.meta.env.VITE_GRAPHQL_ENDPOINT || 'http://localhost:3000/graphql',
 });
 
 function isRefreshRequest(operation: GraphQLRequest) {

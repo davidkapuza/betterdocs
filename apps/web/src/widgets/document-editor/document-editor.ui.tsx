@@ -157,7 +157,7 @@ export const DocumentEditor = enhance(() => {
     return (
       <div className="flex flex-col min-h-screen">
         {isMobile && (
-          <div className="fixed top-0 flex items-center px-16 py-8">
+          <div className="fixed top-0 flex items-center py-8 px-14">
             <SidebarTrigger />
           </div>
         )}
