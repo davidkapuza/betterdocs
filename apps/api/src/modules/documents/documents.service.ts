@@ -6,6 +6,7 @@ import {
   UpdateDocumentInput,
 } from './gql';
 import { extractFields } from '@shared/utils';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class DocumentsService {
@@ -54,17 +55,22 @@ export class DocumentsService {
   }
 
   async update(userId: number, updateDocumentInput: UpdateDocumentInput) {
+    const updateData: Prisma.DocumentUncheckedUpdateInput = {
+      authorId: userId,
+      content: updateDocumentInput.content,
+      title: updateDocumentInput.title,
+    };
+
+    if (updateDocumentInput.content !== undefined) {
+      updateData.plainContent = extractFields(
+        JSON.parse(updateDocumentInput.content),
+        'text'
+      );
+    }
+
     return this.prisma.document.update({
       where: { id: updateDocumentInput.documentId },
-      data: {
-        authorId: userId,
-        content: updateDocumentInput.content,
-        plainContent: extractFields(
-          JSON.parse(updateDocumentInput.content),
-          'text'
-        ),
-        title: updateDocumentInput.title,
-      },
+      data: updateData,
     });
   }
 

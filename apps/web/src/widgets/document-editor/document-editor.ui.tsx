@@ -94,7 +94,7 @@ export const DocumentEditor = enhance(() => {
           updateDocumentInput: {
             collectionId: Number(params.collectionId),
             documentId: Number(documentId),
-            content: JSON.stringify(value ?? '[]'),
+            content: value ? JSON.stringify(value) : undefined,
             title,
           },
         },
