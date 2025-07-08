@@ -5,14 +5,37 @@ import {
 import { useIsMobile } from '@/shared/hooks/use-mobile';
 import { pathKeys } from '@/shared/lib/react-router';
 import { CreateCollectionDialog } from '@/widgets/create-collection-dialog';
-import { SidebarTrigger } from '@betterdocs/ui';
-import { FolderOpen } from 'lucide-react';
+import { EditCollectionDialog } from '@/widgets/edit-collection-dialog';
+import { DeleteCollectionDialog } from '@/widgets/delete-collection-dialog';
+import {
+  SidebarTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  Button,
+  DropdownMenuLabel,
+  DropdownMenuGroup,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from '@betterdocs/ui';
+import { FolderOpen, MoreHorizontal } from 'lucide-react';
 import { createSearchParams, NavLink } from 'react-router';
+import React from 'react';
 
 export function CollectionsPage() {
   const { data } = useCollectionsSuspenseQuery();
 
   const isMobile = useIsMobile();
+
+  const [editingCollection, setEditingCollection] = React.useState<
+    CollectionsQuery['collections'][number] | null
+  >(null);
+  const [deletingCollection, setDeletingCollection] = React.useState<
+    CollectionsQuery['collections'][number] | null
+  >(null);
 
   const getDocumentLink = (
     collection: CollectionsQuery['collections'][number]
@@ -62,26 +85,86 @@ export function CollectionsPage() {
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {data?.collections.map((collection) => (
-              <NavLink
-                key={collection.id}
-                to={getDocumentLink(collection)}
-                className="block w-full p-6 transition-colors bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
-              >
-                <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                  {collection.name}
-                </h5>
-                <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-                  {collection.description || 'No description'}
-                </p>
-                <div className="text-sm text-muted-foreground">
-                  {collection.documents.length} document
-                  {collection.documents.length !== 1 ? 's' : ''}
+              <div key={collection.id}>
+                <div className="relative">
+                  <NavLink to={getDocumentLink(collection)}>
+                    <Card>
+                      <CardHeader className="pe-14">
+                        <CardTitle>{collection.name}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                          {collection.description || 'No description'}
+                        </p>
+                        <div className="text-sm text-muted-foreground">
+                          {collection.documents.length} document
+                          {collection.documents.length !== 1 ? 's' : ''}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </NavLink>
+
+                  <div className="absolute top-3.5 right-3.5">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="ghost">
+                          <MoreHorizontal className="w-4 h-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-56" align="end">
+                        <DropdownMenuLabel>
+                          Collection management
+                        </DropdownMenuLabel>
+                        <DropdownMenuGroup>
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setEditingCollection(collection);
+                            }}
+                          >
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-destructive focus:text-destructive"
+                            onClick={() => {
+                              setDeletingCollection(collection);
+                            }}
+                          >
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </div>
-              </NavLink>
+              </div>
             ))}
           </div>
         )}
       </div>
+
+      {editingCollection && (
+        <EditCollectionDialog
+          collection={editingCollection}
+          open={Boolean(editingCollection)}
+          onOpenChange={(open) => {
+            if (!open) {
+              setEditingCollection(null);
+            }
+          }}
+        />
+      )}
+
+      {deletingCollection && (
+        <DeleteCollectionDialog
+          collection={deletingCollection}
+          open={Boolean(deletingCollection)}
+          onOpenChange={(open) => {
+            if (!open) {
+              setDeletingCollection(null);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }

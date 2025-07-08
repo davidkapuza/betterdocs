@@ -12,6 +12,26 @@ export class CreateCollectionInput {
 }
 
 @InputType()
+export class UpdateCollectionInput {
+  @IsNumber()
+  collectionId: number;
+
+  @IsString()
+  @IsOptional()
+  name?: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+}
+
+@InputType()
+export class DeleteCollectionInput {
+  @IsNumber()
+  collectionId: number;
+}
+
+@InputType()
 export class QueryCollectionInput {
   @IsNumber()
   collectionId: number;

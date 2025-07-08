@@ -13,7 +13,7 @@ import {
 } from '@nestjs/graphql';
 import { JwtPayload } from '@shared/types';
 import { CollectionsService } from './collections.service';
-import { Collection, CreateCollectionInput, QueryCollectionInput, QueryResponse } from './gql';
+import { Collection, CreateCollectionInput, QueryCollectionInput, QueryResponse, UpdateCollectionInput, DeleteCollectionInput } from './gql';
 import { DocumentsService } from '@modules/documents/documents.service';
 import { Document } from '@modules/documents/gql';
 import { DocumentCollectionMembershipGuard } from './guards';
@@ -93,5 +93,21 @@ export class CollectionsResolver {
     @Args('createCollectionInput') createCollectionInput: CreateCollectionInput
   ) {
     return await this.collectionsService.createCollection(jwtPayload.userId, createCollectionInput);
+  }
+
+  @Mutation(() => Collection, { name: 'updateCollection' })
+  @UseGuards(DocumentCollectionMembershipGuard)
+  async updateCollection(
+    @Args('updateCollectionInput') updateCollectionInput: UpdateCollectionInput
+  ) {
+    return await this.collectionsService.updateCollection(updateCollectionInput);
+  }
+
+  @Mutation(() => Collection, { name: 'deleteCollection' })
+  @UseGuards(DocumentCollectionMembershipGuard)
+  async deleteCollection(
+    @Args('deleteCollectionInput') deleteCollectionInput: DeleteCollectionInput
+  ) {
+    return await this.collectionsService.deleteCollection(deleteCollectionInput);
   }
 }

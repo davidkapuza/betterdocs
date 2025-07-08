@@ -77,6 +77,8 @@ type Mutation {
   updateDocument(updateDocumentInput: UpdateDocumentInput!): Document!
   deleteDocument(deleteDocumentInput: DeleteDocumentInput!): Document!
   createCollection(createCollectionInput: CreateCollectionInput!): Collection!
+  updateCollection(updateCollectionInput: UpdateCollectionInput!): Collection!
+  deleteCollection(deleteCollectionInput: DeleteCollectionInput!): Collection!
 }
 
 """Represents NULL values"""
@@ -118,6 +120,16 @@ input DeleteDocumentInput {
 input CreateCollectionInput {
   name: String!
   description: String
+}
+
+input UpdateCollectionInput {
+  collectionId: Float!
+  name: String
+  description: String
+}
+
+input DeleteCollectionInput {
+  collectionId: Float!
 }
 
 type Subscription {

@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { PrismaService } from '@shared/libs/prisma';
-import { CreateCollectionInput, QueryCollectionInput } from './gql';
+import { CreateCollectionInput, QueryCollectionInput, UpdateCollectionInput, DeleteCollectionInput } from './gql';
 import { ConfigService } from '@nestjs/config';
 import { Config } from '@shared/config';
 
@@ -43,6 +43,40 @@ export class CollectionsService {
           },
         },
       },
+    });
+  }
+
+  async updateCollection(updateCollectionInput: UpdateCollectionInput) {
+    const updateData: { name?: string; description?: string } = {};
+    
+    if (updateCollectionInput.name !== undefined) {
+      updateData.name = updateCollectionInput.name;
+    }
+    
+    if (updateCollectionInput.description !== undefined) {
+      updateData.description = updateCollectionInput.description;
+    }
+
+    return this.prisma.collection.update({
+      where: { id: updateCollectionInput.collectionId },
+      data: updateData,
+    });
+  }
+
+  async deleteCollection(deleteCollectionInput: DeleteCollectionInput) {
+    // First, delete all documents in the collection
+    await this.prisma.document.deleteMany({
+      where: { collectionId: deleteCollectionInput.collectionId },
+    });
+
+    // Then delete all user-collection relationships
+    await this.prisma.userCollection.deleteMany({
+      where: { collectionId: deleteCollectionInput.collectionId },
+    });
+
+    // Finally, delete the collection itself
+    return this.prisma.collection.delete({
+      where: { id: deleteCollectionInput.collectionId },
     });
   }
 

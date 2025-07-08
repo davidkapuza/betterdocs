@@ -55,6 +55,22 @@ mutation CreateCollection($createCollectionInput: CreateCollectionInput!) {
   }
 }
 
+mutation UpdateCollection($updateCollectionInput: UpdateCollectionInput!) {
+  updateCollection(updateCollectionInput: $updateCollectionInput) {
+    id
+    name
+    description
+  }
+}
+
+mutation DeleteCollection($deleteCollectionInput: DeleteCollectionInput!) {
+  deleteCollection(deleteCollectionInput: $deleteCollectionInput) {
+    id
+    name
+    description
+  }
+}
+
 subscription QueryCollection($queryCollectionInput: QueryCollectionInput!) {
   queryCollection(queryCollectionInput: $queryCollectionInput) {
     token
