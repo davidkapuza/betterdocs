@@ -19,16 +19,17 @@ import { JwtAccessGuard } from '@modules/auth/guards';
 import { ReqUser } from '@modules/auth/decorators';
 import { JwtPayload } from '@shared/types';
 import { User } from '@modules/users/gql';
-import { CollectionMembershipGuard } from '@modules/collections/guards';
+import { DocumentCollectionMembershipGuard } from '@modules/collections/guards';
 
 // [ ] Versioning documents
 
 @Resolver(() => Document)
-@UseGuards(JwtAccessGuard, CollectionMembershipGuard)
+@UseGuards(JwtAccessGuard)
 export class DocumentsResolver {
   constructor(private readonly documentsService: DocumentsService) {}
 
   @Mutation(() => Document)
+  @UseGuards(DocumentCollectionMembershipGuard)
   async createDocument(
     @ReqUser() jwtPayload: JwtPayload,
     @Args('createDocumentInput') createDocumentInput: CreateDocumentInput
@@ -37,6 +38,7 @@ export class DocumentsResolver {
   }
 
   @Mutation(() => Document)
+  @UseGuards(DocumentCollectionMembershipGuard)
   async updateDocument(
     @ReqUser() jwtPayload: JwtPayload,
     @Args('updateDocumentInput') updateDocumentInput: UpdateDocumentInput
@@ -45,6 +47,7 @@ export class DocumentsResolver {
   }
 
   @Mutation(() => Document)
+  @UseGuards(DocumentCollectionMembershipGuard)
   async deleteDocument(
     @Args('deleteDocumentInput') deleteDocumentInput: DeleteDocumentInput
   ) {
@@ -52,6 +55,7 @@ export class DocumentsResolver {
   }
 
   @Query(() => Document, { name: 'document' })
+  @UseGuards(DocumentCollectionMembershipGuard)
   async getDocument(
     @Args('getDocumentInput') getDocumentInput: GetDocumentInput
   ) {

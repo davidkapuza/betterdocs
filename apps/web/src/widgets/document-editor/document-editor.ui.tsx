@@ -56,7 +56,6 @@ export const DocumentEditor = enhance(() => {
       ? {
           variables: {
             getDocumentInput: {
-              collectionId: Number(params.collectionId),
               documentId: Number(documentId),
             },
           },
@@ -92,7 +91,6 @@ export const DocumentEditor = enhance(() => {
       updateDocument({
         variables: {
           updateDocumentInput: {
-            collectionId: Number(params.collectionId),
             documentId: Number(documentId),
             content: value ? JSON.stringify(value) : undefined,
             title,
@@ -119,7 +117,6 @@ export const DocumentEditor = enhance(() => {
     await deleteDocument({
       variables: {
         deleteDocumentInput: {
-          collectionId: Number(params.collectionId),
           documentId: Number(documentId),
         },
       },

@@ -14,9 +14,6 @@ export class CreateDocumentInput {
 @InputType()
 export class UpdateDocumentInput {
   @IsNumber()
-  collectionId: number;
-
-  @IsNumber()
   documentId: number;
 
   @IsString()
@@ -31,17 +28,11 @@ export class UpdateDocumentInput {
 @InputType()
 export class DeleteDocumentInput {
   @IsNumber()
-  collectionId: number;
-
-  @IsNumber()
   documentId: number;
 }
 
 @InputType()
 export class GetDocumentInput {
-  @IsNumber()
-  collectionId: number;
-
   @IsNumber()
   documentId: number;
 }

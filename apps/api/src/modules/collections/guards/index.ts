@@ -1,1 +1,1 @@
-export { CollectionMembershipGuard } from './collection-membership.guard';
+export { DocumentCollectionMembershipGuard } from './document-collection-membership.guard';

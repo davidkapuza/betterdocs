@@ -23,11 +23,15 @@ import { getMainDefinition } from '@apollo/client/utilities';
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: import.meta.env.VITE_GRAPHQL_SUBSCRIPTION_ENDPOINT || 'ws://localhost:3000/subscriptions',
+    url:
+      import.meta.env.VITE_GRAPHQL_SUBSCRIPTION_ENDPOINT ||
+      'ws://localhost:3000/subscriptions',
     connectionParams: () => {
       const session = useSessionStore.getState().session;
       return {
-        Authorization: session?.accessToken ? `Bearer ${session.accessToken}` : '',
+        Authorization: session?.accessToken
+          ? `Bearer ${session.accessToken}`
+          : '',
       };
     },
   })
@@ -114,9 +118,6 @@ const refreshToken = async () => {
       useSessionStore
         .getState()
         .updateTokens(tokens.accessToken, tokens.refreshToken);
-      
-      // Restart the WebSocket connection with the new token
-      client.resetStore();
     }
 
     return tokens?.accessToken;

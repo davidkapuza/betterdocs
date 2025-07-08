@@ -16,7 +16,7 @@ import { CollectionsService } from './collections.service';
 import { Collection, CreateCollectionInput, QueryCollectionInput, QueryResponse } from './gql';
 import { DocumentsService } from '@modules/documents/documents.service';
 import { Document } from '@modules/documents/gql';
-import { CollectionMembershipGuard } from './guards';
+import { DocumentCollectionMembershipGuard } from './guards';
 import { PubSub } from 'graphql-subscriptions';
 
 // [ ] Adding members to a collection
@@ -36,7 +36,7 @@ export class CollectionsResolver {
     return await this.collectionsService.getUserCollections(jwtPayload.userId);
   }
 
-  @UseGuards(CollectionMembershipGuard)
+  @UseGuards(DocumentCollectionMembershipGuard)
   @Query(() => Collection, { name: 'collection' })
   async getCollection(
     @Args('collectionId', { type: () => Int }) collectionId: number
@@ -49,7 +49,7 @@ export class CollectionsResolver {
     return await this.documentsService.getCollectionDocuments(collection.id);
   }
 
-  @UseGuards(CollectionMembershipGuard)
+  @UseGuards(DocumentCollectionMembershipGuard)
   @Subscription(() => QueryResponse)
   async queryCollection(
     @ReqUser() jwtPayload: JwtPayload,

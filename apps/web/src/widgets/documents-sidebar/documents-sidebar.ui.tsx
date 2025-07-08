@@ -254,7 +254,6 @@ function Tree(props: TreeProps) {
     variables: {
       getDocumentInput: {
         documentId: document.id,
-        collectionId: document.collectionId,
       },
     },
     skip: !document.children || !document.children.length,

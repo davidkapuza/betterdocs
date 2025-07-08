@@ -62,7 +62,6 @@ type Query {
 }
 
 input GetDocumentInput {
-  collectionId: Float!
   documentId: Float!
 }
 
@@ -107,14 +106,12 @@ input CreateDocumentInput {
 }
 
 input UpdateDocumentInput {
-  collectionId: Float!
   documentId: Float!
   title: String
   content: String
 }
 
 input DeleteDocumentInput {
-  collectionId: Float!
   documentId: Float!
 }
 
