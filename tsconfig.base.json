@@ -15,7 +15,6 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@betterdocs/styles/*": ["libs/ui/src/styles/*"],
       "@betterdocs/ui": ["libs/ui/src/index.ts"],
       "@betterdocs/ui/*": ["libs/ui/src/*"],
       "@betterdocs/utils": ["libs/utils/src/index.ts"]

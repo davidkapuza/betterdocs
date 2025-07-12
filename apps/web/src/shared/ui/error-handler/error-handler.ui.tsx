@@ -1,3 +1,5 @@
+import { Button } from "@betterdocs/ui";
+
 type ErrorHandlerProps = {
   error: Error;
   resetErrorBoundary?: (...args: any[]) => void;
@@ -19,9 +21,9 @@ export function ErrorHandler(props: ErrorHandlerProps) {
           <pre>{error.stack}</pre>
         </>
       )}
-      <button type="button" onClick={resetErrorBoundary}>
+      <Button type="button" onClick={resetErrorBoundary}>
         Try again
-      </button>
+      </Button>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import dts from 'vite-plugin-dts';
 import * as path from 'path';
+import tailwindcss from '@tailwindcss/vite';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 
@@ -11,6 +12,7 @@ export default defineConfig(() => ({
   cacheDir: '../../node_modules/.vite/libs/ui',
   plugins: [
     react(),
+    tailwindcss(),
     nxViteTsPaths(),
     nxCopyAssetsPlugin(['*.md']),
     dts({

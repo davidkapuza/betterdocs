@@ -30,7 +30,6 @@
 
       "@betterdocs/ui/*": ["libs/ui/src/*"],
       "@betterdocs/ui": ["libs/ui/src/index.ts"],
-      "@betterdocs/styles/*": ["libs/ui/src/styles/*"],
 
       "@betterdocs/utils": ["libs/utils/src/index.ts"],
     }
@@ -44,8 +43,8 @@
     "src/**/*.test.js",
     "src/**/*.spec.jsx",
     "src/**/*.test.jsx",
-    "vite.config.ts",
-    "vite.config.ts",
+    "vite.config.mts",
+    "vite.config.mts",
     "vitest.config.ts",
     "vitest.config.mts"
   ],
