@@ -28,10 +28,17 @@
       "@/shared": ["apps/web/src/shared"],
       "@/shared/*": ["apps/web/src/shared/*"],
 
-      "@betterdocs/ui/*": ["libs/ui/src/*"],
-      "@betterdocs/ui": ["libs/ui/src/index.ts"],
+      "@betterdocs/ui": ["libs/ui/src/components"],
+      "@betterdocs/ui/*": ["libs/ui/src/components/*"],
 
       "@betterdocs/utils": ["libs/utils/src/index.ts"],
+      "@betterdocs/lib": ["libs/utils"],
+
+      "@betterdocs/hooks": ["libs/hooks/src"],
+      "@betterdocs/hooks/*": ["libs/hooks/src/*"],
+
+      "@betterdocs/plate-ui": ["libs/plate-ui/src/index.ts"],
+      "@betterdocs/assistant-ui": ["libs/assistant-ui/src/index.ts"]
     }
   },
   "exclude": [
@@ -43,8 +50,8 @@
     "src/**/*.test.js",
     "src/**/*.spec.jsx",
     "src/**/*.test.jsx",
-    "vite.config.mts",
-    "vite.config.mts",
+    "vite.config.ts",
+    "vite.config.ts",
     "vitest.config.ts",
     "vitest.config.mts"
   ],

@@ -3,10 +3,6 @@
 import { useSearchParams } from 'react-router';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { Plate } from '@udecode/plate/react';
-import { useCreateEditor } from './hooks/use-create-editor';
-import { Editor, EditorContainer } from '@betterdocs/ui';
-import { EditorHeader } from '@betterdocs/ui';
 import { compose, withSuspense } from '@/shared/lib/react';
 import { ErrorHandler } from '@/shared/ui/error-handler';
 import { withErrorBoundary } from 'react-error-boundary';
@@ -22,7 +18,6 @@ import { useParams } from 'react-router';
 import { routerTypes } from '@/shared/lib/react-router';
 import React from 'react';
 import { useDebouncedCallback } from '@/shared/hooks/use-debounced-callback';
-import { Value } from '@udecode/plate';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,6 +29,10 @@ import {
 import { Ellipsis, Trash2, Plus, FileText } from 'lucide-react';
 import { useIsMobile } from '@/shared/hooks/use-mobile';
 import { skipToken } from '@apollo/client';
+import { Plate, usePlateEditor } from 'platejs/react';
+import { Value } from 'platejs';
+import { EditorContainer, Editor } from '@betterdocs/plate-ui';
+import { DocumentTitle } from './document-title.ui';
 
 const enhance = compose(
   (component) =>
@@ -43,7 +42,7 @@ const enhance = compose(
 );
 
 export const DocumentEditor = enhance(() => {
-  const editor = useCreateEditor({
+  const editor = usePlateEditor({
     skipInitialization: true,
   });
   const params = useParams() as routerTypes.DocumentsPageParams;
@@ -205,7 +204,7 @@ export const DocumentEditor = enhance(() => {
               <SidebarTrigger />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button size="icon-sm" variant="ghost">
+                  <Button size="icon" variant="ghost">
                     <Ellipsis />
                   </Button>
                 </DropdownMenuTrigger>
@@ -231,7 +230,7 @@ export const DocumentEditor = enhance(() => {
               <div className="flex items-center w-full max-w-3xl gap-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button size="icon-sm" variant="ghost">
+                    <Button size="icon" variant="ghost">
                       <Ellipsis />
                     </Button>
                   </DropdownMenuTrigger>
@@ -252,11 +251,10 @@ export const DocumentEditor = enhance(() => {
                 </DropdownMenu>
               </div>
             )}
-            <EditorHeader
+            <DocumentTitle
+              ref={titleRef}
+              onChange={(e) => handleTitleChange(e.target.value)}
               value={title}
-              onChange={handleTitleChange}
-              titleRef={titleRef}
-              isReadOnly={false}
             />
           </div>
           <Editor />

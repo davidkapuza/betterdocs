@@ -1,33 +1,29 @@
 import {
   ComponentType,
-  ForwardedRef,
   forwardRef,
   ForwardRefExoticComponent,
   PropsWithoutRef,
   RefAttributes,
+  Ref,
 } from 'react';
+
+type ComposedComponent<Props extends object> = ForwardRefExoticComponent<
+  PropsWithoutRef<Props> & RefAttributes<unknown>
+>;
 
 export function compose<Props extends object>(
   ...hocs: Array<(component: ComponentType<Props>) => ComponentType<Props>>
-): (
-  component: ComponentType<Props>
-) => ForwardRefExoticComponent<PropsWithoutRef<Props> & RefAttributes<Props>> {
+): (component: ComponentType<Props>) => ComposedComponent<Props> {
   return (component: ComponentType<Props>) => {
-    const WrappedComponent = forwardRef<Props, Props>(
-      (props, ref: ForwardedRef<Props>) => {
-        const ComposedComponent = hocs.reduceRight(
-          (wrapped, hoc) => hoc(wrapped),
-          component
-        );
-
-        return <ComposedComponent {...props} ref={ref} />;
+    const Composed = hocs.reduceRight((wrapped, hoc) => hoc(wrapped), component);
+    const WrappedComponent = forwardRef(
+      (props: PropsWithoutRef<Props>, ref: Ref<unknown>) => {
+        return <Composed {...(props as Props)} ref={ref} />;
       }
     );
-
     WrappedComponent.displayName = `Composed(${
       component.displayName || component.name || 'Component'
     })`;
-
     return WrappedComponent;
   };
 }

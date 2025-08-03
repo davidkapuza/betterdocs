@@ -1,117 +1,179 @@
-import * as types from "@nx-apollo/models-graphql"
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
-export type SignUpMutationVariables = types.Exact<{
-  signUpInput: types.SignUpInput;
+export type SignUpMutationVariables = Exact<{
+  signUpInput: SignUpInput;
 }>;
 
 
 export type SignUpMutation = { __typename?: 'Mutation', signUp?: any | null };
 
-export type SignInMutationVariables = types.Exact<{
-  signInInput: types.SignInInput;
+export type SignInMutationVariables = Exact<{
+  signInInput: SignInInput;
 }>;
 
 
-export type SignInMutation = { __typename?: 'Mutation', signIn: { __typename?: 'SignInResponseModel', accessToken: string, refreshToken: string, user: { __typename?: 'User', id: number, email: string, firstName: string, lastName: string, role: types.Role, status: types.UserStatus } } };
+export type SignInMutation = { __typename?: 'Mutation', signIn: { __typename?: 'SignInResponseModel', accessToken: string, refreshToken: string, user: { __typename?: 'User', id: number, email: string, firstName: string, lastName: string, role: Role, status: UserStatus } } };
 
-export type RefreshTokensMutationVariables = types.Exact<{ [key: string]: never; }>;
+export type RefreshTokensMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type RefreshTokensMutation = { __typename?: 'Mutation', refreshTokens: { __typename?: 'TokensResponseModel', accessToken: string, refreshToken: string } };
 
-export type SignOutMutationVariables = types.Exact<{ [key: string]: never; }>;
+export type SignOutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type SignOutMutation = { __typename?: 'Mutation', signOut?: any | null };
 
-export type CollectionsQueryVariables = types.Exact<{ [key: string]: never; }>;
+export type CollectionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type CollectionsQuery = { __typename?: 'Query', collections: Array<{ __typename?: 'Collection', id: number, name: string, description?: string | null, documents: Array<{ __typename?: 'Document', id: number, title: string, content: string }> }> };
 
-export type CollectionQueryVariables = types.Exact<{
-  collectionId: types.Scalars['Int']['input'];
+export type CollectionQueryVariables = Exact<{
+  collectionId: Scalars['Int']['input'];
 }>;
 
 
-export type CollectionQuery = { __typename?: 'Query', collection: { __typename?: 'Collection', id: number, name: string, description?: string | null, documents: Array<{ __typename?: 'Document', id: number, title: string, content: string, author: { __typename?: 'User', role: types.Role, status: types.UserStatus, id: number, email: string, firstName: string, lastName: string } }> } };
+export type CollectionQuery = { __typename?: 'Query', collection: { __typename?: 'Collection', id: number, name: string, description?: string | null, documents: Array<{ __typename?: 'Document', id: number, title: string, content: string, author: { __typename?: 'User', role: Role, status: UserStatus, id: number, email: string, firstName: string, lastName: string } }> } };
 
-export type CollectionDocumentsQueryVariables = types.Exact<{
-  collectionId: types.Scalars['Int']['input'];
+export type CollectionDocumentsQueryVariables = Exact<{
+  collectionId: Scalars['Int']['input'];
 }>;
 
 
 export type CollectionDocumentsQuery = { __typename?: 'Query', collection: { __typename?: 'Collection', documents: Array<{ __typename?: 'Document', id: number, title: string, collectionId: number, children: Array<{ __typename?: 'Document', id: number, title: string, collectionId: number }> }> } };
 
-export type CreateCollectionMutationVariables = types.Exact<{
-  createCollectionInput: types.CreateCollectionInput;
+export type CreateCollectionMutationVariables = Exact<{
+  createCollectionInput: CreateCollectionInput;
 }>;
 
 
 export type CreateCollectionMutation = { __typename?: 'Mutation', createCollection: { __typename?: 'Collection', id: number, name: string, description?: string | null } };
 
-export type UpdateCollectionMutationVariables = types.Exact<{
-  updateCollectionInput: types.UpdateCollectionInput;
+export type UpdateCollectionMutationVariables = Exact<{
+  updateCollectionInput: UpdateCollectionInput;
 }>;
 
 
 export type UpdateCollectionMutation = { __typename?: 'Mutation', updateCollection: { __typename?: 'Collection', id: number, name: string, description?: string | null } };
 
-export type DeleteCollectionMutationVariables = types.Exact<{
-  deleteCollectionInput: types.DeleteCollectionInput;
+export type DeleteCollectionMutationVariables = Exact<{
+  deleteCollectionInput: DeleteCollectionInput;
 }>;
 
 
 export type DeleteCollectionMutation = { __typename?: 'Mutation', deleteCollection: { __typename?: 'Collection', id: number, name: string, description?: string | null } };
 
-export type QueryCollectionSubscriptionVariables = types.Exact<{
-  queryCollectionInput: types.QueryCollectionInput;
+export type QueryCollectionSubscriptionVariables = Exact<{
+  queryCollectionInput: QueryCollectionInput;
 }>;
 
 
 export type QueryCollectionSubscription = { __typename?: 'Subscription', queryCollection: { __typename?: 'QueryResponse', token: string, completed: boolean } };
 
-export type GetDocumentQueryVariables = types.Exact<{
-  getDocumentInput: types.GetDocumentInput;
+export type InviteUserToCollectionMutationVariables = Exact<{
+  inviteUserToCollectionInput: InviteUserToCollectionInput;
 }>;
 
 
-export type GetDocumentQuery = { __typename?: 'Query', document: { __typename?: 'Document', id: number, title: string, content: string, collectionId: number, author: { __typename?: 'User', role: types.Role, status: types.UserStatus, id: number, email: string, firstName: string, lastName: string } } };
+export type InviteUserToCollectionMutation = { __typename?: 'Mutation', inviteUserToCollection: { __typename?: 'CollectionInvite', id: string, collectionId: number, inviterEmail: string, inviteeEmail: string, role: UserCollectionRole, token: string, expiresAt: any, createdAt: any, collection: { __typename?: 'Collection', id: number, name: string, description?: string | null } } };
 
-export type DocumentTreeQueryVariables = types.Exact<{
-  getDocumentInput: types.GetDocumentInput;
+export type AcceptCollectionInviteMutationVariables = Exact<{
+  acceptCollectionInviteInput: AcceptCollectionInviteInput;
+}>;
+
+
+export type AcceptCollectionInviteMutation = { __typename?: 'Mutation', acceptCollectionInvite: { __typename?: 'Collection', id: number, name: string, description?: string | null } };
+
+export type GenerateCollectionShareLinkMutationVariables = Exact<{
+  generateCollectionShareLinkInput: GenerateCollectionShareLinkInput;
+}>;
+
+
+export type GenerateCollectionShareLinkMutation = { __typename?: 'Mutation', generateCollectionShareLink: { __typename?: 'CollectionShareLink', url: string, token: string, role: UserCollectionRole, expiresAt?: any | null } };
+
+export type JoinCollectionByShareLinkMutationVariables = Exact<{
+  token: Scalars['String']['input'];
+}>;
+
+
+export type JoinCollectionByShareLinkMutation = { __typename?: 'Mutation', joinCollectionByShareLink: { __typename?: 'Collection', id: number, name: string, description?: string | null } };
+
+export type RemoveUserFromCollectionMutationVariables = Exact<{
+  removeUserFromCollectionInput: RemoveUserFromCollectionInput;
+}>;
+
+
+export type RemoveUserFromCollectionMutation = { __typename?: 'Mutation', removeUserFromCollection: { __typename?: 'CollectionMember', role: UserCollectionRole, joinedAt: any, user: { __typename?: 'User', id: number, email: string, firstName: string, lastName: string } } };
+
+export type CollectionMembersQueryVariables = Exact<{
+  collectionId: Scalars['Int']['input'];
+}>;
+
+
+export type CollectionMembersQuery = { __typename?: 'Query', collectionMembers: Array<{ __typename?: 'CollectionMember', role: UserCollectionRole, joinedAt: any, user: { __typename?: 'User', id: number, email: string, firstName: string, lastName: string } }> };
+
+export type CollectionPendingInvitesQueryVariables = Exact<{
+  collectionId: Scalars['Int']['input'];
+}>;
+
+
+export type CollectionPendingInvitesQuery = { __typename?: 'Query', collectionPendingInvites: Array<{ __typename?: 'CollectionInvite', id: string, inviterEmail: string, inviteeEmail: string, role: UserCollectionRole, expiresAt: any, createdAt: any }> };
+
+export type CollectionShareLinksQueryVariables = Exact<{
+  collectionId: Scalars['Int']['input'];
+}>;
+
+
+export type CollectionShareLinksQuery = { __typename?: 'Query', collectionShareLinks: Array<{ __typename?: 'CollectionShareLink', id: string, role: UserCollectionRole, token: string, expiresAt?: any | null, createdAt: any }> };
+
+export type DeleteCollectionShareLinkMutationVariables = Exact<{
+  shareLinkId: Scalars['String']['input'];
+}>;
+
+
+export type DeleteCollectionShareLinkMutation = { __typename?: 'Mutation', deleteCollectionShareLink: { __typename?: 'CollectionShareLink', id: string } };
+
+export type GetDocumentQueryVariables = Exact<{
+  getDocumentInput: GetDocumentInput;
+}>;
+
+
+export type GetDocumentQuery = { __typename?: 'Query', document: { __typename?: 'Document', id: number, title: string, content: string, collectionId: number, author: { __typename?: 'User', role: Role, status: UserStatus, id: number, email: string, firstName: string, lastName: string } } };
+
+export type DocumentTreeQueryVariables = Exact<{
+  getDocumentInput: GetDocumentInput;
 }>;
 
 
 export type DocumentTreeQuery = { __typename?: 'Query', document: { __typename?: 'Document', id: number, title: string, collectionId: number, children: Array<{ __typename?: 'Document', id: number, title: string, collectionId: number, children: Array<{ __typename?: 'Document', id: number, title: string, collectionId: number }> }> } };
 
-export type UpdateDocumentMutationVariables = types.Exact<{
-  updateDocumentInput: types.UpdateDocumentInput;
+export type UpdateDocumentMutationVariables = Exact<{
+  updateDocumentInput: UpdateDocumentInput;
 }>;
 
 
-export type UpdateDocumentMutation = { __typename?: 'Mutation', updateDocument: { __typename?: 'Document', id: number, title: string, content: string, parentId?: number | null, collectionId: number, author: { __typename?: 'User', role: types.Role, status: types.UserStatus, id: number, email: string, firstName: string, lastName: string } } };
+export type UpdateDocumentMutation = { __typename?: 'Mutation', updateDocument: { __typename?: 'Document', id: number, title: string, content: string, parentId?: number | null, collectionId: number, author: { __typename?: 'User', role: Role, status: UserStatus, id: number, email: string, firstName: string, lastName: string } } };
 
-export type CreateDocumentMutationVariables = types.Exact<{
-  createDocumentInput: types.CreateDocumentInput;
+export type CreateDocumentMutationVariables = Exact<{
+  createDocumentInput: CreateDocumentInput;
 }>;
 
 
-export type CreateDocumentMutation = { __typename?: 'Mutation', createDocument: { __typename?: 'Document', id: number, title: string, content: string, collectionId: number, author: { __typename?: 'User', role: types.Role, status: types.UserStatus, id: number, email: string, firstName: string, lastName: string } } };
+export type CreateDocumentMutation = { __typename?: 'Mutation', createDocument: { __typename?: 'Document', id: number, title: string, content: string, collectionId: number, author: { __typename?: 'User', role: Role, status: UserStatus, id: number, email: string, firstName: string, lastName: string } } };
 
-export type DeleteDocumentMutationVariables = types.Exact<{
-  deleteDocumentInput: types.DeleteDocumentInput;
+export type DeleteDocumentMutationVariables = Exact<{
+  deleteDocumentInput: DeleteDocumentInput;
 }>;
 
 
 export type DeleteDocumentMutation = { __typename?: 'Mutation', deleteDocument: { __typename?: 'Document', id: number, title: string, collectionId: number } };
 
-export type UserQueryVariables = types.Exact<{ [key: string]: never; }>;
+export type UserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UserQuery = { __typename?: 'Query', user: { __typename?: 'User', role: types.Role, status: types.UserStatus, id: number, email: string, firstName: string, lastName: string } };
+export type UserQuery = { __typename?: 'Query', user: { __typename?: 'User', role: Role, status: UserStatus, id: number, email: string, firstName: string, lastName: string } };
 
 
 export const SignUpDocument = gql`
@@ -536,6 +598,374 @@ export function useQueryCollectionSubscription(baseOptions: Apollo.SubscriptionH
       }
 export type QueryCollectionSubscriptionHookResult = ReturnType<typeof useQueryCollectionSubscription>;
 export type QueryCollectionSubscriptionResult = Apollo.SubscriptionResult<QueryCollectionSubscription>;
+export const InviteUserToCollectionDocument = gql`
+    mutation InviteUserToCollection($inviteUserToCollectionInput: InviteUserToCollectionInput!) {
+  inviteUserToCollection(
+    inviteUserToCollectionInput: $inviteUserToCollectionInput
+  ) {
+    id
+    collectionId
+    inviterEmail
+    inviteeEmail
+    role
+    token
+    expiresAt
+    createdAt
+    collection {
+      id
+      name
+      description
+    }
+  }
+}
+    `;
+export type InviteUserToCollectionMutationFn = Apollo.MutationFunction<InviteUserToCollectionMutation, InviteUserToCollectionMutationVariables>;
+
+/**
+ * __useInviteUserToCollectionMutation__
+ *
+ * To run a mutation, you first call `useInviteUserToCollectionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInviteUserToCollectionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [inviteUserToCollectionMutation, { data, loading, error }] = useInviteUserToCollectionMutation({
+ *   variables: {
+ *      inviteUserToCollectionInput: // value for 'inviteUserToCollectionInput'
+ *   },
+ * });
+ */
+export function useInviteUserToCollectionMutation(baseOptions?: Apollo.MutationHookOptions<InviteUserToCollectionMutation, InviteUserToCollectionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<InviteUserToCollectionMutation, InviteUserToCollectionMutationVariables>(InviteUserToCollectionDocument, options);
+      }
+export type InviteUserToCollectionMutationHookResult = ReturnType<typeof useInviteUserToCollectionMutation>;
+export type InviteUserToCollectionMutationResult = Apollo.MutationResult<InviteUserToCollectionMutation>;
+export type InviteUserToCollectionMutationOptions = Apollo.BaseMutationOptions<InviteUserToCollectionMutation, InviteUserToCollectionMutationVariables>;
+export const AcceptCollectionInviteDocument = gql`
+    mutation AcceptCollectionInvite($acceptCollectionInviteInput: AcceptCollectionInviteInput!) {
+  acceptCollectionInvite(
+    acceptCollectionInviteInput: $acceptCollectionInviteInput
+  ) {
+    id
+    name
+    description
+  }
+}
+    `;
+export type AcceptCollectionInviteMutationFn = Apollo.MutationFunction<AcceptCollectionInviteMutation, AcceptCollectionInviteMutationVariables>;
+
+/**
+ * __useAcceptCollectionInviteMutation__
+ *
+ * To run a mutation, you first call `useAcceptCollectionInviteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAcceptCollectionInviteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [acceptCollectionInviteMutation, { data, loading, error }] = useAcceptCollectionInviteMutation({
+ *   variables: {
+ *      acceptCollectionInviteInput: // value for 'acceptCollectionInviteInput'
+ *   },
+ * });
+ */
+export function useAcceptCollectionInviteMutation(baseOptions?: Apollo.MutationHookOptions<AcceptCollectionInviteMutation, AcceptCollectionInviteMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AcceptCollectionInviteMutation, AcceptCollectionInviteMutationVariables>(AcceptCollectionInviteDocument, options);
+      }
+export type AcceptCollectionInviteMutationHookResult = ReturnType<typeof useAcceptCollectionInviteMutation>;
+export type AcceptCollectionInviteMutationResult = Apollo.MutationResult<AcceptCollectionInviteMutation>;
+export type AcceptCollectionInviteMutationOptions = Apollo.BaseMutationOptions<AcceptCollectionInviteMutation, AcceptCollectionInviteMutationVariables>;
+export const GenerateCollectionShareLinkDocument = gql`
+    mutation GenerateCollectionShareLink($generateCollectionShareLinkInput: GenerateCollectionShareLinkInput!) {
+  generateCollectionShareLink(
+    generateCollectionShareLinkInput: $generateCollectionShareLinkInput
+  ) {
+    url
+    token
+    role
+    expiresAt
+  }
+}
+    `;
+export type GenerateCollectionShareLinkMutationFn = Apollo.MutationFunction<GenerateCollectionShareLinkMutation, GenerateCollectionShareLinkMutationVariables>;
+
+/**
+ * __useGenerateCollectionShareLinkMutation__
+ *
+ * To run a mutation, you first call `useGenerateCollectionShareLinkMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGenerateCollectionShareLinkMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [generateCollectionShareLinkMutation, { data, loading, error }] = useGenerateCollectionShareLinkMutation({
+ *   variables: {
+ *      generateCollectionShareLinkInput: // value for 'generateCollectionShareLinkInput'
+ *   },
+ * });
+ */
+export function useGenerateCollectionShareLinkMutation(baseOptions?: Apollo.MutationHookOptions<GenerateCollectionShareLinkMutation, GenerateCollectionShareLinkMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GenerateCollectionShareLinkMutation, GenerateCollectionShareLinkMutationVariables>(GenerateCollectionShareLinkDocument, options);
+      }
+export type GenerateCollectionShareLinkMutationHookResult = ReturnType<typeof useGenerateCollectionShareLinkMutation>;
+export type GenerateCollectionShareLinkMutationResult = Apollo.MutationResult<GenerateCollectionShareLinkMutation>;
+export type GenerateCollectionShareLinkMutationOptions = Apollo.BaseMutationOptions<GenerateCollectionShareLinkMutation, GenerateCollectionShareLinkMutationVariables>;
+export const JoinCollectionByShareLinkDocument = gql`
+    mutation JoinCollectionByShareLink($token: String!) {
+  joinCollectionByShareLink(token: $token) {
+    id
+    name
+    description
+  }
+}
+    `;
+export type JoinCollectionByShareLinkMutationFn = Apollo.MutationFunction<JoinCollectionByShareLinkMutation, JoinCollectionByShareLinkMutationVariables>;
+
+/**
+ * __useJoinCollectionByShareLinkMutation__
+ *
+ * To run a mutation, you first call `useJoinCollectionByShareLinkMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useJoinCollectionByShareLinkMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [joinCollectionByShareLinkMutation, { data, loading, error }] = useJoinCollectionByShareLinkMutation({
+ *   variables: {
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useJoinCollectionByShareLinkMutation(baseOptions?: Apollo.MutationHookOptions<JoinCollectionByShareLinkMutation, JoinCollectionByShareLinkMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<JoinCollectionByShareLinkMutation, JoinCollectionByShareLinkMutationVariables>(JoinCollectionByShareLinkDocument, options);
+      }
+export type JoinCollectionByShareLinkMutationHookResult = ReturnType<typeof useJoinCollectionByShareLinkMutation>;
+export type JoinCollectionByShareLinkMutationResult = Apollo.MutationResult<JoinCollectionByShareLinkMutation>;
+export type JoinCollectionByShareLinkMutationOptions = Apollo.BaseMutationOptions<JoinCollectionByShareLinkMutation, JoinCollectionByShareLinkMutationVariables>;
+export const RemoveUserFromCollectionDocument = gql`
+    mutation RemoveUserFromCollection($removeUserFromCollectionInput: RemoveUserFromCollectionInput!) {
+  removeUserFromCollection(
+    removeUserFromCollectionInput: $removeUserFromCollectionInput
+  ) {
+    user {
+      id
+      email
+      firstName
+      lastName
+    }
+    role
+    joinedAt
+  }
+}
+    `;
+export type RemoveUserFromCollectionMutationFn = Apollo.MutationFunction<RemoveUserFromCollectionMutation, RemoveUserFromCollectionMutationVariables>;
+
+/**
+ * __useRemoveUserFromCollectionMutation__
+ *
+ * To run a mutation, you first call `useRemoveUserFromCollectionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveUserFromCollectionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeUserFromCollectionMutation, { data, loading, error }] = useRemoveUserFromCollectionMutation({
+ *   variables: {
+ *      removeUserFromCollectionInput: // value for 'removeUserFromCollectionInput'
+ *   },
+ * });
+ */
+export function useRemoveUserFromCollectionMutation(baseOptions?: Apollo.MutationHookOptions<RemoveUserFromCollectionMutation, RemoveUserFromCollectionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveUserFromCollectionMutation, RemoveUserFromCollectionMutationVariables>(RemoveUserFromCollectionDocument, options);
+      }
+export type RemoveUserFromCollectionMutationHookResult = ReturnType<typeof useRemoveUserFromCollectionMutation>;
+export type RemoveUserFromCollectionMutationResult = Apollo.MutationResult<RemoveUserFromCollectionMutation>;
+export type RemoveUserFromCollectionMutationOptions = Apollo.BaseMutationOptions<RemoveUserFromCollectionMutation, RemoveUserFromCollectionMutationVariables>;
+export const CollectionMembersDocument = gql`
+    query CollectionMembers($collectionId: Int!) {
+  collectionMembers(collectionId: $collectionId) {
+    user {
+      id
+      email
+      firstName
+      lastName
+    }
+    role
+    joinedAt
+  }
+}
+    `;
+
+/**
+ * __useCollectionMembersQuery__
+ *
+ * To run a query within a React component, call `useCollectionMembersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCollectionMembersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCollectionMembersQuery({
+ *   variables: {
+ *      collectionId: // value for 'collectionId'
+ *   },
+ * });
+ */
+export function useCollectionMembersQuery(baseOptions: Apollo.QueryHookOptions<CollectionMembersQuery, CollectionMembersQueryVariables> & ({ variables: CollectionMembersQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CollectionMembersQuery, CollectionMembersQueryVariables>(CollectionMembersDocument, options);
+      }
+export function useCollectionMembersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CollectionMembersQuery, CollectionMembersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CollectionMembersQuery, CollectionMembersQueryVariables>(CollectionMembersDocument, options);
+        }
+export function useCollectionMembersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CollectionMembersQuery, CollectionMembersQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<CollectionMembersQuery, CollectionMembersQueryVariables>(CollectionMembersDocument, options);
+        }
+export type CollectionMembersQueryHookResult = ReturnType<typeof useCollectionMembersQuery>;
+export type CollectionMembersLazyQueryHookResult = ReturnType<typeof useCollectionMembersLazyQuery>;
+export type CollectionMembersSuspenseQueryHookResult = ReturnType<typeof useCollectionMembersSuspenseQuery>;
+export type CollectionMembersQueryResult = Apollo.QueryResult<CollectionMembersQuery, CollectionMembersQueryVariables>;
+export const CollectionPendingInvitesDocument = gql`
+    query CollectionPendingInvites($collectionId: Int!) {
+  collectionPendingInvites(collectionId: $collectionId) {
+    id
+    inviterEmail
+    inviteeEmail
+    role
+    expiresAt
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useCollectionPendingInvitesQuery__
+ *
+ * To run a query within a React component, call `useCollectionPendingInvitesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCollectionPendingInvitesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCollectionPendingInvitesQuery({
+ *   variables: {
+ *      collectionId: // value for 'collectionId'
+ *   },
+ * });
+ */
+export function useCollectionPendingInvitesQuery(baseOptions: Apollo.QueryHookOptions<CollectionPendingInvitesQuery, CollectionPendingInvitesQueryVariables> & ({ variables: CollectionPendingInvitesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CollectionPendingInvitesQuery, CollectionPendingInvitesQueryVariables>(CollectionPendingInvitesDocument, options);
+      }
+export function useCollectionPendingInvitesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CollectionPendingInvitesQuery, CollectionPendingInvitesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CollectionPendingInvitesQuery, CollectionPendingInvitesQueryVariables>(CollectionPendingInvitesDocument, options);
+        }
+export function useCollectionPendingInvitesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CollectionPendingInvitesQuery, CollectionPendingInvitesQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<CollectionPendingInvitesQuery, CollectionPendingInvitesQueryVariables>(CollectionPendingInvitesDocument, options);
+        }
+export type CollectionPendingInvitesQueryHookResult = ReturnType<typeof useCollectionPendingInvitesQuery>;
+export type CollectionPendingInvitesLazyQueryHookResult = ReturnType<typeof useCollectionPendingInvitesLazyQuery>;
+export type CollectionPendingInvitesSuspenseQueryHookResult = ReturnType<typeof useCollectionPendingInvitesSuspenseQuery>;
+export type CollectionPendingInvitesQueryResult = Apollo.QueryResult<CollectionPendingInvitesQuery, CollectionPendingInvitesQueryVariables>;
+export const CollectionShareLinksDocument = gql`
+    query CollectionShareLinks($collectionId: Int!) {
+  collectionShareLinks(collectionId: $collectionId) {
+    id
+    role
+    token
+    expiresAt
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useCollectionShareLinksQuery__
+ *
+ * To run a query within a React component, call `useCollectionShareLinksQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCollectionShareLinksQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCollectionShareLinksQuery({
+ *   variables: {
+ *      collectionId: // value for 'collectionId'
+ *   },
+ * });
+ */
+export function useCollectionShareLinksQuery(baseOptions: Apollo.QueryHookOptions<CollectionShareLinksQuery, CollectionShareLinksQueryVariables> & ({ variables: CollectionShareLinksQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CollectionShareLinksQuery, CollectionShareLinksQueryVariables>(CollectionShareLinksDocument, options);
+      }
+export function useCollectionShareLinksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CollectionShareLinksQuery, CollectionShareLinksQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CollectionShareLinksQuery, CollectionShareLinksQueryVariables>(CollectionShareLinksDocument, options);
+        }
+export function useCollectionShareLinksSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CollectionShareLinksQuery, CollectionShareLinksQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<CollectionShareLinksQuery, CollectionShareLinksQueryVariables>(CollectionShareLinksDocument, options);
+        }
+export type CollectionShareLinksQueryHookResult = ReturnType<typeof useCollectionShareLinksQuery>;
+export type CollectionShareLinksLazyQueryHookResult = ReturnType<typeof useCollectionShareLinksLazyQuery>;
+export type CollectionShareLinksSuspenseQueryHookResult = ReturnType<typeof useCollectionShareLinksSuspenseQuery>;
+export type CollectionShareLinksQueryResult = Apollo.QueryResult<CollectionShareLinksQuery, CollectionShareLinksQueryVariables>;
+export const DeleteCollectionShareLinkDocument = gql`
+    mutation DeleteCollectionShareLink($shareLinkId: String!) {
+  deleteCollectionShareLink(shareLinkId: $shareLinkId) {
+    id
+  }
+}
+    `;
+export type DeleteCollectionShareLinkMutationFn = Apollo.MutationFunction<DeleteCollectionShareLinkMutation, DeleteCollectionShareLinkMutationVariables>;
+
+/**
+ * __useDeleteCollectionShareLinkMutation__
+ *
+ * To run a mutation, you first call `useDeleteCollectionShareLinkMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteCollectionShareLinkMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteCollectionShareLinkMutation, { data, loading, error }] = useDeleteCollectionShareLinkMutation({
+ *   variables: {
+ *      shareLinkId: // value for 'shareLinkId'
+ *   },
+ * });
+ */
+export function useDeleteCollectionShareLinkMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCollectionShareLinkMutation, DeleteCollectionShareLinkMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteCollectionShareLinkMutation, DeleteCollectionShareLinkMutationVariables>(DeleteCollectionShareLinkDocument, options);
+      }
+export type DeleteCollectionShareLinkMutationHookResult = ReturnType<typeof useDeleteCollectionShareLinkMutation>;
+export type DeleteCollectionShareLinkMutationResult = Apollo.MutationResult<DeleteCollectionShareLinkMutation>;
+export type DeleteCollectionShareLinkMutationOptions = Apollo.BaseMutationOptions<DeleteCollectionShareLinkMutation, DeleteCollectionShareLinkMutationVariables>;
 export const GetDocumentDocument = gql`
     query GetDocument($getDocumentInput: GetDocumentInput!) {
   document(getDocumentInput: $getDocumentInput) {

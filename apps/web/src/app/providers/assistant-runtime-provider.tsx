@@ -20,7 +20,7 @@ type AssistantRuntimeProviderProps = {
 export function AssistantRuntimeProvider({
   children,
 }: AssistantRuntimeProviderProps) {
-  const params = useParams() as routerTypes.DocumentPageParams;
+  const params = useParams() as routerTypes.DocumentsPageParams;
   const collectionId = Number(params.collectionId) || 1; // Fallback to 1 if parsing fails
   
   const MyModelAdapter: ChatModelAdapter = {

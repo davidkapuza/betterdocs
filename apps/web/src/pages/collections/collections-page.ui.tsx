@@ -7,6 +7,7 @@ import { pathKeys } from '@/shared/lib/react-router';
 import { CreateCollectionDialog } from '@/widgets/create-collection-dialog';
 import { EditCollectionDialog } from '@/widgets/edit-collection-dialog';
 import { DeleteCollectionDialog } from '@/widgets/delete-collection-dialog';
+import { InviteUsersDialog } from '@/widgets/invite-users-dialog';
 import {
   SidebarTrigger,
   DropdownMenu,
@@ -20,6 +21,7 @@ import {
   CardHeader,
   CardTitle,
   CardContent,
+  DropdownMenuSeparator,
 } from '@betterdocs/ui';
 import { FolderOpen, MoreHorizontal } from 'lucide-react';
 import { createSearchParams, NavLink } from 'react-router';
@@ -34,6 +36,9 @@ export function CollectionsPage() {
     CollectionsQuery['collections'][number] | null
   >(null);
   const [deletingCollection, setDeletingCollection] = React.useState<
+    CollectionsQuery['collections'][number] | null
+  >(null);
+  const [invitingCollection, setInvitingCollection] = React.useState<
     CollectionsQuery['collections'][number] | null
   >(null);
 
@@ -123,15 +128,26 @@ export function CollectionsPage() {
                           >
                             Edit
                           </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuGroup>
                           <DropdownMenuItem
-                            className="text-destructive focus:text-destructive"
                             onClick={() => {
-                              setDeletingCollection(collection);
+                              setInvitingCollection(collection);
                             }}
                           >
-                            Delete
+                            Invite users
                           </DropdownMenuItem>
                         </DropdownMenuGroup>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          className="text-destructive focus:text-destructive"
+                          onClick={() => {
+                            setDeletingCollection(collection);
+                          }}
+                        >
+                          Delete
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
@@ -161,6 +177,18 @@ export function CollectionsPage() {
           onOpenChange={(open) => {
             if (!open) {
               setDeletingCollection(null);
+            }
+          }}
+        />
+      )}
+
+      {invitingCollection && (
+        <InviteUsersDialog
+          collection={invitingCollection}
+          open={Boolean(invitingCollection)}
+          onOpenChange={(open) => {
+            if (!open) {
+              setInvitingCollection(null);
             }
           }}
         />

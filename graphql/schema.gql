@@ -47,6 +47,46 @@ type Collection {
   name: String!
   description: String
   documents: [Document!]!
+  members: [CollectionMember!]!
+}
+
+type CollectionMember {
+  user: User!
+  role: UserCollectionRole!
+  joinedAt: DateTime!
+}
+
+"""The role of a user in a collection"""
+enum UserCollectionRole {
+  owner
+  editor
+  viewer
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type CollectionInvite {
+  id: String!
+  collectionId: Float!
+  collection: Collection!
+  inviterEmail: String!
+  inviteeEmail: String!
+  role: UserCollectionRole!
+  token: String!
+  expiresAt: DateTime!
+  createdAt: DateTime!
+}
+
+type CollectionShareLink {
+  id: String!
+  url: String!
+  token: String!
+  role: UserCollectionRole!
+  expiresAt: DateTime
+  createdAt: DateTime!
 }
 
 type QueryResponse {
@@ -59,6 +99,9 @@ type Query {
   document(getDocumentInput: GetDocumentInput!): Document!
   collections: [Collection!]!
   collection(collectionId: Int!): Collection!
+  collectionMembers(collectionId: Int!): [CollectionMember!]!
+  collectionPendingInvites(collectionId: Int!): [CollectionInvite!]!
+  collectionShareLinks(collectionId: Int!): [CollectionShareLink!]!
 }
 
 input GetDocumentInput {
@@ -79,6 +122,12 @@ type Mutation {
   createCollection(createCollectionInput: CreateCollectionInput!): Collection!
   updateCollection(updateCollectionInput: UpdateCollectionInput!): Collection!
   deleteCollection(deleteCollectionInput: DeleteCollectionInput!): Collection!
+  inviteUserToCollection(inviteUserToCollectionInput: InviteUserToCollectionInput!): CollectionInvite!
+  acceptCollectionInvite(acceptCollectionInviteInput: AcceptCollectionInviteInput!): Collection!
+  generateCollectionShareLink(generateCollectionShareLinkInput: GenerateCollectionShareLinkInput!): CollectionShareLink!
+  joinCollectionByShareLink(token: String!): Collection!
+  removeUserFromCollection(removeUserFromCollectionInput: RemoveUserFromCollectionInput!): CollectionMember!
+  deleteCollectionShareLink(shareLinkId: String!): CollectionShareLink!
 }
 
 """Represents NULL values"""
@@ -130,6 +179,27 @@ input UpdateCollectionInput {
 
 input DeleteCollectionInput {
   collectionId: Float!
+}
+
+input InviteUserToCollectionInput {
+  collectionId: Float!
+  email: String!
+  role: UserCollectionRole!
+}
+
+input AcceptCollectionInviteInput {
+  inviteToken: String!
+}
+
+input GenerateCollectionShareLinkInput {
+  collectionId: Float!
+  role: UserCollectionRole!
+  expiresInDays: Float
+}
+
+input RemoveUserFromCollectionInput {
+  collectionId: Float!
+  userId: Float!
 }
 
 type Subscription {

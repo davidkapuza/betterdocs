@@ -15,8 +15,13 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@betterdocs/ui": ["libs/ui/src/index.ts"],
-      "@betterdocs/ui/*": ["libs/ui/src/*"],
+      "@betterdocs/assistant-ui": ["libs/assistant-ui/src/index.ts"],
+      "@betterdocs/hooks": ["libs/hooks/src"],
+      "@betterdocs/hooks/*": ["libs/hooks/src/*"],
+      "@betterdocs/lib": ["libs/utils"],
+      "@betterdocs/plate-ui": ["libs/plate-ui/src/index.ts"],
+      "@betterdocs/ui": ["libs/ui/src/components"],
+      "@betterdocs/ui/*": ["libs/ui/src/components/*"],
       "@betterdocs/utils": ["libs/utils/src/index.ts"]
     }
   },

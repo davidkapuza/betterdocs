@@ -1,0 +1,17 @@
+{
+  "name": "@betterdocs/assistant-ui",
+  "version": "0.0.1",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "require": "./index.js"
+    }
+  },
+  "dependencies": {
+    "@assistant-ui/react": "^0.10.26",
+    "@assistant-ui/react-markdown": "^0.10.6",
+    "remark-gfm": "^4.0.1"
+  }
+}

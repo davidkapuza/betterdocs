@@ -10,6 +10,7 @@ import { signUpPageRoute } from '@/pages/sign-up';
 import React from 'react';
 import { collectionsPageRoute } from '@/pages/collections';
 import { documentsPageRoute } from '@/pages/documents';
+import { joinCollectionPageRoute } from '@/pages/join-collection';
 import { compose, withSuspense } from '@/shared/lib/react';
 import { pathKeys } from '@/shared/lib/react-router';
 import { page404Route } from '@/pages/page-404';
@@ -55,7 +56,7 @@ const browserRouter = createBrowserRouter([
           },
           {
             path: pathKeys.collections.root(),
-            children: [collectionsPageRoute, documentsPageRoute],
+            children: [collectionsPageRoute, documentsPageRoute, joinCollectionPageRoute],
           },
         ],
       },

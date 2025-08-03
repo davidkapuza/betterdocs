@@ -6,6 +6,13 @@ import { MailData } from './types';
 import path from 'path';
 import ms, { StringValue } from 'ms';
 
+interface CollectionInvitationData {
+  inviterName: string;
+  collectionName: string;
+  inviteToken: string;
+  frontendUrl: string;
+}
+
 @Injectable()
 export class MailService {
   constructor(
@@ -65,6 +72,26 @@ export class MailService {
         title: 'Password reset',
         url: url.toString(),
         action: 'Reset',
+      },
+    });
+  }  async sendCollectionInvitation(mailData: MailData<CollectionInvitationData>) {
+    const inviteUrl = `${mailData.data.frontendUrl}/collections/join/${mailData.data.inviteToken}`;
+    
+    const templatePath = path.resolve(
+      __dirname,
+      'modules/mail/templates/collection-invitation.template.hbs'
+    );
+
+    await this.mailerService.send({
+      to: mailData.to,
+      subject: `You've been invited to "${mailData.data.collectionName}"`,
+      text: inviteUrl,
+      templatePath,
+      context: {
+        inviterName: mailData.data.inviterName,
+        collectionName: mailData.data.collectionName,
+        inviteUrl: inviteUrl,
+        frontendUrl: mailData.data.frontendUrl,
       },
     });
   }

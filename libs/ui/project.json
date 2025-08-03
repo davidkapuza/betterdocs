@@ -9,6 +9,19 @@
       "options": {
         "packageRoot": "dist/{projectRoot}"
       }
+    },
+    "add-component": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx shadcn@latest add",
+          "npm run update-exports"
+        ],
+        "cwd": "libs/ui",
+        "parallel": false,
+        "forwardAllArgs": true
+      },
+      "configurations": {}
     }
   },
   "release": {

@@ -77,3 +77,99 @@ subscription QueryCollection($queryCollectionInput: QueryCollectionInput!) {
     completed
   }
 }
+
+mutation InviteUserToCollection($inviteUserToCollectionInput: InviteUserToCollectionInput!) {
+  inviteUserToCollection(inviteUserToCollectionInput: $inviteUserToCollectionInput) {
+    id
+    collectionId
+    inviterEmail
+    inviteeEmail
+    role
+    token
+    expiresAt
+    createdAt
+    collection {
+      id
+      name
+      description
+    }
+  }
+}
+
+mutation AcceptCollectionInvite($acceptCollectionInviteInput: AcceptCollectionInviteInput!) {
+  acceptCollectionInvite(acceptCollectionInviteInput: $acceptCollectionInviteInput) {
+    id
+    name
+    description
+  }
+}
+
+mutation GenerateCollectionShareLink($generateCollectionShareLinkInput: GenerateCollectionShareLinkInput!) {
+  generateCollectionShareLink(generateCollectionShareLinkInput: $generateCollectionShareLinkInput) {
+    url
+    token
+    role
+    expiresAt
+  }
+}
+
+mutation JoinCollectionByShareLink($token: String!) {
+  joinCollectionByShareLink(token: $token) {
+    id
+    name
+    description
+  }
+}
+
+mutation RemoveUserFromCollection($removeUserFromCollectionInput: RemoveUserFromCollectionInput!) {
+  removeUserFromCollection(removeUserFromCollectionInput: $removeUserFromCollectionInput) {
+    user {
+      id
+      email
+      firstName
+      lastName
+    }
+    role
+    joinedAt
+  }
+}
+
+query CollectionMembers($collectionId: Int!) {
+  collectionMembers(collectionId: $collectionId) {
+    user {
+      id
+      email
+      firstName
+      lastName
+    }
+    role
+    joinedAt
+  }
+}
+
+query CollectionPendingInvites($collectionId: Int!) {
+  collectionPendingInvites(collectionId: $collectionId) {
+    id
+    inviterEmail
+    inviteeEmail
+    role
+    expiresAt
+    createdAt
+  }
+}
+
+query CollectionShareLinks($collectionId: Int!) {
+  collectionShareLinks(collectionId: $collectionId) {
+    id
+    role
+    token
+    expiresAt
+    createdAt
+  }
+}
+
+mutation DeleteCollectionShareLink($shareLinkId: String!) {
+  deleteCollectionShareLink(shareLinkId: $shareLinkId) {
+    id
+  }
+}

@@ -6,6 +6,9 @@ import { DocumentsModule } from '@modules/documents/documents.module';
 import { PubSub } from 'graphql-subscriptions';
 import { RabbitMQModule } from '@modules/rabbitmq/rabbitmq.module';
 import { CollectionsController } from './collections.controller';
+import { MailModule } from '@modules/mail/mail.module';
+import { UsersModule } from '@modules/users/users.module';
+import { JwtModule } from '@nestjs/jwt';
 
 const COLLECTIONS_QUEUE_INPUT =
   process.env.COLLECTIONS_QUEUE_INPUT || 'collections_queue.input';
@@ -13,6 +16,12 @@ const COLLECTIONS_QUEUE_INPUT =
 @Module({
   imports: [
     DocumentsModule,
+    MailModule,
+    UsersModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || 'default-secret',
+      signOptions: { expiresIn: '30d' },
+    }),
     RabbitMQModule.register({
       queue: COLLECTIONS_QUEUE_INPUT,
     }),

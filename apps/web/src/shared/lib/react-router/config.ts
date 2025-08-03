@@ -20,6 +20,9 @@ export const pathKeys = {
     collection({ collectionId }: DocumentsPageParams) {
       return pathKeys.collections.root().concat('/', collectionId);
     },
+    join(token: string) {
+      return pathKeys.collections.root().concat('/join/', token);
+    },
   },
   page404() {
     return pathKeys.root.concat('404');
