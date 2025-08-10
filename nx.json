@@ -17,6 +17,20 @@
   "nxCloudId": "679799de896a9430b7281c63",
   "plugins": [
     {
+      "plugin": "@nx/js/typescript",
+      "options": {
+        "typecheck": {
+          "targetName": "typecheck"
+        },
+        "build": {
+          "targetName": "build",
+          "configName": "tsconfig.lib.json",
+          "buildDepsName": "build-deps",
+          "watchDepsName": "watch-deps"
+        }
+      }
+    },
+    {
       "plugin": "@nxlv/python",
       "options": {
         "packageManager": "uv"

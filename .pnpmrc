@@ -1,0 +1,6 @@
+prefer-frozen-lockfile=false
+auto-install-peers=true
+hoist-pattern[]=*eslint*
+hoist-pattern[]=*prettier*
+public-hoist-pattern[]=*eslint*
+public-hoist-pattern[]=*prettier*

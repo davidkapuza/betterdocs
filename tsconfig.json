@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.base.json",
+  "files": [], // intentionally empty
+  "references": [
+    {
+      "path": "./libs/utils"
+    },
+    {
+      "path": "./libs/ui"
+    }
+  ]
+}

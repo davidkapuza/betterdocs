@@ -8,6 +8,11 @@ out-tsc
 # dependencies
 node_modules
 
+# Package managers
+# npm
+package-lock.json
+npm-debug.log*
+
 # Yarn
 .yarn/*
 !.yarn/patches
@@ -17,7 +22,10 @@ node_modules
 !.yarn/versions
 .pnp.*
 yarn-error.log
-package-lock.json
+
+# pnpm
+.pnpm-debug.log*
+.pnpm-store/
 
 # IDEs and editors
 /.idea

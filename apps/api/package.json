@@ -1,0 +1,14 @@
+{
+  "name": "@betterdocs/api",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "build": "nx build api",
+    "build:dev": "nx build api --configuration=development",
+    "start": "node dist/main.js",
+    "start:dev": "node dist/main.js",
+    "seed": "ts-node prisma/seed.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

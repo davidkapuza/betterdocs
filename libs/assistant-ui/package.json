@@ -11,7 +11,10 @@
   },
   "dependencies": {
     "@assistant-ui/react": "^0.10.26",
-    "@assistant-ui/react-markdown": "^0.10.6",
-    "remark-gfm": "^4.0.1"
+    "@assistant-ui/react-markdown": "^0.10.6"
+  },
+  "devDependencies": {
+    "@betterdocs/utils": "workspace:*",
+    "@betterdocs/ui": "workspace:*"
   }
 }

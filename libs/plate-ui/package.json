@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@ariakit/react": "^0.4.17",
-    "@faker-js/faker": "^9.9.0",
     "@platejs/ai": "^49.1.9",
     "@platejs/autoformat": "^49.0.0",
     "@platejs/basic-nodes": "^49.0.0",
@@ -54,12 +53,9 @@
     "lowlight": "^3.3.0",
     "pdf-lib": "^1.17.1",
     "platejs": "^49.1.5",
-    "react-day-picker": "^9.8.0",
     "react-lite-youtube-embed": "^2.5.1",
     "react-player": "^2.16.0",
     "react-tweet": "^3.2.2",
-    "remark-gfm": "^4.0.1",
-    "remark-math": "^6.0.0",
     "use-file-picker": "2.1.2"
   },
   "peerDependencies": {
@@ -67,6 +63,9 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@betterdocs/ui": "workspace:*",
+    "@betterdocs/hooks": "workspace:*",
+    "@betterdocs/utils": "workspace:*",
     "@types/lodash": "^4.17.20"
   }
 }

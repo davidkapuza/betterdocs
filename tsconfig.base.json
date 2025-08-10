@@ -1,9 +1,13 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "composite": true,
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
     "rootDir": ".",
     "sourceMap": true,
-    "declaration": false,
+    "declaration": true,
+    "declarationMap": true,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -13,17 +17,7 @@
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "@betterdocs/assistant-ui": ["libs/assistant-ui/src/index.ts"],
-      "@betterdocs/hooks": ["libs/hooks/src"],
-      "@betterdocs/hooks/*": ["libs/hooks/src/*"],
-      "@betterdocs/lib": ["libs/utils"],
-      "@betterdocs/plate-ui": ["libs/plate-ui/src/index.ts"],
-      "@betterdocs/ui": ["libs/ui/src/components"],
-      "@betterdocs/ui/*": ["libs/ui/src/components/*"],
-      "@betterdocs/utils": ["libs/utils/src/index.ts"]
-    }
+    "baseUrl": "."
   },
   "exclude": ["node_modules", "tmp"]
 }
