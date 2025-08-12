@@ -191,11 +191,6 @@ export type MutationResetPasswordArgs = {
 };
 
 
-export type MutationResetPasswordRequestArgs = {
-  email: Scalars['String']['input'];
-};
-
-
 export type MutationSignInArgs = {
   signInInput: SignInInput;
 };

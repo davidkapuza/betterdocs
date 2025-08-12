@@ -11,9 +11,16 @@ registerEnumType(UserStatus, {
 
 @ObjectType()
 export class User {
+  @Field(() => Number)
   id: number;
+
+  @Field(() => String)
   email: string;
+
+  @Field(() => String)
   firstName: string;
+
+  @Field(() => String)
   lastName: string;
 
   @Field(() => Role)

@@ -9,29 +9,14 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "apps/api",
-        "command": "npx webpack --mode=production --node-env=production"
-      },
-      "configurations": {
-        "development": {
-          "command": "npx webpack --mode=development --node-env=development"
-        }
+        "command": "npx nest build -b swc"
       }
     },
     "serve": {
-      "executor": "@nx/js:node",
-      "defaultConfiguration": "development",
-      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
       "options": {
-        "buildTarget": "api:build",
-        "runBuildTargetDependencies": false
-      },
-      "configurations": {
-        "development": {
-          "buildTarget": "api:build:development"
-        },
-        "production": {
-          "buildTarget": "api:build:production"
-        }
+        "cwd": "apps/api",
+        "command": "npx nest start -b swc -w --type-check"
       }
     },
 

@@ -3,12 +3,12 @@
 # ------------------------------------------------------
 
 type User {
-  role: Role!
-  status: UserStatus!
   id: Float!
   email: String!
   firstName: String!
   lastName: String!
+  role: Role!
+  status: UserStatus!
 }
 
 enum Role {
@@ -113,7 +113,7 @@ type Mutation {
   confirmEmail(hash: String!): SignInResponseModel!
   signIn(signInInput: SignInInput!): SignInResponseModel!
   refreshTokens: TokensResponseModel!
-  resetPasswordRequest(email: String!): Void
+  resetPasswordRequest: Void
   resetPassword(resetPasswordInput: ResetPasswordInput!): SignInResponseModel!
   signOut: Void
   createDocument(createDocumentInput: CreateDocumentInput!): Document!

@@ -14,11 +14,13 @@ WORKDIR /app
 RUN addgroup --system api && \
           adduser --system -G api api
 
-COPY dist/apps/api api/
+# Copy built files from Nest dist
+COPY apps/api/dist ./api
 RUN chown -R api:api .
 
-# You can remove this install step if you build with `--bundle` option.
-# The bundled output will include external dependencies.
-RUN npm --prefix api --omit=dev -f install
+# Install production deps for the built app if needed
+RUN npm --prefix api --omit=dev -f install || true
 
-CMD [ "node", "api" ]
+USER api
+
+CMD [ "node", "api/main.js" ]
