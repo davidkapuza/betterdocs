@@ -477,6 +477,9 @@ importers:
       react-error-boundary:
         specifier: ^6.0.0
         version: 6.0.0(react@19.1.1)
+      react-hook-form:
+        specifier: ^7.60.0
+        version: 7.62.0(react@19.1.1)
       react-resizable-panels:
         specifier: ^2.1.8
         version: 2.1.9(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -635,8 +638,8 @@ importers:
         specifier: ^49.0.15
         version: 49.0.15(@types/react@19.1.9)(class-variance-authority@0.7.1)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(tailwind-merge@3.3.1)
       '@uploadthing/react':
-        specifier: ^7.3.2
-        version: 7.3.2(react@19.1.1)(uploadthing@7.7.3(express@5.1.0)(tailwindcss@4.1.11))
+        specifier: 7.3.1
+        version: 7.3.1(react@19.1.1)(uploadthing@7.7.2(express@5.1.0)(tailwindcss@4.1.11))
       html2canvas-pro:
         specifier: ^1.5.11
         version: 1.5.11
@@ -652,6 +655,12 @@ importers:
       react:
         specifier: ^19.1.0
         version: 19.1.1
+      react-dnd:
+        specifier: ^16.0.1
+        version: 16.0.1(@types/node@24.1.0)(@types/react@19.1.9)(react@19.1.1)
+      react-dnd-html5-backend:
+        specifier: ^16.0.1
+        version: 16.0.1
       react-dom:
         specifier: ^19.1.0
         version: 19.1.1(react@19.1.1)
@@ -661,9 +670,15 @@ importers:
       react-player:
         specifier: ^2.16.0
         version: 2.16.1(react@19.1.1)
+      react-textarea-autosize:
+        specifier: ^8.5.9
+        version: 8.5.9(@types/react@19.1.9)(react@19.1.1)
       react-tweet:
         specifier: ^3.2.2
         version: 3.2.2(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      uploadthing:
+        specifier: 7.7.2
+        version: 7.7.2(express@5.1.0)(tailwindcss@4.1.11)
       use-file-picker:
         specifier: 2.1.2
         version: 2.1.2(react@19.1.1)
@@ -1781,10 +1796,10 @@ packages:
     resolution: {integrity: sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==}
     engines: {node: '>=10.0.0'}
 
-  '@effect/platform@0.85.2':
-    resolution: {integrity: sha512-zIRixbQeO6QniR0k2mwR7DmR2HO1w6+qQlzQ5nb8lyPyPgd1gV9wo/9yBeB6zRC+CGnxiUiYsRMamclVISuxLw==}
+  '@effect/platform@0.81.0':
+    resolution: {integrity: sha512-RZ0pqpSUET0Ab3CBjOhJ12C2/vWLQsy+SLJbGNxjcOm9xZAwQowggWCs4S3ZXhdnNTR5WJHH02WlAWHJDaMKhA==}
     peerDependencies:
-      effect: ^3.16.8
+      effect: ^3.14.21
 
   '@emnapi/core@1.4.5':
     resolution: {integrity: sha512-XsLw1dEOpkSX/WucdqUhPWP7hDxSvZiY+fsUC14h+FtQ2Ifni4znbBt8punRX+Uj2JG/uDb8nEHVKvrVlvdZ5Q==}
@@ -5789,8 +5804,8 @@ packages:
   '@uploadthing/mime-types@0.3.5':
     resolution: {integrity: sha512-iYOmod80XXOSe4NVvaUG9FsS91YGPUaJMTBj52Nwu0G2aTzEN6Xcl0mG1rWqXJ4NUH8MzjVqg+tQND5TPkJWhg==}
 
-  '@uploadthing/react@7.3.2':
-    resolution: {integrity: sha512-dssVzrxGBKBHUzJu/CiEGc3hQ49U4sPdnqN5xMmtEdnJP+6OB+a8JUjkwxiJDBQXc3ft9XCmkLCZZoUt1EQSIw==}
+  '@uploadthing/react@7.3.1':
+    resolution: {integrity: sha512-yIAFw46ZO/NPb74zpomwn6Hf2ZX/Ws+vNlR4oKNLJ7YtJ+/bqERclzC3xnRVi/pT47ctISlqXQFGiXUn85wg5Q==}
     peerDependencies:
       next: '*'
       react: ^17.0.2 || ^18.0.0 || ^19.0.0
@@ -5799,8 +5814,8 @@ packages:
       next:
         optional: true
 
-  '@uploadthing/shared@7.1.9':
-    resolution: {integrity: sha512-5Gn1wGVSygsBxI6tjOwwEQt/U4m+vbmZCnsuf8pDfZ+MiXe3el03CWMmpbH3KtSu0BwG48wyCKNfHplZsphvOA==}
+  '@uploadthing/shared@7.1.8':
+    resolution: {integrity: sha512-OA9ZrTfILOCt1G93wOD7dZmS653z99Nr3isZpIxzBO3y4B2geKFmPjJUZClig2RrAWLKr2VUYToXKfd9D/wP9w==}
 
   '@verdaccio/auth@8.0.0-next-8.19':
     resolution: {integrity: sha512-VEWhj9Zs6qY2vzVpwY0uViPGxCPhiVo+g2WTLPNGa8avYz6sC8eiHZOJv3E22TKm/PaeSzclvSbMXiXP1bYuMA==}
@@ -7618,11 +7633,11 @@ packages:
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
 
+  effect@3.14.21:
+    resolution: {integrity: sha512-TKR7zfWcuZgEdWd+oIGA8LdREj/c+1Q0wz4pWqQtYT7VHnkW/QQEYCXgrDI5dT6lJgRTgyQAC1bAnpAf6MdjIA==}
+
   effect@3.16.12:
     resolution: {integrity: sha512-N39iBk0K71F9nb442TLbTkjl24FLUzuvx2i1I2RsEAQsdAdUTuUoW0vlfUXgkMTUOnYqKnWcFfqw4hK4Pw27hg==}
-
-  effect@3.16.8:
-    resolution: {integrity: sha512-E4U0MZFBun99myxOogy9ZZ1c3IYR47L/A5GqCP9Lp+6ORag0YLmGHOrYxQ3agN1FOMTrElgtJmciicwnHdE+Ug==}
 
   ejs@3.1.10:
     resolution: {integrity: sha512-UeJmFfOrAQS8OJWPZ4qtgHyWExa088/MtK5UEyoJGFH67cDEXkZSviOiKRCZ4Xij0zxI3JECgYs3oKx+AizQBA==}
@@ -12951,8 +12966,8 @@ packages:
     peerDependencies:
       browserslist: '>= 4.21.0'
 
-  uploadthing@7.7.3:
-    resolution: {integrity: sha512-jmPMVoqM+fWP1EXiwP6VBLTJykZ8z4ryrUr1N8yc87T+cxZw2vyvX2ReCaLhfjdbielPjHm486VCHtO2gYBFQA==}
+  uploadthing@7.7.2:
+    resolution: {integrity: sha512-Q8rp40vnh8g4+OHvocmf+YVoSi+6RWTKmemo5BgW7R8iFU2O2EYH/n+CIxPzxhYyH/QjhRF/pHoIMcUL/8OtSg==}
     engines: {node: '>=18.13.0'}
     peerDependencies:
       express: '*'
@@ -14985,9 +15000,9 @@ snapshots:
 
   '@discoveryjs/json-ext@0.5.7': {}
 
-  '@effect/platform@0.85.2(effect@3.16.8)':
+  '@effect/platform@0.81.0(effect@3.14.21)':
     dependencies:
-      effect: 3.16.8
+      effect: 3.14.21
       find-my-way-ts: 0.1.6
       msgpackr: 1.11.5
       multipasta: 0.2.7
@@ -19756,17 +19771,17 @@ snapshots:
 
   '@uploadthing/mime-types@0.3.5': {}
 
-  '@uploadthing/react@7.3.2(react@19.1.1)(uploadthing@7.7.3(express@5.1.0)(tailwindcss@4.1.11))':
+  '@uploadthing/react@7.3.1(react@19.1.1)(uploadthing@7.7.2(express@5.1.0)(tailwindcss@4.1.11))':
     dependencies:
-      '@uploadthing/shared': 7.1.9
+      '@uploadthing/shared': 7.1.8
       file-selector: 0.6.0
       react: 19.1.1
-      uploadthing: 7.7.3(express@5.1.0)(tailwindcss@4.1.11)
+      uploadthing: 7.7.2(express@5.1.0)(tailwindcss@4.1.11)
 
-  '@uploadthing/shared@7.1.9':
+  '@uploadthing/shared@7.1.8':
     dependencies:
       '@uploadthing/mime-types': 0.3.5
-      effect: 3.16.8
+      effect: 3.14.21
       sqids: 0.3.0
 
   '@verdaccio/auth@8.0.0-next-8.19':
@@ -21940,12 +21955,12 @@ snapshots:
 
   ee-first@1.1.1: {}
 
-  effect@3.16.12:
+  effect@3.14.21:
     dependencies:
       '@standard-schema/spec': 1.0.0
       fast-check: 3.23.2
 
-  effect@3.16.8:
+  effect@3.16.12:
     dependencies:
       '@standard-schema/spec': 1.0.0
       fast-check: 3.23.2
@@ -28690,13 +28705,13 @@ snapshots:
       escalade: 3.2.0
       picocolors: 1.1.1
 
-  uploadthing@7.7.3(express@5.1.0)(tailwindcss@4.1.11):
+  uploadthing@7.7.2(express@5.1.0)(tailwindcss@4.1.11):
     dependencies:
-      '@effect/platform': 0.85.2(effect@3.16.8)
+      '@effect/platform': 0.81.0(effect@3.14.21)
       '@standard-schema/spec': 1.0.0-beta.4
       '@uploadthing/mime-types': 0.3.5
-      '@uploadthing/shared': 7.1.9
-      effect: 3.16.8
+      '@uploadthing/shared': 7.1.8
+      effect: 3.14.21
     optionalDependencies:
       express: 5.1.0
       tailwindcss: 4.1.11

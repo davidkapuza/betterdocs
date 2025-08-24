@@ -2,7 +2,7 @@ import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
 
-import { useIsMobile } from "@betterdocs/hooks/use-mobile"
+import { useIsMobile } from "@betterdocs/hooks"
 import { cn } from "@betterdocs/utils"
 import { Button } from "./button"
 import { Input } from "./input"

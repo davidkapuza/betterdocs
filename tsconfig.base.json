@@ -17,7 +17,19 @@
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@betterdocs/hooks": ["libs/hooks/src/index.ts"],
+      "@betterdocs/hooks/*": ["libs/hooks/src/*"],
+      "@betterdocs/utils": ["libs/utils/src/index.ts"],
+      "@betterdocs/utils/*": ["libs/utils/src/*"],
+      "@betterdocs/ui": ["libs/ui/src/components/index.ts"],
+      "@betterdocs/ui/*": ["libs/ui/src/components/*"],
+      "@betterdocs/plate-ui": ["libs/plate-ui/src/index.ts"],
+      "@betterdocs/plate-ui/*": ["libs/plate-ui/src/*"],
+      "@betterdocs/assistant-ui": ["libs/assistant-ui/src/index.ts"],
+      "@betterdocs/assistant-ui/*": ["libs/assistant-ui/src/*"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
