@@ -31,7 +31,7 @@ import { useIsMobile } from '@/shared/hooks/use-mobile';
 import { skipToken } from '@apollo/client';
 import { Plate, usePlateEditor } from 'platejs/react';
 import { Value } from 'platejs';
-import { EditorContainer, Editor } from '@betterdocs/plate-ui';
+import { EditorContainer, Editor, EditorKit } from '@betterdocs/plate-ui';
 import { DocumentTitle } from './document-title.ui';
 
 const enhance = compose(
@@ -43,7 +43,7 @@ const enhance = compose(
 
 export const DocumentEditor = enhance(() => {
   const editor = usePlateEditor({
-    skipInitialization: true,
+    plugins: EditorKit,
   });
   const params = useParams() as routerTypes.DocumentsPageParams;
   const [searchParams, setSearchParams] = useSearchParams();

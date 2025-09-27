@@ -4,5 +4,6 @@ export default {
   content: [
     './src/**/*.{js,ts,jsx,tsx}',
     '../../libs/ui/src/**/*.{js,ts,jsx,tsx}',
+    '../../libs/plate-ui/src/**/*.{js,ts,jsx,tsx}',
   ],
 } satisfies Config;
